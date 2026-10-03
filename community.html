@@ -3,7 +3,7 @@
 :root{--bg:#050505;--panel:#0c0c0f;--panel2:#121216;--text:#f5f5f5;--muted:#90909a;--red:#e10600;--red2:#ff3028;--line:rgba(255,255,255,.09);--max:1180px}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,rgba(225,6,0,.16),transparent 28%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}.wrap{width:min(var(--max),calc(100% - 32px));margin:auto}.top{position:sticky;top:0;z-index:20;background:rgba(5,5,5,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-weight:1000;letter-spacing:.15em}.brand span{color:#ff3028}.navlinks{display:flex;gap:8px}.tab{background:none;border:1px solid transparent;color:#aaa;padding:10px 12px;border-radius:9px;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:.1em}.tab.active,.tab:hover{color:#fff;background:#111114;border-color:var(--line)}.btn{border:1px solid var(--line);border-radius:10px;background:#101014;color:#fff;padding:11px 15px;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:.08em}.btn.red{background:linear-gradient(135deg,var(--red2),#9f0000);border-color:#ff4038}.btn:disabled{opacity:.45;cursor:not-allowed}.hero{padding:55px 0 28px}.kicker{font-size:10px;color:#ff4039;font-weight:1000;letter-spacing:.2em;text-transform:uppercase}.hero h1{font-size:clamp(40px,7vw,76px);line-height:.9;letter-spacing:-.06em;margin:10px 0}.hero p{color:#999;max-width:700px;line-height:1.6}.status{padding:10px 12px;border:1px solid rgba(225,6,0,.35);border-radius:10px;background:#100606;color:#ff817b;font-size:11px;margin:15px 0}.grid{display:grid;grid-template-columns:1.4fr .6fr;gap:18px;padding-bottom:70px}.panel{background:linear-gradient(145deg,#111115,#080809);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.25)}.panel h2{font-size:25px;margin:0 0 14px}.panel h3{margin:0}.field{margin:10px 0}.field label{display:block;color:#aaa;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;background:#08080a;color:#fff;border:1px solid var(--line);border-radius:9px;padding:12px;outline:none}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(255,48,40,.6)}.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1}.card{padding:17px 0;border-top:1px solid var(--line)}.card:first-child{border-top:0}.meta{color:#777;font-size:10px;margin:5px 0 11px}.body{color:#ddd;white-space:pre-wrap;line-height:1.55}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.mini{padding:8px 10px;font-size:10px}.empty{color:#777;text-align:center;padding:30px 10px}.hidden{display:none!important}.avatar{width:42px;height:42px;border-radius:12px;object-fit:cover;background:#1a1a1e;display:grid;place-items:center;font-weight:1000;color:#ff4b45}.posthead{display:flex;gap:11px;align-items:center}.posthead small{color:#777}.loadout{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:10px;background:#0a0a0c}.attachment{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:8px 0;font-size:12px}.attachment:last-child{border:0}.attachment span{color:#777}.notice{border:1px solid rgba(255,255,255,.1);background:#0c0c0f;padding:13px;border-radius:10px;color:#aaa;font-size:12px;line-height:1.5}.profilebox{display:flex;align-items:center;gap:12px;margin-bottom:15px}.badge{display:inline-block;border:1px solid rgba(225,6,0,.4);color:#ff4b45;border-radius:999px;padding:4px 7px;font-size:9px;font-weight:900}.auth{max-width:500px;margin:40px auto 90px}.auth h2{font-size:34px;margin:8px 0}.auth .switch{color:#999;margin-top:12px;font-size:12px}.switch button{background:none;border:0;color:#ff4b45;font-weight:900}.section-title{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.section-title button{flex:0 0 auto}@media(max-width:850px){.nav{height:auto;min-height:72px;flex-wrap:wrap;padding:10px 0}.navlinks{order:3;width:100%;overflow:auto}.grid{grid-template-columns:1fr}.hero{padding-top:35px}.wrap{width:min(var(--max),calc(100% - 22px))}}
 </style></head><body><header class="top"><div class="wrap nav"><a class="brand" href="index.html">VEXARO <span>COMMUNITY</span></a><nav class="navlinks"><button class="tab active" data-view="feed">Feed</button><button class="tab" data-view="loadouts">Loadouts</button><button class="tab" data-view="settings">Settings</button><button class="tab" data-view="profile">Profile</button><button class="tab hidden" id="adminTab" data-view="admin">Admin</button></nav><div id="authNav"><button class="btn red" id="openAuth">Join VEXARO</button></div></div></header><main class="wrap"><section class="hero"><div class="kicker">VEXARO / COMMUNITY</div><h1>BUILD. SHARE.<br><span style="color:#ff3028">GRIND.</span></h1><p>A proper home for the VEXARO community. Share gameplay thoughts, loadouts and controller/graphics settings, follow other members and build your profile.</p><div id="configNotice" class="status hidden"></div></section><section id="authView" class="auth panel hidden"><div class="kicker">VEXARO / ACCOUNT</div><h2 id="authTitle">JOIN VEXARO.</h2><p id="authSub" style="color:#888;line-height:1.5">Create your free member account.</p><div class="field"><label>Email</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="new-password" placeholder="At least 6 characters"></div><div id="signupFields"><div class="field"><label>Username</label><input id="username" maxlength="24" placeholder="VEXARO_Fan"></div><div class="field"><label>Display name</label><input id="displayName" maxlength="40" placeholder="Your display name"></div></div><button class="btn red" id="authSubmit" style="width:100%">Create account</button><div class="switch" id="authSwitch">Already a member? <button id="toggleAuth">Sign in</button></div><div id="authMsg" class="notice hidden" style="margin-top:12px"></div></section><section id="appView" class="grid"><div><div id="feedView" class="view"><div class="panel"><div class="section-title"><div><div class="kicker">Community feed</div><h2>WHAT'S HAPPENING?</h2></div></div><div id="postComposer" class="hidden"><div class="field"><textarea id="postBody" maxlength="1000" placeholder="Share a clip, thought, question or setup tip..."></textarea></div><button class="btn red" id="postSubmit">Post to VEXARO</button></div><div id="signedOutNotice" class="notice">You can browse the community. <button class="btn mini red" id="signInInline">Sign in to post</button></div><div id="feedList"></div></div></div><div id="loadoutsView" class="view hidden"><div class="panel"><div class="section-title"><div><div class="kicker">Loadout hub</div><h2>COMMUNITY BUILDS.</h2></div><button class="btn red" id="newLoadout">+ New loadout</button></div><div id="loadoutForm" class="hidden"><div class="row"><div class="field"><label>Title</label><input id="lTitle" placeholder="VEXARO Rush Build"></div><div class="field"><label>Weapon</label><input id="lWeapon" placeholder="Your weapon"></div></div><div class="field"><label>Category</label><input id="lCategory" value="Warzone"></div><div class="field"><label>Attachments</label><textarea id="lAttachments" placeholder="Muzzle: ...\nBarrel: ...\nOptic: ...\nMagazine: ..."></textarea></div><div class="field"><label>Notes</label><textarea id="lNotes" placeholder="Why you use this build..."></textarea></div><div class="actions"><button class="btn red" id="saveLoadout">Save loadout</button><button class="btn" id="cancelLoadout">Cancel</button></div></div><div id="loadoutList"></div></div></div><div id="settingsView" class="view hidden"><div class="panel"><div class="section-title"><div><div class="kicker">Settings hub</div><h2>SHOW YOUR SETUP.</h2></div><button class="btn red" id="newSetting">+ Share settings</button></div><div id="settingForm" class="hidden"><div class="field"><label>Title</label><input id="sTitle" placeholder="My controller settings"></div><div class="field"><label>Type</label><select id="sType"><option value="controller">Controller</option><option value="graphics">Graphics</option><option value="audio">Audio</option><option value="other">Other</option></select></div><div class="field"><label>Details</label><textarea id="sBody" placeholder="Sensitivity, FOV, graphics settings, audio setup, etc."></textarea></div><div class="actions"><button class="btn red" id="saveSetting">Share settings</button><button class="btn" id="cancelSetting">Cancel</button></div></div><div id="settingList"></div></div></div><div id="profileView" class="view hidden"><div class="panel"><div class="kicker">Your profile</div><h2>VEXARO MEMBER.</h2><div id="profileContent"></div></div></div><div id="adminView" class="view hidden"><div class="panel"><div class="kicker">VEXARO / ADMIN</div><h2>MODERATION.</h2><p style="color:#888;line-height:1.5">Manage reports and keep the VEXARO community clean.</p><div id="adminStats" class="notice">Loading moderation data...</div><div id="reportList" style="margin-top:12px"></div></div></div></div><aside><div class="panel"><div class="kicker">VEXARO / STATUS</div><h2 id="sideTitle">COMMUNITY.</h2><div id="sideContent" class="notice">Create an account to post, build a profile and share your loadouts/settings.</div></div><div class="panel" style="margin-top:18px"><div class="kicker">Rules</div><h3 style="margin:8px 0 12px">KEEP IT CLEAN.</h3><div class="notice">No harassment, spam, cheating promotion, scams or personal information. Use Report if something needs moderator attention.</div></div></aside></section></main><script>
 const readyConfig=()=>window.VEXARO_SUPABASE_URL&&window.VEXARO_SUPABASE_KEY&&!window.VEXARO_SUPABASE_URL.includes('PASTE_')&&!window.VEXARO_SUPABASE_KEY.includes('PASTE_');
-let sb=null, session=null, profile=null, authMode='signup', currentView='feed';
+let sb=null, session=null, profile=null, authMode='signup', currentView='feed', authInitializing=true;
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 function msg(text){$('authMsg').textContent=text;$('authMsg').classList.remove('hidden')}
 async function authSubmit(){
@@ -11,7 +11,7 @@ async function authSubmit(){
   const email=$('email').value.trim();
   const password=$('password').value;
   if(!email||!password){msg('Enter your email and password.');return}
-  const btn=$('authSubmit'); btn.disabled=true; msg('Signing in…');
+  const btn=$('authSubmit'); btn.disabled=true; msg(authMode==='signup'?'Creating account…':'Signing in…');
   try{
     if(authMode==='signup'){
       const username=$('username').value.trim().replace(/[^a-zA-Z0-9_]/g,'').slice(0,24);
@@ -19,28 +19,83 @@ async function authSubmit(){
       if(username.length<3){msg('Username needs at least 3 letters/numbers.');return}
       const {data,error}=await sb.auth.signUp({email,password,options:{data:{username,display_name}}});
       if(error)throw error;
-      if(data.session){await setSignedIn(data.session);return}
+      if(data.session){await applySession(data.session);return}
       msg('Account created. Check your email to confirm your account, then sign in.');
     }else{
       const {data,error}=await sb.auth.signInWithPassword({email,password});
       if(error)throw error;
       if(!data.session)throw new Error('Sign-in succeeded but no session was returned. Please try again.');
-      await setSignedIn(data.session);
+      await applySession(data.session);
     }
   }catch(e){msg(e?.message||'Something went wrong. Please try again.')}finally{btn.disabled=false}
 }
-async function setSignedIn(s){
-  session=s;
-  await refreshUser();
-  $('authView').classList.add('hidden');
-  $('appView').classList.remove('hidden');
+let sessionVersion=0;
+async function applySession(s){
+  const version=++sessionVersion;
+  session=s||null;
+  if(!session){
+    profile=null;
+    $('authNav').innerHTML='<button class="btn red" id="openAuth">Join VEXARO</button>';
+    $('openAuth').onclick=()=>openAuth('signup');
+    $('postComposer').classList.add('hidden');$('signedOutNotice').classList.remove('hidden');
+    $('sideTitle').textContent='COMMUNITY.';$('sideContent').textContent='Create an account to post, build a profile and share your loadouts/settings.';
+    $('adminTab').classList.add('hidden');
+    $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
+    showView('feed');
+    return;
+  }
+  const {data,error}=await sb.from('profiles').select('id,username,display_name,bio,avatar_url,created_at,role').eq('id',session.user.id).maybeSingle();
+  if(version!==sessionVersion)return;
+  if(error){
+    profile=null;
+    $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>';
+    $('logout').onclick=signOut;
+    $('sideTitle').textContent='VEXARO MEMBER';$('sideContent').textContent='Your profile is still loading. Please try again.';
+    $('adminTab').classList.add('hidden');
+  }else if(!data){
+    profile=null;
+    $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>';
+    $('logout').onclick=signOut;
+    $('sideTitle').textContent='VEXARO MEMBER';$('sideContent').textContent='Your profile is still being created. Please try again in a moment.';
+    $('adminTab').classList.add('hidden');
+  }else{
+    profile=data;
+    const isAdmin=String(profile.role||'').trim().toLowerCase()==='admin';
+    $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>';
+    $('logout').onclick=signOut;
+    $('postComposer').classList.remove('hidden');$('signedOutNotice').classList.add('hidden');
+    $('sideTitle').textContent=profile.display_name||'VEXARO MEMBER';
+    $('sideContent').innerHTML=`@${esc(profile.username||'member')}<br><br><span class="badge">${isAdmin?'ADMIN':'FREE MEMBER'}</span>`;
+    $('adminTab').classList.toggle('hidden',!isAdmin);
+  }
+  $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
   showView(currentView||'feed');
 }
-function openAuth(mode='signup'){authMode=mode;$('authView').classList.remove('hidden');$('appView').classList.add('hidden');$('authTitle').textContent=mode==='signup'?'JOIN VEXARO.':'WELCOME BACK.';$('authSub').textContent=mode==='signup'?'Create your free member account.':'Sign in to your VEXARO account.';$('signupFields').classList.toggle('hidden',mode!=='signup');$('authSubmit').textContent=mode==='signup'?'Create account':'Sign in';$('authSwitch').innerHTML=mode==='signup'?`Already a member? <button id="toggleAuth">Sign in</button>`:`Need an account? <button id="toggleAuth">Create one</button>`;$('toggleAuth').onclick=()=>openAuth(mode==='signup'?'signin':'signup');window.scrollTo({top:0,behavior:'smooth'})}
-function showView(view){currentView=view;$('authView').classList.add('hidden');$('appView').classList.remove('hidden');document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===view));document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));$(view+'View').classList.remove('hidden'); if(view==='feed')loadFeed(); if(view==='loadouts')loadLoadouts(); if(view==='settings')loadSettings(); if(view==='profile')renderProfile(); if(view==='admin')loadAdmin();}
-async function loadAdmin(){if(!session||profile?.role!=='admin'){showView('feed');return}const {data,error}=await sb.from('reports').select('id,reason,status,created_at,post_id,reporter_id').order('created_at',{ascending:false}).limit(50);if(error){$('reportList').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}const open=(data||[]).filter(r=>r.status==='open').length;$('adminStats').textContent=`${open} open report${open===1?'':'s'} · ${(data||[]).length} recent reports`;$('reportList').innerHTML=data?.length?data.map(r=>`<div class="card" style="margin-top:10px"><b>${esc(r.reason)}</b><br><small>${new Date(r.created_at).toLocaleString()} · ${esc(r.status)}</small><div class="actions" style="margin-top:10px">${r.post_id?`<button class="btn mini red" onclick="adminDeletePost('${r.post_id}','${r.id}')">Remove post</button>`:''}${r.status==='open'?`<button class="btn mini" onclick="resolveReport('${r.id}')">Mark reviewed</button>`:''}</div></div>`).join(''):'<div class="empty">No reports yet.</div>'}
-async function resolveReport(id){if(profile?.role!=='admin')return;const {error}=await sb.from('reports').update({status:'reviewed',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',id);if(error)alert(error.message);else loadAdmin()}
-async function adminDeletePost(postId,reportId){if(profile?.role!=='admin')return;if(!confirm('Remove this post from the community?'))return;const {error}=await sb.from('posts').delete().eq('id',postId);if(error){alert(error.message);return}await sb.from('reports').update({status:'actioned',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',reportId);loadAdmin();loadFeed()}
+function openAuth(mode='signup'){
+  authMode=mode;
+  $('authView').classList.remove('hidden');$('appView').classList.add('hidden');
+  $('authTitle').textContent=mode==='signup'?'JOIN VEXARO.':'WELCOME BACK.';
+  $('authSub').textContent=mode==='signup'?'Create your free member account.':'Sign in to your VEXARO account.';
+  $('signupFields').classList.toggle('hidden',mode!=='signup');
+  $('authSubmit').textContent=mode==='signup'?'Create account':'Sign in';
+  $('authMsg').classList.add('hidden');
+  $('authSwitch').innerHTML=mode==='signup'?`Already a member? <button id="toggleAuth" type="button">Sign in</button>`:`Need an account? <button id="toggleAuth" type="button">Create one</button>`;
+  $('toggleAuth').onclick=()=>openAuth(mode==='signup'?'signin':'signup');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showView(view){
+  currentView=view;
+  if(view==='admin' && String(profile?.role||'').toLowerCase()!=='admin') view='feed';
+  currentView=view;
+  $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
+  $(view+'View').classList.remove('hidden');
+  if(view==='feed')loadFeed(); if(view==='loadouts')loadLoadouts(); if(view==='settings')loadSettings(); if(view==='profile')renderProfile(); if(view==='admin')loadAdmin();
+}
+async function loadAdmin(){if(!session||String(profile?.role||'').toLowerCase()!=='admin'){showView('feed');return}const {data,error}=await sb.from('reports').select('id,reason,status,created_at,post_id,reporter_id').order('created_at',{ascending:false}).limit(50);if(error){$('reportList').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}const open=(data||[]).filter(r=>r.status==='open').length;$('adminStats').textContent=`${open} open report${open===1?'':'s'} · ${(data||[]).length} recent reports`;$('reportList').innerHTML=data?.length?data.map(r=>`<div class="card" style="margin-top:10px"><b>${esc(r.reason)}</b><br><small>${new Date(r.created_at).toLocaleString()} · ${esc(r.status)}</small><div class="actions" style="margin-top:10px">${r.post_id?`<button class="btn mini red" onclick="adminDeletePost('${r.post_id}','${r.id}')">Remove post</button>`:''}${r.status==='open'?`<button class="btn mini" onclick="resolveReport('${r.id}')">Mark reviewed</button>`:''}</div></div>`).join(''):'<div class="empty">No reports yet.</div>'}
+async function resolveReport(id){if(String(profile?.role||'').toLowerCase()!=='admin')return;const {error}=await sb.from('reports').update({status:'reviewed',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',id);if(error)alert(error.message);else loadAdmin()}
+async function adminDeletePost(postId,reportId){if(String(profile?.role||'').toLowerCase()!=='admin')return;if(!confirm('Remove this post from the community?'))return;const {error}=await sb.from('posts').delete().eq('id',postId);if(error){alert(error.message);return}await sb.from('reports').update({status:'actioned',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',reportId);loadAdmin();loadFeed()}
 async function boot(){
   if(!readyConfig()){
     $('configNotice').textContent='Community backend not connected yet. Add your Supabase URL and publishable key to supabase-config.js, then redeploy.';
@@ -48,58 +103,24 @@ async function boot(){
     $('appView').classList.remove('hidden');showView('feed');$('signedOutNotice').innerHTML='Community preview is ready. The account/database connection still needs to be configured.';return
   }
   sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
+  // VEXARO intentionally starts each fresh page load signed out. Clear the local session before subscribing to auth events.
   const res=await sb.auth.getSession();
-  if(res.data.session){
-    await sb.auth.signOut({scope:'local'});
-  }
-  session=null;
-  profile=null;
-  await refreshUser();
-  sb.auth.onAuthStateChange((_event,s)=>{
-    session=s||null;
-    setTimeout(()=>refreshUser(),0);
+  if(res.data.session){await sb.auth.signOut({scope:'local'});}
+  session=null;profile=null;sessionVersion++;
+  authInitializing=false;
+  await applySession(null);
+  sb.auth.onAuthStateChange((event,s)=>{
+    if(authInitializing)return;
+    // Supabase may emit INITIAL_SESSION asynchronously; ignore it because boot already established the signed-out state.
+    if(event==='INITIAL_SESSION')return;
+    setTimeout(()=>{applySession(s||null)},0);
   });
-}
-async function refreshUser(){
-  if(session){
-    const {data,error}=await sb.from('profiles').select('id,username,display_name,bio,avatar_url,created_at,role').eq('id',session.user.id).maybeSingle();
-    profile=error?null:data;
-    if(!profile){
-      $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>';
-      $('logout').onclick=signOut;
-      $('sideTitle').textContent='VEXARO MEMBER';$('sideContent').textContent='Your profile is still loading. Refresh once if needed.';
-      $('adminTab').classList.add('hidden');
-    }else{
-      const isAdmin=String(profile.role||'').toLowerCase()==='admin';
-      $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>';
-      $('logout').onclick=signOut;
-      $('postComposer').classList.remove('hidden');$('signedOutNotice').classList.add('hidden');
-      $('sideTitle').textContent=profile.display_name||'VEXARO MEMBER';
-      $('sideContent').innerHTML=`@${esc(profile.username||'member')}<br><br><span class="badge">${isAdmin?'ADMIN':'FREE MEMBER'}</span>`;
-      $('adminTab').classList.toggle('hidden',!isAdmin);
-    }
-    $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
-  }else{
-    profile=null;
-    $('authNav').innerHTML='<button class="btn red" id="openAuth">Join VEXARO</button>';
-    $('openAuth').onclick=()=>openAuth();
-    $('postComposer').classList.add('hidden');$('signedOutNotice').classList.remove('hidden');
-    $('sideTitle').textContent='COMMUNITY.';$('sideContent').textContent='Create an account to post, build a profile and share your loadouts/settings.';
-    $('adminTab').classList.add('hidden');
-    $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
-  }
 }
 async function signOut(){
   if(!sb)return;
-  const {error}=await sb.auth.signOut();
+  const {error}=await sb.auth.signOut({scope:'local'});
   if(error){alert(error.message);return}
-  session=null;profile=null;
-  $('authNav').innerHTML='<button class="btn red" id="openAuth">Join VEXARO</button>';
-  $('openAuth').onclick=()=>openAuth('signup');
-  $('postComposer').classList.add('hidden');$('signedOutNotice').classList.remove('hidden');
-  $('sideTitle').textContent='COMMUNITY.';$('sideContent').textContent='Create an account to post, build a profile and share your loadouts/settings.';
-  $('adminTab').classList.add('hidden');
-  showView('feed');
+  await applySession(null);
 }
 async function loadFeed(){if(!sb){$('feedList').innerHTML='<div class="empty">Connect Supabase to load community posts.</div>';return}const {data:posts,error}=await sb.from('posts').select('id,user_id,body,created_at,profiles!posts_user_id_fkey(username,display_name),post_likes(user_id),comments(id,body,created_at,profiles!comments_user_id_fkey(username,display_name))').order('created_at',{ascending:false}).limit(30);if(error){$('feedList').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}$('feedList').innerHTML=posts.length?posts.map(p=>{const liked=session&&p.post_likes.some(x=>x.user_id===session.user.id);return `<article class="card"><div class="posthead"><div class="avatar">${esc((p.profiles?.display_name||'V').slice(0,1).toUpperCase())}</div><div><b>${esc(p.profiles?.display_name||'VEXARO Member')}</b><br><small>@${esc(p.profiles?.username||'member')} · ${new Date(p.created_at).toLocaleString()}</small></div></div><div class="body" style="margin-top:12px">${esc(p.body)}</div><div class="actions"><button class="btn mini" onclick="toggleLike('${p.id}',${liked})">${liked?'♥':'♡'} ${p.post_likes.length}</button><button class="btn mini" onclick="focusComment('${p.id}')">💬 ${p.comments.length}</button>${session?`<button class="btn mini" onclick="reportPost('${p.id}')">Report</button>`:''}</div><div id="comments-${p.id}">${p.comments.slice(-3).map(c=>`<div class="notice" style="margin-top:8px"><b>@${esc(c.profiles?.username||'member')}</b> ${esc(c.body)}</div>`).join('')}</div><div class="row" style="margin-top:8px"><input id="comment-${p.id}" placeholder="Write a comment..." maxlength="500"><button class="btn mini" onclick="addComment('${p.id}')">Send</button></div></article>`}).join(''):'<div class="empty">No posts yet. Be the first to start the VEXARO community.</div>'}
 async function postSubmit(){if(!session){openAuth();return}const body=$('postBody').value.trim();if(!body)return;const {error}=await sb.from('posts').insert({user_id:session.user.id,body});if(error){alert(error.message);return}$('postBody').value='';loadFeed()}
