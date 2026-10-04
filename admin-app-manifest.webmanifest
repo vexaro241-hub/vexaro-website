@@ -1,9 +1,9 @@
 {
   "name":"VEXARO Admin",
   "short_name":"VEXARO Admin",
-  "start_url":"/admin-app.html",
+  "start_url":"/",
   "scope":"/",
-  "id":"vexaro-admin",
+  "id":"https://vexaro-admin.vexaro241.workers.dev/",
   "display":"standalone",
   "background_color":"#050505",
   "theme_color":"#070707",
