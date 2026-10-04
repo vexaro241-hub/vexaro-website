@@ -1,9 +1,9 @@
 {
   "name": "VEXARO Members",
   "short_name": "VEXARO Members",
-  "start_url": "/community.html",
+  "start_url": "/",
   "scope": "/",
-  "id": "vexaro-members",
+  "id": "https://vexaro-members.vexaro241.workers.dev/",
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#070707",
