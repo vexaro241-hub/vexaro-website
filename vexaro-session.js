@@ -4,13 +4,17 @@ const IDLE_LIMIT=24*60*60*1000;
 const now=Date.now();
 const last=Number(localStorage.getItem('vexaro_last_active')||0);
 const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
-/* VEXARO rule: a browser reload starts a clean auth state. */
+/* VEXARO rule: a browser reload starts a clean auth state and returns to Home. */
 if(nav&&nav.type==='reload'){
   try{
     Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)).forEach(k=>localStorage.removeItem(k));
     localStorage.removeItem('vexaro_last_active');
     localStorage.removeItem('vexaro_session_role');
   }catch(e){}
+  if(location.pathname!=='/'||location.search||location.hash){
+    location.replace('/');
+    return;
+  }
 }
 if(!last||now-last<=IDLE_LIMIT){
   localStorage.setItem('vexaro_last_active',String(now));
