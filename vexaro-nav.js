@@ -16,7 +16,7 @@ function cleanHome(){
  const p=document.querySelector('.poster');
  if(p){
   const style=document.createElement('style');
-  style.textContent='.poster:after{background:none!important;mix-blend-mode:normal!important}.poster:before{background:#020202!important;filter:none!important}.poster-grid:after,.poster-content:before{display:none!important;content:none!important}';
+  style.textContent='.poster:after{background:none!important;mix-blend-mode:normal!important}.poster-grid:after,.poster-content:before{display:none!important;content:none!important}';
   document.head.appendChild(style);
  }
 }
