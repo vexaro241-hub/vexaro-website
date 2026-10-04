@@ -32,6 +32,22 @@ function menuStyles(){
  s.id='vexaro-menu-responsive';
  s.textContent=`
 html,body{max-width:100%;overflow-x:hidden}
+/* Lock the site header to one consistent position across every page. */
+.topbar{width:100%!important;position:sticky!important;top:0!important;z-index:9990!important}
+.topbar .nav{width:min(1180px,calc(100% - 40px))!important;min-height:74px!important;height:74px!important;margin:0 auto!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;position:relative!important}
+.topbar .brand{flex:0 0 auto!important;white-space:nowrap!important}
+.topbar .navlinks{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important;gap:6px!important;max-width:calc(100% - 150px)!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;white-space:nowrap!important}
+.topbar .navlinks::-webkit-scrollbar{display:none!important}
+.topbar .navlinks a{flex:0 0 auto!important;white-space:nowrap!important}
+@media(max-width:800px){
+ .topbar .nav{width:calc(100% - 26px)!important;min-height:64px!important;height:64px!important;padding:0!important;gap:12px!important}
+ .topbar .navlinks{max-width:calc(100% - 100px)!important;gap:4px!important}
+ .topbar .navlinks a{padding:8px 6px!important;font-size:8px!important}
+}
+@media(max-width:520px){
+ .topbar .nav{width:calc(100% - 20px)!important;min-height:60px!important;height:60px!important}
+ .topbar .navlinks{max-width:calc(100% - 88px)!important}
+}
 *,*:before,*:after{box-sizing:border-box}
 img,video,iframe,svg{max-width:100%}
 .mobilemenu{position:fixed!important;top:76px!important;right:14px!important;left:14px!important;z-index:9999!important;display:none!important;flex-direction:column!important;gap:0!important;padding:12px!important;max-height:calc(100dvh - 92px)!important;overflow:auto!important;background:rgba(8,8,10,.98)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:14px!important;box-shadow:0 24px 70px rgba(0,0,0,.7)!important;backdrop-filter:blur(18px)!important}
