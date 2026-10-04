@@ -1,12 +1,6 @@
 (function(){
 'use strict';
-/* VEXARO site-wide rule: browser refresh returns to Home.
-   Normal navigation and back/forward history are unchanged. */
-const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
-if(nav&&nav.type==='reload'&&(location.pathname!=='/'||location.search||location.hash)){
- location.replace('/');
- return;
-}
+/* VEXARO navigation: preserve the signed-in account across navigation and reloads. */
 const links=[
  ['HOME','/'],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],
  ['SETTINGS','/settings.html'],['LIVE','/live/'],['COMMUNITY','/community.html'],
@@ -83,17 +77,17 @@ h3{font-size:clamp(1.05rem,2.5vw,1.6rem)!important;line-height:1.15!important}
 .topbar{width:100%!important;position:sticky!important;top:0!important;z-index:9990!important}
 .topbar .nav{width:min(1180px,calc(100% - 40px))!important;min-height:74px!important;height:74px!important;margin:0 auto!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;position:relative!important}
 .topbar .brand{flex:0 0 auto!important;white-space:nowrap!important}
-.topbar .navlinks{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important;gap:6px!important;max-width:calc(100% - 150px)!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;white-space:nowrap!important}
-.topbar .navlinks::-webkit-scrollbar{display:none!important}
-.topbar .navlinks a{flex:0 0 auto!important;white-space:nowrap!important}
+.topbar .links,.topbar .navlinks{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important;gap:6px!important;max-width:calc(100% - 150px)!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;white-space:nowrap!important}
+.topbar .links,.topbar .navlinks::-webkit-scrollbar{display:none!important}
+.topbar .links,.topbar .links a,.navlinks a{flex:0 0 auto!important;white-space:nowrap!important}
 @media(max-width:800px){
  .topbar .nav{width:calc(100% - 26px)!important;min-height:64px!important;height:64px!important;padding:0!important;gap:12px!important}
- .topbar .navlinks{max-width:calc(100% - 100px)!important;gap:4px!important}
- .topbar .navlinks a{padding:8px 6px!important;font-size:8px!important}
+ .topbar .links,.topbar .navlinks{max-width:calc(100% - 100px)!important;gap:4px!important}
+ .topbar .links,.topbar .links a,.navlinks a{padding:8px 6px!important;font-size:8px!important}
 }
 @media(max-width:520px){
  .topbar .nav{width:calc(100% - 20px)!important;min-height:60px!important;height:60px!important}
- .topbar .navlinks{max-width:calc(100% - 88px)!important}
+ .topbar .links,.topbar .navlinks{max-width:calc(100% - 88px)!important}
 }
 *,*:before,*:after{box-sizing:border-box}
 img,video,iframe,svg{max-width:100%}
