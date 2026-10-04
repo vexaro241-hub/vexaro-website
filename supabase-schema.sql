@@ -172,7 +172,7 @@ create table if not exists public.membership_plans (
   stripe_price_id text
 );
 
-insert into public.membership_plans (code,name,price_pence,interval_unit,interval_count,access_level,description,sort_order)
+insert into public.membership_plans (code,name,price_pence,interval_unit,interval_count,access_level,description,sort_order,stripe_product_id,stripe_price_id)
 values
  ('pro_week','PRO WEEK',149,'week',1,'weekly','A low-cost taste of PRO with selected premium access.',1,'prod_VNXWKFtBa8HyRr','price_1UMmRTGS3i6hTYhRuj92QODN'),
  ('pro_month','PRO MONTH',399,'month',1,'full','Full VEXARO PRO access.',2,'prod_VNXWPVIQZmNvYY','price_1UMmRVGS3i6hTYhR4ESslcBy'),
