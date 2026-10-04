@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VEXARO ADMIN HUB</title>
+<style>body{margin:0;background:#080808;color:#fff;font-family:Arial,sans-serif}a{color:inherit;text-decoration:none}.wrap{max-width:1100px;margin:auto;padding:32px 20px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-weight:900;letter-spacing:.18em;color:#ff2a3d}.badge{border:1px solid #ff2a3d;padding:8px 12px;color:#ff2a3d}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:28px}.card{border:1px solid #292929;background:#101010;padding:20px}.card h2{margin:0 0 8px}.card p{color:#aaa}.btn{display:inline-block;border:1px solid #ff2a3d;padding:10px 14px;margin-top:8px}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:22px}.stat{background:#111;padding:16px;border-left:3px solid #ff2a3d}.num{font-size:28px;font-weight:900}.hidden{display:none}</style></head>
+<body><main class="wrap"><div id="loading">Checking admin access…</div><section id="hub" class="hidden">
+<div class="top"><div><div class="brand">VEXARO</div><h1>ADMIN HUB</h1></div><div class="badge">ADMIN ONLY</div></div>
+<div class="stats"><div class="stat"><div>Members</div><div class="num" id="members">—</div></div><div class="stat"><div>Posts</div><div class="num" id="posts">—</div></div><div class="stat"><div>Comments</div><div class="num" id="comments">—</div></div><div class="stat"><div>Open reports</div><div class="num" id="reports">—</div></div><div class="stat"><div>Pending sellers</div><div class="num" id="sellers">—</div></div></div>
+<div class="grid">
+<div class="card"><h2>Community</h2><p>Moderate members, posts, comments and reports.</p><a class="btn" href="community.html">OPEN COMMUNITY ADMIN</a></div>
+<div class="card"><h2>Marketplace</h2><p>Review sellers, listings and requests.</p><a class="btn" href="marketplace.html">OPEN MARKETPLACE</a></div>
+<div class="card"><h2>VEXARO PRO</h2><p>Manage the future premium framework.</p><a class="btn" href="index.html#pro-lab">OPEN PRO LAB</a></div>
+<div class="card"><h2>Website</h2><p>Return to the main VEXARO site.</p><a class="btn" href="index.html">BACK TO VEXARO</a></div>
+</div></section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
+<script>
+(async()=>{try{const sb=supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);const s=await sb.auth.getSession();if(!s.data.session)throw 0;const p=await sb.from('profiles').select('role').eq('id',s.data.session.user.id).single();if(String(p.data?.role||'').toLowerCase()!=='admin')throw 0;
+document.getElementById('loading').classList.add('hidden');document.getElementById('hub').classList.remove('hidden');
+const count=async(t,filter)=>{let q=sb.from(t).select('*',{count:'exact',head:true});if(filter)q=q.eq(filter[0],filter[1]);const r=await q;return r.count??0};
+[['members','profiles'],['posts','posts'],['comments','comments']].forEach(async([id,t])=>document.getElementById(id).textContent=await count(t));
+document.getElementById('reports').textContent=await count('reports',['status','open']);document.getElementById('sellers').textContent=await count('marketplace_sellers',['status','pending']);
+}catch(e){location.replace('index.html')}})();
+</script></body></html>
