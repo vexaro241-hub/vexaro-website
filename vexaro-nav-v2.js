@@ -1,6 +1,11 @@
 (function(){
 'use strict';
 /* VEXARO navigation: preserve the signed-in account across navigation and reloads. */
+const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
+if(nav&&nav.type==='reload'&&location.pathname!=='/'&&location.pathname!=='/index.html'&&location.pathname!=='/admin-app.html'){
+ location.replace('/');
+ return;
+}
 const links=[
  ['HOME','/'],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],
  ['SETTINGS','/settings.html'],['LIVE','/live/'],['COMMUNITY','/community.html'],
