@@ -9,3 +9,4 @@
 /*.js
   Content-Type: application/javascript; charset=UTF-8
   Content-Disposition: inline
+  Cache-Control: no-cache, must-revalidate
