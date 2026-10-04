@@ -1,1 +1,49 @@
-(function(){const L=[['HOME','/'],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],['SETTINGS','/settings.html'],['LIVE','/live/'],['COMMUNITY','/community.html'],['MARKETPLACE','/marketplace.html'],['PRO','/membership.html'],['ABOUT','/about.html'],['APP','/app.html'],['SEARCH','/search.html']];const s=document.createElement('style');s.textContent='#vexaro-global-menu-btn{position:fixed;top:15px;right:16px;z-index:10001;width:46px;height:46px;border:1px solid rgba(255,255,255,.16);border-radius:10px;background:rgba(8,8,10,.92);color:#fff;font-size:25px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,.35);backdrop-filter:blur(14px)}#vexaro-global-menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:9998;display:none}#vexaro-global-menu{position:fixed;top:0;right:0;bottom:0;width:min(390px,88vw);z-index:10000;background:linear-gradient(160deg,#111116,#050506 65%);border-left:1px solid rgba(255,255,255,.1);box-shadow:-24px 0 80px rgba(0,0,0,.55);padding:82px 22px 28px;overflow:auto;display:none}#vexaro-global-menu.open,#vexaro-global-menu-backdrop.open{display:block}#vexaro-global-menu .vexaro-menu-title{font-size:10px;font-weight:1000;letter-spacing:.2em;color:#ff4038;text-transform:uppercase;margin:0 0 18px}#vexaro-global-menu a{display:block;padding:14px 12px;margin:4px 0;border:1px solid transparent;border-radius:9px;color:#ddd;text-decoration:none;font-size:11px;font-weight:1000;letter-spacing:.12em;text-transform:uppercase}#vexaro-global-menu a:hover{background:#17171b;border-color:rgba(255,48,40,.35);color:#fff}';document.head.appendChild(s);const e=document.getElementById('hamb');if(e&&document.getElementById('mobilemenu')){e.style.display='flex';e.style.alignItems='center';e.style.justifyContent='center';e.style.width='44px';e.style.height='44px';return}const b=document.createElement('button');b.id='vexaro-global-menu-btn';b.type='button';b.setAttribute('aria-label','Open VEXARO menu');b.textContent='☰';const o=document.createElement('div');o.id='vexaro-global-menu-backdrop';const n=document.createElement('nav');n.id='vexaro-global-menu';n.innerHTML='<div class="vexaro-menu-title">VEXARO / NAVIGATION</div>'+L.map(x=>'<a href="'+x[1]+'">'+x[0]+'</a>').join('')+'<a href="/community.html?signin=1">SIGN IN / JOIN VEXARO</a><a href="https://www.twitch.tv/vexaro241" target="_blank" rel="noreferrer">WATCH TWITCH</a><a href="https://www.tiktok.com/@vexaro241" target="_blank" rel="noreferrer">TIKTOK</a>';document.body.append(b,o,n);const c=()=>{n.classList.remove('open');o.classList.remove('open');b.textContent='☰'};b.onclick=()=>{const x=n.classList.toggle('open');o.classList.toggle('open',x);b.textContent=x?'×':'☰'};o.onclick=c;n.querySelectorAll('a').forEach(a=>a.onclick=c)})();
+(function(){
+'use strict';
+const links=[
+ ['HOME','/'],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],
+ ['SETTINGS','/settings.html'],['LIVE','/live/'],['COMMUNITY','/community.html'],
+ ['MARKETPLACE','/marketplace.html'],['PRO','/membership.html'],['ABOUT','/about.html'],
+ ['APP','/app.html'],['SEARCH','/search.html']
+];
+function cleanupLegacyCache(){
+ try{
+  if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{});
+  if('caches' in window) caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))).catch(()=>{});
+ }catch(e){}
+}
+function cleanHome(){
+ const p=document.querySelector('.poster');
+ if(p){
+  const style=document.createElement('style');
+  style.textContent='.poster:after{background:none!important;mix-blend-mode:normal!important}.poster:before{background:#020202!important;filter:none!important}.poster-grid:after,.poster-content:before{display:none!important;content:none!important}';
+  document.head.appendChild(style);
+ }
+}
+function mobileMenu(){
+ const button=document.getElementById('hamb'), menu=document.getElementById('mobilemenu');
+ if(button&&menu){
+  button.setAttribute('aria-expanded','false');
+  button.onclick=()=>{
+   const open=menu.classList.toggle('open');
+   button.setAttribute('aria-expanded',String(open));
+   button.textContent=open?'×':'☰';
+  };
+  menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+   menu.classList.remove('open');button.setAttribute('aria-expanded','false');button.textContent='☰';
+  }));
+  return;
+ }
+ const b=document.createElement('button');b.id='vexaro-global-menu-btn';b.type='button';b.textContent='☰';
+ Object.assign(b.style,{position:'fixed',top:'15px',right:'16px',zIndex:'10001',width:'46px',height:'46px',border:'1px solid rgba(255,255,255,.16)',borderRadius:'10px',background:'rgba(8,8,10,.94)',color:'#fff',fontSize:'25px'});
+ const n=document.createElement('nav');n.id='vexaro-global-menu';
+ Object.assign(n.style,{position:'fixed',top:'0',right:'0',bottom:'0',width:'min(390px,88vw)',zIndex:'10000',background:'#08080a',padding:'82px 22px 28px',overflow:'auto',display:'none'});
+ n.innerHTML='<div style="color:#ff4038;font-size:10px;font-weight:900;letter-spacing:.2em;margin-bottom:18px">VEXARO / NAVIGATION</div>'+links.map(x=>'<a href="'+x[1]+'" style="display:block;padding:14px 12px;color:#ddd;text-decoration:none;font-size:11px;font-weight:900;letter-spacing:.12em">'+x[0]+'</a>').join('')+'<a href="/community.html?signin=1" style="display:block;padding:14px 12px;color:#ff4038">SIGN IN / JOIN VEXARO</a>';
+ document.body.append(b,n);
+ b.onclick=()=>{const open=n.style.display!=='block';n.style.display=open?'block':'none';b.textContent=open?'×':'☰'};
+ n.querySelectorAll('a').forEach(a=>a.onclick=()=>{n.style.display='none';b.textContent='☰'});
+}
+cleanupLegacyCache();
+cleanHome();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mobileMenu,{once:true});else mobileMenu();
+})();
