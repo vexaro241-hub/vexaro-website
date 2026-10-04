@@ -152,3 +152,90 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after insert on auth.users
 for each row execute procedure public.handle_new_user();
+
+
+-- VEXARO PRO membership foundation.
+-- New accounts receive one month of full PRO trial access.
+create schema if not exists private;
+
+create table if not exists public.membership_plans (
+  code text primary key,
+  name text not null,
+  price_pence integer not null check (price_pence >= 0),
+  interval_unit text not null check (interval_unit in ('week','month','year')),
+  interval_count integer not null default 1 check (interval_count > 0),
+  access_level text not null check (access_level in ('weekly','full')),
+  description text not null default '',
+  active boolean not null default true,
+  sort_order integer not null default 0
+);
+
+insert into public.membership_plans (code,name,price_pence,interval_unit,interval_count,access_level,description,sort_order)
+values
+ ('pro_week','PRO WEEK',149,'week',1,'weekly','A low-cost taste of PRO with selected premium access.',1),
+ ('pro_month','PRO MONTH',399,'month',1,'full','Full VEXARO PRO access.',2),
+ ('pro_year','PRO YEAR',2999,'year',1,'full','Full VEXARO PRO access at the best annual value.',3)
+on conflict (code) do update set
+ name=excluded.name, price_pence=excluded.price_pence, interval_unit=excluded.interval_unit,
+ interval_count=excluded.interval_count, access_level=excluded.access_level,
+ description=excluded.description, sort_order=excluded.sort_order;
+
+create table if not exists public.memberships (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  plan_code text not null references public.membership_plans(code),
+  status text not null default 'active' check (status in ('trialing','active','past_due','cancelled','expired')),
+  starts_at timestamptz not null default now(),
+  ends_at timestamptz not null,
+  is_trial boolean not null default false,
+  provider text,
+  provider_customer_id text,
+  provider_subscription_id text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists memberships_user_status_idx on public.memberships(user_id,status,ends_at desc);
+create index if not exists memberships_plan_code_idx on public.memberships(plan_code);
+create index if not exists memberships_provider_subscription_idx on public.memberships(provider_subscription_id);
+
+alter table public.membership_plans enable row level security;
+alter table public.memberships enable row level security;
+
+create policy "Membership plans are public" on public.membership_plans
+for select to anon, authenticated using (active = true);
+
+create policy "Users view own memberships" on public.memberships
+for select to authenticated using ((select auth.uid()) = user_id);
+
+create or replace function private.handle_new_membership()
+returns trigger language plpgsql security definer set search_path=public,private
+as $$
+begin
+  insert into public.memberships (user_id,plan_code,status,starts_at,ends_at,is_trial,provider)
+  values (new.id,'pro_month','trialing',now(),now()+interval '1 month',true,'vexaro_trial')
+  on conflict do nothing;
+  return new;
+end;
+$$;
+
+revoke all on function private.handle_new_membership() from public;
+
+drop trigger if exists on_profile_created_membership on public.profiles;
+create trigger on_profile_created_membership after insert on public.profiles
+for each row execute function private.handle_new_membership();
+
+create or replace function private.touch_membership_updated_at()
+returns trigger language plpgsql security definer set search_path=public,private
+as $$
+begin
+  new.updated_at=now();
+  return new;
+end;
+$$;
+
+revoke all on function private.touch_membership_updated_at() from public;
+
+drop trigger if exists memberships_touch_updated_at on public.memberships;
+create trigger memberships_touch_updated_at before update on public.memberships
+for each row execute function private.touch_membership_updated_at();
