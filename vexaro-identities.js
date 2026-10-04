@@ -34,6 +34,7 @@ window.VEXARO_IDENTITIES={
   this.render();
   return this.active;
  },
+ set(id){ return this.switchTo(id); },
  async switchTo(id){
   const x=this.list.find(v=>v.id===id);
   if(!x)return;
