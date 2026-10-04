@@ -1,7 +1,9 @@
 {
   "name": "VEXARO",
   "short_name": "VEXARO",
-  "start_url": "/",
+  "start_url": "/index.html",
+  "scope": "/",
+  "id": "vexaro-app",
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#070707",
@@ -20,7 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "scope": "/",
-  "id": "/",
   "orientation": "portrait-primary"
 }
