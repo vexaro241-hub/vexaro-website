@@ -11,7 +11,7 @@ async function authSubmit(){
   const email=$('email').value.trim();
   const password=$('password').value;
   if(!email||!password){msg('Enter your email and password.');return}
-  const btn=$('authSubmit'); btn.disabled=true; msg(authMode==='signup'?'Creating account…':'Signing in…');
+  const btn=$('authSubmit'); btn.disabled=true; authBusy=true; msg(authMode==='signup'?'Creating account…':'Signing in…');
   try{
     if(authMode==='signup'){
       const username=$('username').value.trim().replace(/[^a-zA-Z0-9_]/g,'').slice(0,24);
@@ -27,9 +27,10 @@ async function authSubmit(){
       if(!data.session)throw new Error('Sign-in succeeded but no session was returned. Please try again.');
       await applySession(data.session);
     }
-  }catch(e){msg(e?.message||'Something went wrong. Please try again.')}finally{btn.disabled=false}
+  }catch(e){msg(e?.message||'Something went wrong. Please try again.')}finally{authBusy=false;btn.disabled=false}
 }
 let sessionVersion=0;
+let authBusy=false;
 async function applySession(s){
   const version=++sessionVersion;
   session=s||null;
@@ -110,10 +111,10 @@ async function boot(){
   authInitializing=false;
   await applySession(null);
   sb.auth.onAuthStateChange((event,s)=>{
-    if(authInitializing)return;
+    if(authInitializing || authBusy)return;
     // Supabase may emit INITIAL_SESSION asynchronously; ignore it because boot already established the signed-out state.
     if(event==='INITIAL_SESSION')return;
-    setTimeout(()=>{applySession(s||null)},0);
+    setTimeout(()=>{if(!authBusy)applySession(s||null)},0);
   });
 }
 async function signOut(){
