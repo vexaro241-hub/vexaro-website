@@ -101,7 +101,7 @@ async function applySession(s){
     $('logout').onclick=signOut;
     localStorage.setItem('vexaro_last_active',String(Date.now()));
     localStorage.setItem('vexaro_session_role',isAdmin?'admin':'member');
-    const activeIdentity=await window.VEXARO_IDENTITIES.init(sb,session.user.id); const creatorMode=activeIdentity?.identity_type==='creator'; $('postComposer').classList.toggle('hidden',!creatorMode); $('signedOutNotice').classList.add('hidden'); if(!creatorMode){$('signedOutNotice').classList.remove('hidden');$('signedOutNotice').innerHTML='<div class="notice">👑 Admin mode is active. Admin mode cannot publish creator posts. <button class="btn mini accent" type="button" onclick="window.VEXARO_IDENTITIES.set(window.VEXARO_IDENTITIES.list.find(x=>x.identity_type===\'creator\')?.id)">Switch to VEXARO Creator</button></div>';} 
+    const activeIdentity=window.VEXARO_IDENTITIES?.active||null; const creatorMode=!activeIdentity || activeIdentity?.identity_type==='creator'; $('postComposer').classList.toggle('hidden',!creatorMode); $('signedOutNotice').classList.add('hidden'); if(!creatorMode){$('signedOutNotice').classList.remove('hidden');$('signedOutNotice').innerHTML='<div class="notice">👑 Admin mode is active. Admin mode cannot publish creator posts. <button class="btn mini accent" type="button" onclick="window.VEXARO_IDENTITIES.set(window.VEXARO_IDENTITIES.list.find(x=>x.identity_type===\'creator\')?.id)">Switch to VEXARO Creator</button></div>';} 
     $('sideTitle').textContent=profile.display_name||'VEXARO MEMBER';
     $('sideContent').innerHTML=`@${esc(profile.username||'member')}<br><br><span class="badge">${isAdmin?'ADMIN':'FREE MEMBER'}</span>`;
     $('adminTab').classList.toggle('hidden',!isAdmin);
@@ -157,7 +157,7 @@ async function boot(){
     $('appView').classList.remove('hidden');showView('feed');$('signedOutNotice').innerHTML='Community preview is ready. The account/database connection still needs to be configured.';return
   }
   sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
-  await window.VEXARO_IDENTITIES.acceptHandoff(sb);
+  try{await window.VEXARO_IDENTITIES?.acceptHandoff(sb)}catch(_){}
   const res=await sb.auth.getSession();
   if(res.data.session){
     await applySession(res.data.session);
@@ -165,6 +165,7 @@ async function boot(){
     session=null;profile=null;sessionVersion++;await applySession(null);
   }
   authInitializing=false;
+  try{ if(session) window.VEXARO_IDENTITIES?.init(sb,session.user.id).catch(()=>{}); }catch(_){}
   if(homepageAuth && !session) openAuth('signin');
   sb.auth.onAuthStateChange((event,s)=>{
     if(authInitializing || authBusy)return;
