@@ -182,7 +182,71 @@ async function deleteComment(id){
   const {error}=await sb.from('comments').delete().eq('id',id).eq('user_id',session.user.id);
   if(error){alert(error.message);return} loadFeed();
 }
-async function postSubmit(){if(!session){openAuth();return}const body=$('postBody').value.trim();const files=[...($('postMedia')?.files||[])];if(!body&&!files.length){alert('Write something or add a photo/video.');return}if(files.length>6){alert('Choose up to 6 files.');return}for(const f of files){if(f.size>52428800){alert(f.name+' is over 50MB.');return}}const {data:post,error}=await sb.from('posts').insert({user_id:session.user.id,body:body||'Shared a VEXARO upload.'}).select('id').single();if(error){alert(error.message);return}for(const f of files){const kind=f.type.startsWith('video/')?'video':'image';const ext=(f.name.split('.').pop()||'bin').toLowerCase();const path='posts/'+session.user.id+'/'+crypto.randomUUID()+'.'+ext;const up=await sb.storage.from('community-media').upload(path,f,{contentType:f.type,upsert:false});if(up.error){alert('Post created, but '+f.name+' could not upload: '+up.error.message);continue}const pub=sb.storage.from('community-media').getPublicUrl(path).data.publicUrl;const ins=await sb.from('post_media').insert({post_id:post.id,user_id:session.user.id,media_type:kind,storage_path:path,public_url:pub,mime_type:f.type,size_bytes:f.size});if(ins.error)alert('Media saved with an issue: '+ins.error.message)}$('postBody').value='';if($('postMedia'))$('postMedia').value='';if($('postMediaStatus'))$('postMediaStatus').textContent='';loadFeed()}
+const MAX_COMMUNITY_UPLOAD_BYTES=50*1024*1024;
+function setPostStatus(text,kind=''){
+  const el=$('postMediaStatus'); if(!el)return;
+  el.textContent=text||'';
+  el.style.color=kind==='error'?'#ff817b':kind==='success'?'#7dff9b':'#777';
+}
+async function postSubmit(){
+  if(!session){openAuth('signin');return}
+  const body=$('postBody').value.trim();
+  const files=[...($('postMedia')?.files||[])];
+  if(!body&&!files.length){setPostStatus('Write something or add a photo/video.','error');return}
+  if(files.length>6){setPostStatus('Choose up to 6 files.','error');return}
+  const oversized=files.find(f=>f.size>MAX_COMMUNITY_UPLOAD_BYTES);
+  if(oversized){
+    setPostStatus(oversized.name+' is over 50MB. Supabase Free currently has a hard 50MB maximum file limit.','error');
+    return;
+  }
+  const allowed=['image/jpeg','image/png','image/webp','image/gif','video/mp4','video/webm','video/quicktime'];
+  const invalid=files.find(f=>!allowed.includes(f.type));
+  if(invalid){setPostStatus(invalid.name+' is not a supported image/video format.','error');return}
+  const btn=$('postSubmit'); btn.disabled=true;
+  const uploaded=[];
+  try{
+    setPostStatus(files.length?'Uploading media…':'Publishing post…');
+    for(const f of files){
+      const kind=f.type.startsWith('video/')?'video':'image';
+      const ext=(f.name.split('.').pop()||'bin').toLowerCase();
+      const path='posts/'+session.user.id+'/'+crypto.randomUUID()+'.'+ext;
+      const up=await sb.storage.from('community-media').upload(path,f,{contentType:f.type,upsert:false,cacheControl:'31536000'});
+      if(up.error)throw new Error('Upload failed for '+f.name+': '+up.error.message);
+      uploaded.push({path,file:f});
+    }
+    setPostStatus('Saving post…');
+    const {data:post,error}=await sb.from('posts').insert({
+      user_id:session.user.id,
+      body:body||'Shared a VEXARO upload.'
+    }).select('id').single();
+    if(error)throw error;
+    for(const item of uploaded){
+      const kind=item.file.type.startsWith('video/')?'video':'image';
+      const pub=sb.storage.from('community-media').getPublicUrl(item.path).data.publicUrl;
+      const ins=await sb.from('post_media').insert({
+        post_id:post.id,user_id:session.user.id,media_type:kind,
+        storage_path:item.path,public_url:pub,mime_type:item.file.type,size_bytes:item.file.size
+      });
+      if(ins.error)throw new Error('Media record failed: '+ins.error.message);
+    }
+    $('postBody').value='';
+    if($('postMedia'))$('postMedia').value='';
+    setPostStatus('Posted to VEXARO.','success');
+    await loadFeed();
+  }catch(e){
+    for(const item of uploaded){
+      try{await sb.storage.from('community-media').remove([item.path])}catch(_){}
+    }
+    if(e?.message&&typeof e.message==='string'&&e.message.includes('Post')){
+      setPostStatus(e.message,'error');
+    }else{
+      setPostStatus(e?.message||'Could not publish the post. Please try again.','error');
+    }
+    await loadFeed();
+  }finally{
+    btn.disabled=false;
+  }
+}
 async function notify(userId,type,title,body,link){if(!session||!userId||userId===session.user.id)return;const {error}=await sb.from('notifications').insert({user_id:userId,type,title,body,link:link||'community.html',actor_id:session.user.id});if(error)console.warn('Notification not created:',error.message)}
 async function toggleLike(postId,liked){if(!session){openAuth('signin');return}const {data:post}=await sb.from('posts').select('user_id').eq('id',postId).maybeSingle();if(liked){await sb.from('post_likes').delete().match({post_id:postId,user_id:session.user.id})}else{const {error}=await sb.from('post_likes').insert({post_id:postId,user_id:session.user.id});if(!error&&post?.user_id)await notify(post.user_id,'like','Your post got a like','Someone liked your VEXARO post.','community.html')}loadFeed()}
 async function addComment(postId){if(!session){openAuth('signin');return}const input=$('comment-'+postId);const body=input.value.trim();if(!body)return;const {data:post}=await sb.from('posts').select('user_id').eq('id',postId).maybeSingle();const {error}=await sb.from('comments').insert({post_id:postId,user_id:session.user.id,body});if(error)alert(error.message);else{if(post?.user_id)await notify(post.user_id,'comment','New comment on your post','Someone commented on your VEXARO post.','community.html');input.value='';loadFeed()}}
