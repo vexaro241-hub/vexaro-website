@@ -1,9 +1,4 @@
 (function(){
-  const path=location.pathname.replace(/\/+$/,'')||'/';
-  if(path!=='/'&&path!=='/index.html'){
-    location.replace('/');
-    return;
-  }
   const IDLE_LIMIT=24*60*60*1000;
   const now=Date.now(),last=Number(localStorage.getItem('vexaro_last_active')||0);
   if(!last||now-last<=IDLE_LIMIT){localStorage.setItem('vexaro_last_active',String(now));}
