@@ -167,16 +167,18 @@ create table if not exists public.membership_plans (
   access_level text not null check (access_level in ('weekly','full')),
   description text not null default '',
   active boolean not null default true,
-  sort_order integer not null default 0
+  sort_order integer not null default 0,
+  stripe_product_id text,
+  stripe_price_id text
 );
 
 insert into public.membership_plans (code,name,price_pence,interval_unit,interval_count,access_level,description,sort_order)
 values
- ('pro_week','PRO WEEK',149,'week',1,'weekly','A low-cost taste of PRO with selected premium access.',1),
- ('pro_month','PRO MONTH',399,'month',1,'full','Full VEXARO PRO access.',2),
- ('pro_year','PRO YEAR',2999,'year',1,'full','Full VEXARO PRO access at the best annual value.',3)
+ ('pro_week','PRO WEEK',149,'week',1,'weekly','A low-cost taste of PRO with selected premium access.',1,'prod_VNXWKFtBa8HyRr','price_1UMmRTGS3i6hTYhRuj92QODN'),
+ ('pro_month','PRO MONTH',399,'month',1,'full','Full VEXARO PRO access.',2,'prod_VNXWPVIQZmNvYY','price_1UMmRVGS3i6hTYhR4ESslcBy'),
+ ('pro_year','PRO YEAR',2999,'year',1,'full','Full VEXARO PRO access at the best annual value.',3,'prod_VNXWSLWfAdorfQ','price_1UMmRXGS3i6hTYhRmDPI3qGJ')
 on conflict (code) do update set
- name=excluded.name, price_pence=excluded.price_pence, interval_unit=excluded.interval_unit,
+ name=excluded.name, stripe_product_id=excluded.stripe_product_id, stripe_price_id=excluded.stripe_price_id, price_pence=excluded.price_pence, interval_unit=excluded.interval_unit,
  interval_count=excluded.interval_count, access_level=excluded.access_level,
  description=excluded.description, sort_order=excluded.sort_order;
 
@@ -290,3 +292,16 @@ do $$ begin create policy "Admins write audit log" on public.admin_audit_log for
 
 alter table public.membership_plans add column if not exists stripe_product_id text;
 alter table public.membership_plans add column if not exists stripe_price_id text;
+
+-- Notification and audit trigger helpers used by the VEXARO 1.0 build.
+create or replace function private.create_notification(p_user_id uuid,p_type text,p_title text,p_body text,p_link text,p_actor_id uuid) returns void language plpgsql security definer set search_path=public,private as $$ begin if p_user_id is null or p_actor_id=p_user_id then return; end if; insert into public.notifications(user_id,type,title,body,link,actor_id) values(p_user_id,p_type,p_title,p_body,p_link,p_actor_id); end $$;
+revoke all on function private.create_notification(uuid,text,text,text,text,uuid) from public;
+create or replace function private.notify_follow() returns trigger language plpgsql security definer set search_path=public,private as $$ begin perform private.create_notification(new.following_id,'follow','New follower','Someone followed you.','community.html',new.follower_id); return new; end $$;
+revoke all on function private.notify_follow() from public;
+drop trigger if exists follows_notify on public.follows; create trigger follows_notify after insert on public.follows for each row execute function private.notify_follow();
+create or replace function private.notify_like() returns trigger language plpgsql security definer set search_path=public,private as $$ declare target_user uuid; begin select user_id into target_user from public.posts where id=new.post_id; perform private.create_notification(target_user,'like','New like','Someone liked your post.','community.html',new.user_id); return new; end $$;
+revoke all on function private.notify_like() from public;
+drop trigger if exists post_likes_notify on public.post_likes; create trigger post_likes_notify after insert on public.post_likes for each row execute function private.notify_like();
+create or replace function private.notify_comment() returns trigger language plpgsql security definer set search_path=public,private as $$ declare target_user uuid; begin select user_id into target_user from public.posts where id=new.post_id; perform private.create_notification(target_user,'comment','New comment','Someone commented on your post.','community.html',new.user_id); return new; end $$;
+revoke all on function private.notify_comment() from public;
+drop trigger if exists comments_notify on public.comments; create trigger comments_notify after insert on public.comments for each row execute function private.notify_comment();
