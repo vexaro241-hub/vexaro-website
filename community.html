@@ -112,6 +112,7 @@ async function loadAdmin(){
 async function resolveReport(id){if(String(profile?.role||'').toLowerCase()!=='admin')return;const {error}=await sb.from('reports').update({status:'reviewed',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',id);if(error)alert(error.message);else loadAdmin()}
 async function adminDeletePost(postId,reportId){if(String(profile?.role||'').toLowerCase()!=='admin')return;if(!confirm('Remove this post from the community?'))return;const {error}=await sb.from('posts').delete().eq('id',postId);if(error){alert(error.message);return}await sb.from('reports').update({status:'actioned',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',reportId);loadAdmin();loadFeed()}
 async function adminDeleteComment(commentId,reportId){if(String(profile?.role||'').toLowerCase()!=='admin')return;if(!confirm('Remove this comment from the community?'))return;const {error}=await sb.from('comments').delete().eq('id',commentId);if(error){alert(error.message);return}if(reportId)await sb.from('reports').update({status:'actioned',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',reportId);loadAdmin();loadFeed()}
+const homepageAuth=new URLSearchParams(window.location.search).get('signin')==='1';
 async function boot(){
   if(!readyConfig()){
     $('configNotice').textContent='Community backend not connected yet. Add your Supabase URL and publishable key to supabase-config.js, then redeploy.';
@@ -125,6 +126,7 @@ async function boot(){
   session=null;profile=null;sessionVersion++;
   authInitializing=false;
   await applySession(null);
+  if(homepageAuth) openAuth('signin');
   sb.auth.onAuthStateChange((event,s)=>{
     if(authInitializing || authBusy)return;
     // Supabase may emit INITIAL_SESSION asynchronously; ignore it because boot already established the signed-out state.
