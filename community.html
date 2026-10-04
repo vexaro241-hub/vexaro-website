@@ -25,13 +25,13 @@ async function authSubmit(){
       if(username.length<3){msg('Username needs at least 3 letters/numbers.');return}
       const {data,error}=await sb.auth.signUp({email,password,options:{data:{username,display_name}}});
       if(error)throw error;
-      if(data.session){await applySession(data.session);location.replace('index.html');location.replace('index.html');return}
+      if(data.session){await applySession(data.session);location.replace('index.html');return}
       msg('Account created. Check your email to confirm your account, then sign in.');
     }else{
       const {data,error}=await sb.auth.signInWithPassword({email,password});
       if(error)throw error;
       if(!data.session)throw new Error('Sign-in succeeded but no session was returned. Please try again.');
-      await applySession(data.session);
+      await applySession(data.session);location.replace('index.html');
     }
   }catch(e){msg(e?.message||'Something went wrong. Please try again.')}finally{authBusy=false;btn.disabled=false}
 }
@@ -132,7 +132,7 @@ async function boot(){
   if(res.data.session){
     await applySession(res.data.session);
   }else{
-    session=null;profile=null;sessionVersion++;await applySession(null);location.replace('index.html');
+    session=null;profile=null;sessionVersion++;await applySession(null);
   }
   authInitializing=false;
   if(homepageAuth && !session) openAuth('signin');
@@ -149,6 +149,7 @@ async function signOut(){
   localStorage.removeItem('vexaro_last_active');
   localStorage.removeItem('vexaro_session_role');
   await applySession(null);
+  location.replace('index.html');
 }
 let feedCache=[];
 function renderFeed(){
