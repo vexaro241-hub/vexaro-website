@@ -305,3 +305,101 @@ drop trigger if exists post_likes_notify on public.post_likes; create trigger po
 create or replace function private.notify_comment() returns trigger language plpgsql security definer set search_path=public,private as $$ declare target_user uuid; begin select user_id into target_user from public.posts where id=new.post_id; perform private.create_notification(target_user,'comment','New comment','Someone commented on your post.','community.html',new.user_id); return new; end $$;
 revoke all on function private.notify_comment() from public;
 drop trigger if exists comments_notify on public.comments; create trigger comments_notify after insert on public.comments for each row execute function private.notify_comment();
+
+
+-- VEXARO 1.0 live-schema parity: media + marketplace.
+-- Keep the repository schema aligned with the live project.
+alter table public.profiles add column if not exists role text not null default 'member';
+
+create table if not exists public.post_media (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.posts(id) on delete cascade,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  media_type text not null check (media_type in ('image','video')),
+  storage_path text not null,
+  public_url text not null,
+  mime_type text not null,
+  size_bytes bigint not null default 0,
+  created_at timestamptz not null default now()
+);
+create index if not exists post_media_post_id_idx on public.post_media(post_id,created_at asc);
+create index if not exists post_media_user_id_idx on public.post_media(user_id,created_at desc);
+alter table public.post_media enable row level security;
+do $$ begin create policy "Public media view" on public.post_media for select to anon,authenticated using (true); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Members add own media" on public.post_media for insert to authenticated with check ((select auth.uid())=user_id); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Members delete own media" on public.post_media for delete to authenticated using ((select auth.uid())=user_id or private.is_admin()); exception when duplicate_object then null; end $$;
+
+create table if not exists public.marketplace_sellers (
+  user_id uuid primary key references public.profiles(id) on delete cascade,
+  status text not null default 'pending' check (status in ('pending','approved','suspended')),
+  seller_name text not null default 'VEXARO Seller' check (char_length(seller_name) between 1 and 40),
+  bio text not null default '' check (char_length(bio)<=500),
+  created_at timestamptz not null default now(),
+  approved_at timestamptz,
+  approved_by uuid references public.profiles(id) on delete set null
+);
+
+create table if not exists public.marketplace_listings (
+  id uuid primary key default gen_random_uuid(),
+  seller_id uuid not null references public.marketplace_sellers(user_id) on update cascade on delete restrict,
+  title text not null check (char_length(title) between 1 and 100),
+  description text not null default '' check (char_length(description)<=2000),
+  game text not null check (char_length(game) between 1 and 50),
+  platform text not null default 'Other' check (char_length(platform) between 1 and 30),
+  category text not null default 'Gaming service' check (char_length(category) between 1 and 50),
+  price_pence integer not null check (price_pence between 0 and 1000000),
+  status text not null default 'pending' check (status in ('pending','approved','rejected','paused','removed')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  approved_at timestamptz,
+  approved_by uuid references public.profiles(id) on delete set null
+);
+
+create table if not exists public.marketplace_requests (
+  id uuid primary key default gen_random_uuid(),
+  requester_id uuid not null references public.profiles(id) on delete cascade,
+  title text not null check (char_length(title) between 1 and 100),
+  description text not null check (char_length(description) between 1 and 2000),
+  game text not null check (char_length(game) between 1 and 50),
+  platform text not null default 'Other' check (char_length(platform) between 1 and 30),
+  budget_pence integer check (budget_pence is null or budget_pence between 0 and 1000000),
+  status text not null default 'open' check (status in ('open','closed','removed')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.marketplace_offers (
+  id uuid primary key default gen_random_uuid(),
+  request_id uuid not null references public.marketplace_requests(id) on delete cascade,
+  seller_id uuid not null references public.profiles(id) on delete cascade,
+  message text not null check (char_length(message) between 1 and 1000),
+  price_pence integer not null check (price_pence between 0 and 1000000),
+  status text not null default 'pending' check (status in ('pending','accepted','declined','withdrawn')),
+  created_at timestamptz not null default now()
+);
+
+alter table public.marketplace_sellers enable row level security;
+alter table public.marketplace_listings enable row level security;
+alter table public.marketplace_requests enable row level security;
+alter table public.marketplace_offers enable row level security;
+
+do $$ begin create policy "Marketplace approved sellers public" on public.marketplace_sellers for select to anon,authenticated using (status='approved' or (select auth.uid())=user_id or private.is_admin()); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Members request seller approval" on public.marketplace_sellers for insert to authenticated with check ((select auth.uid())=user_id and status='pending'); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Sellers or admins update seller profile" on public.marketplace_sellers for update to authenticated using ((select auth.uid())=user_id or private.is_admin()) with check (private.is_admin() or ((select auth.uid())=user_id and status='pending' and approved_by is null and approved_at is null)); exception when duplicate_object then null; end $$;
+
+do $$ begin create policy "Approved marketplace listings public" on public.marketplace_listings for select to anon,authenticated using (status='approved' or (select auth.uid())=seller_id or private.is_admin()); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Approved sellers create listings" on public.marketplace_listings for insert to authenticated with check ((select auth.uid())=seller_id and exists(select 1 from public.marketplace_sellers s where s.user_id=(select auth.uid()) and s.status='approved') and status='pending'); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Sellers or admins update listings" on public.marketplace_listings for update to authenticated using ((select auth.uid())=seller_id or private.is_admin()) with check ((select auth.uid())=seller_id or private.is_admin()); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Sellers or admins delete listings" on public.marketplace_listings for delete to authenticated using ((select auth.uid())=seller_id or private.is_admin()); exception when duplicate_object then null; end $$;
+
+do $$ begin create policy "Public open requests" on public.marketplace_requests for select to anon,authenticated using (status='open' or (select auth.uid())=requester_id or private.is_admin()); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Members create requests" on public.marketplace_requests for insert to authenticated with check ((select auth.uid())=requester_id and status='open'); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Requesters or admins update requests" on public.marketplace_requests for update to authenticated using ((select auth.uid())=requester_id or private.is_admin()) with check ((select auth.uid())=requester_id or private.is_admin()); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Requesters or admins delete requests" on public.marketplace_requests for delete to authenticated using ((select auth.uid())=requester_id or private.is_admin()); exception when duplicate_object then null; end $$;
+
+do $$ begin create policy "Offer participants view offers" on public.marketplace_offers for select to authenticated using ((select auth.uid())=seller_id or exists(select 1 from public.marketplace_requests r where r.id=marketplace_offers.request_id and r.requester_id=(select auth.uid())) or private.is_admin()); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Approved sellers make offers" on public.marketplace_offers for insert to authenticated with check ((select auth.uid())=seller_id and exists(select 1 from public.marketplace_sellers s where s.user_id=(select auth.uid()) and s.status='approved') and status='pending'); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Offer owners or admins update offers" on public.marketplace_offers for update to authenticated using ((select auth.uid())=seller_id or private.is_admin()) with check ((select auth.uid())=seller_id or private.is_admin()); exception when duplicate_object then null; end $$;
+
+alter table public.marketplace_listings drop constraint if exists marketplace_listings_seller_id_fkey;
+alter table public.marketplace_listings add constraint marketplace_listings_seller_id_fkey foreign key (seller_id) references public.marketplace_sellers(user_id) on update cascade on delete restrict;
