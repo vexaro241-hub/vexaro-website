@@ -25,13 +25,13 @@ async function authSubmit(){
       if(username.length<3){msg('Username needs at least 3 letters/numbers.');return}
       const {data,error}=await sb.auth.signUp({email,password,options:{data:{username,display_name}}});
       if(error)throw error;
-      if(data.session){await applySession(data.session);location.replace('index.html');return}
+      if(data.session){await applySession(data.session);location.replace('/');return}
       msg('Account created. Check your email to confirm your account, then sign in.');
     }else{
       const {data,error}=await sb.auth.signInWithPassword({email,password});
       if(error)throw error;
       if(!data.session)throw new Error('Sign-in succeeded but no session was returned. Please try again.');
-      await applySession(data.session);location.replace('index.html');
+      await applySession(data.session);location.replace('/');
     }
   }catch(e){msg(e?.message||'Something went wrong. Please try again.')}finally{authBusy=false;btn.disabled=false}
 }
@@ -120,7 +120,7 @@ async function loadAdmin(){
 async function resolveReport(id){if(String(profile?.role||'').toLowerCase()!=='admin')return;const {error}=await sb.from('reports').update({status:'reviewed',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',id);if(error)alert(error.message);else loadAdmin()}
 async function adminDeletePost(postId,reportId){if(String(profile?.role||'').toLowerCase()!=='admin')return;if(!confirm('Remove this post from the community?'))return;const {error}=await sb.from('posts').delete().eq('id',postId);if(error){alert(error.message);return}await sb.from('reports').update({status:'actioned',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',reportId);loadAdmin();loadFeed()}
 async function adminDeleteComment(commentId,reportId){if(String(profile?.role||'').toLowerCase()!=='admin')return;if(!confirm('Remove this comment from the community?'))return;const {error}=await sb.from('comments').delete().eq('id',commentId);if(error){alert(error.message);return}if(reportId)await sb.from('reports').update({status:'actioned',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',reportId);loadAdmin();loadFeed()}
-const homepageAuth=new URLSearchParams(window.location.search).get('signin')==='1';
+const homepageAuth=new URLSearchParams(window.location.search).get('signin')==='1'||new URLSearchParams(window.location.search).get('auth')==='signin';
 async function boot(){
   if(!readyConfig()){
     $('configNotice').textContent='Community backend not connected yet. Add your Supabase URL and publishable key to supabase-config.js, then redeploy.';
@@ -149,7 +149,7 @@ async function signOut(){
   localStorage.removeItem('vexaro_last_active');
   localStorage.removeItem('vexaro_session_role');
   await applySession(null);
-  location.replace('index.html');
+  location.replace('/');
 }
 let feedCache=[];
 function renderFeed(){
