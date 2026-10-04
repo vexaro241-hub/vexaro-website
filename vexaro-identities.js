@@ -24,8 +24,8 @@ window.VEXARO_IDENTITIES={
  render(){
   const el=document.getElementById('identitySwitcher');if(!el||!this.active)return;
   const other=this.list.find(x=>x.id!==this.active.id);
-  el.innerHTML='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><span style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#777">Using</span><strong>'+esc(this.active.display_name)+'</strong><span style="font-size:9px;border:1px solid rgba(225,6,0,.35);border-radius:999px;padding:4px 7px;color:#e10600">'+esc(this.active.identity_type.toUpperCase())+'</span>'+(other?'<button type="button" class="btn mini" id="switchIdentityBtn">Switch to '+esc(other.display_name)+'</button>':'')+'</div>';
-  const b=document.getElementById('switchIdentityBtn');if(b)b.onclick=()=>this.set(other.id);
+  const target=other?(other.identity_type==='admin'?'/admin-app.html':'/community.html'):''; const switchLabel=other?'Switch to '+esc(other.display_name):''; el.innerHTML='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><span style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#777">Using</span><strong>'+esc(this.active.display_name)+'</strong><span style="font-size:9px;border:1px solid rgba(225,6,0,.35);border-radius:999px;padding:4px 7px;color:#e10600">'+esc(this.active.identity_type.toUpperCase())+'</span>'+(other?'<a class="btn mini" id="switchIdentityBtn" href="'+target+'">'+switchLabel+'</a>':'')+'</div>';
+  const b=document.getElementById('switchIdentityBtn');if(b&&other)b.addEventListener('click',()=>{localStorage.setItem(KEY,other.id)});
  }
 };
 })();
