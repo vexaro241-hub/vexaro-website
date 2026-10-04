@@ -1,11 +1,11 @@
 {
   "name": "VEXARO",
   "short_name": "VEXARO",
-  "start_url": "./",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#070707",
-  "description": "VEXARO \u2014 Warzone creator, streamer and gaming community.",
+  "description": "VEXARO — Warzone creator, streamer and gaming community.",
   "icons": [
     {
       "src": "icon-192.svg",
@@ -19,5 +19,8 @@
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "scope": "/",
+  "id": "/",
+  "orientation": "portrait-primary"
 }
