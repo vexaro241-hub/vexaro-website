@@ -126,16 +126,24 @@ async function boot(){
     $('appView').classList.remove('hidden');showView('feed');$('signedOutNotice').innerHTML='Community preview is ready. The account/database connection still needs to be configured.';return
   }
   sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
-  // VEXARO intentionally starts each fresh page load signed out. Clear the local session before subscribing to auth events.
+  // VEXARO admin stays signed in on this device. Ordinary members are asked to sign in again on a fresh page load.
   const res=await sb.auth.getSession();
-  if(res.data.session){await sb.auth.signOut({scope:'local'});}
-  session=null;profile=null;sessionVersion++;
+  if(res.data.session){
+    await applySession(res.data.session);
+    const isAdmin=String(profile?.role||'').toLowerCase()==='admin';
+    if(!isAdmin){
+      await sb.auth.signOut({scope:'local'});
+      session=null;profile=null;sessionVersion++;
+      await applySession(null);
+    }
+  }else{
+    session=null;profile=null;sessionVersion++;
+    await applySession(null);
+  }
   authInitializing=false;
-  await applySession(null);
-  if(homepageAuth) openAuth('signin');
+  if(homepageAuth && !session) openAuth('signin');
   sb.auth.onAuthStateChange((event,s)=>{
     if(authInitializing || authBusy)return;
-    // Supabase may emit INITIAL_SESSION asynchronously; ignore it because boot already established the signed-out state.
     if(event==='INITIAL_SESSION')return;
     setTimeout(()=>{if(!authBusy)applySession(s||null)},0);
   });
