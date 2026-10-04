@@ -25,7 +25,7 @@ async function authSubmit(){
       if(username.length<3){msg('Username needs at least 3 letters/numbers.');return}
       const {data,error}=await sb.auth.signUp({email,password,options:{data:{username,display_name}}});
       if(error)throw error;
-      if(data.session){await applySession(data.session);return}
+      if(data.session){await applySession(data.session);location.replace('index.html');location.replace('index.html');return}
       msg('Account created. Check your email to confirm your account, then sign in.');
     }else{
       const {data,error}=await sb.auth.signInWithPassword({email,password});
@@ -132,7 +132,7 @@ async function boot(){
   if(res.data.session){
     await applySession(res.data.session);
   }else{
-    session=null;profile=null;sessionVersion++;await applySession(null);
+    session=null;profile=null;sessionVersion++;await applySession(null);location.replace('index.html');
   }
   authInitializing=false;
   if(homepageAuth && !session) openAuth('signin');
