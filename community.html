@@ -130,16 +130,10 @@ async function boot(){
   sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
   const res=await sb.auth.getSession();
   if(res.data.session){
-    const last=Number(localStorage.getItem('vexaro_last_active')||0);
-    const isAdmin=String(profile?.role||'').toLowerCase()==='admin';
-    if(last&&Date.now()-last>24*60*60*1000&&!isAdmin){
-      await sb.auth.signOut({scope:'local'});session=null;profile=null;localStorage.removeItem('vexaro_last_active');localStorage.removeItem('vexaro_session_role');sessionVersion++;await applySession(null);
-    }else{
-      await applySession(res.data.session);
-      localStorage.setItem('vexaro_last_active',String(Date.now()));
-      localStorage.setItem('vexaro_session_role',isAdmin?'admin':'member');
-    }
-  }else{session=null;profile=null;sessionVersion++;await applySession(null)}
+    await applySession(res.data.session);
+  }else{
+    session=null;profile=null;sessionVersion++;await applySession(null);
+  }
   authInitializing=false;
   if(homepageAuth && !session) openAuth('signin');
   sb.auth.onAuthStateChange((event,s)=>{
