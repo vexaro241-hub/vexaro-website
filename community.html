@@ -158,8 +158,7 @@ async function boot(){
     $('appView').classList.remove('hidden');showView('feed');$('signedOutNotice').innerHTML='Community preview is ready. The account/database connection still needs to be configured.';return
   }
   sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
-  try{await window.VEXARO_IDENTITIES?.acceptHandoff(sb)}catch(_){}
-  const res=await sb.auth.getSession();
+    const res=await sb.auth.getSession();
   if(res.data.session){
     await applySession(res.data.session);
   }else{
@@ -249,9 +248,12 @@ async function postSubmit(){
       uploaded.push({path,file:f});
     }
     setPostStatus('Saving post…');
-    const identity=window.VEXARO_IDENTITIES.active; if(!identity||identity.identity_type!=='creator'||!identity.can_post){throw new Error('Switch to VEXARO Creator before posting.')} const {data:post,error}=await sb.from('posts').insert({
+    const identityRes=await sb.from('profile_identities').select('id').eq('user_id',session.user.id).eq('identity_type','creator').eq('can_post',true).maybeSingle();
+    if(identityRes.error)throw identityRes.error;
+    if(!identityRes.data?.id)throw new Error('Your VEXARO creator profile is not available yet.');
+    const {data:post,error}=await sb.from('posts').insert({
       user_id:session.user.id,
-      identity_id:identity.id,
+      identity_id:identityRes.data.id,
       body:body||'Share a VEXARO upload.'
     }).select('id').single();
     if(error)throw error;
