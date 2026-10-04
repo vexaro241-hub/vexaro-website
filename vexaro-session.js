@@ -1,5 +1,5 @@
 (function(){
-  const path=location.pathname.replace(/\\/+$/,'')||'/';
+  const path=location.pathname.replace(/\/+$/,'')||'/';
   if(path!=='/'&&path!=='/index.html'){
     location.replace('/');
     return;
