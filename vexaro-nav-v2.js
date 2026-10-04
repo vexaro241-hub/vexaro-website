@@ -87,14 +87,20 @@ h3{font-size:clamp(1.05rem,2.5vw,1.6rem)!important;line-height:1.15!important}
 .topbar .navlinks::-webkit-scrollbar{display:none!important}
 .topbar .navlinks a{flex:0 0 auto!important;white-space:nowrap!important}
 @media(max-width:800px){
- .topbar .nav{width:calc(100% - 26px)!important;min-height:64px!important;height:64px!important;padding:0!important;gap:12px!important}
- .topbar .navlinks{max-width:calc(100% - 100px)!important;gap:4px!important}
- .topbar .navlinks a{padding:8px 6px!important;font-size:8px!important}
+ .topbar .nav{width:calc(100% - 20px)!important;min-height:64px!important;height:64px!important;padding:0!important;gap:8px!important}
+ .topbar .brand{font-size:12px!important;max-width:calc(100% - 58px)!important;overflow:hidden!important;text-overflow:ellipsis!important}
+ .topbar .navlinks{display:none!important}
+ #hamb,#vexaro-global-menu-btn{position:relative!important;top:auto!important;right:auto!important;flex:0 0 42px!important;width:42px!important;height:42px!important;margin-left:auto!important}
 }
 @media(max-width:520px){
- .topbar .nav{width:calc(100% - 20px)!important;min-height:60px!important;height:60px!important}
- .topbar .navlinks{max-width:calc(100% - 88px)!important}
+ .topbar .nav{width:calc(100% - 16px)!important;min-height:60px!important;height:60px!important}
+ .topbar .brand{font-size:11px!important;letter-spacing:.11em!important}
+ #hamb,#vexaro-global-menu-btn{flex-basis:40px!important;width:40px!important;height:40px!important;font-size:22px!important}
 }
+/* VEXARO HEADER FINAL MOBILE FIX */
+.topbar .nav{overflow:visible!important}
+@media(max-width:800px){.topbar .navlinks{visibility:hidden!important;width:0!important;max-width:0!important;overflow:hidden!important}.topbar .nav{justify-content:space-between!important}.topbar .brand{flex:1 1 auto!important;min-width:0!important}}
+
 *,*:before,*:after{box-sizing:border-box}
 img,video,iframe,svg{max-width:100%}
 .mobilemenu{position:fixed!important;top:76px!important;right:14px!important;left:14px!important;z-index:9999!important;display:none!important;flex-direction:column!important;gap:0!important;padding:12px!important;max-height:calc(100dvh - 92px)!important;overflow:auto!important;background:rgba(8,8,10,.98)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:14px!important;box-shadow:0 24px 70px rgba(0,0,0,.7)!important;backdrop-filter:blur(18px)!important}
