@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head><script src="vexaro-session.js"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070707"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.svg"><title>VEXARO PRO</title>
+<style>
+:root{--bg:#050505;--panel:#0c0c0f;--text:#f5f5f5;--muted:#8f8f98;--red:#e10600;--red2:#ff3028;--line:rgba(255,255,255,.09);--max:1180px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,rgba(225,6,0,.18),transparent 30%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{text-decoration:none;color:inherit}.wrap{width:min(var(--max),calc(100% - 28px));margin:auto}.top{position:sticky;top:0;z-index:20;background:rgba(5,5,5,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:1000;letter-spacing:.16em;color:#fff}.brand span{color:var(--red2)}.navlinks{display:flex;gap:6px;flex-wrap:wrap}.navlinks a{padding:9px 10px;border-radius:8px;color:#aaa;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.08em}.navlinks a:hover,.navlinks a.active{color:#fff;background:#111114}.btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:#101014;color:#fff;border-radius:10px;padding:11px 15px;font-weight:950;font-size:10px;text-transform:uppercase;letter-spacing:.09em}.btn.red{background:linear-gradient(135deg,var(--red2),#9f0000);border-color:#ff4038}.btn:disabled{opacity:.5;cursor:not-allowed}.hero{padding:70px 0 40px;text-align:center}.kicker{color:#ff4038;font-size:10px;font-weight:1000;letter-spacing:.2em;text-transform:uppercase}.hero h1{font-size:clamp(50px,9vw,100px);line-height:.82;letter-spacing:-.07em;margin:12px 0 20px}.hero p{max-width:690px;margin:0 auto;color:#999;line-height:1.65}.status{margin:25px auto 0;max-width:700px;padding:13px 15px;border:1px solid rgba(255,48,40,.3);background:#100606;border-radius:10px;color:#ffaaa5;font-size:11px;line-height:1.5}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:20px 0 65px}.plan{position:relative;padding:25px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#121216,#080809);min-height:410px;box-shadow:0 20px 60px rgba(0,0,0,.25)}.plan.featured{border-color:rgba(255,48,40,.6);box-shadow:0 20px 70px rgba(225,6,0,.12)}.ribbon{position:absolute;top:14px;right:14px;padding:5px 8px;border-radius:999px;background:#ff3028;color:#fff;font-size:8px;font-weight:1000;letter-spacing:.1em}.plan h2{font-size:25px;margin:4px 0 7px}.price{font-size:44px;font-weight:1000;letter-spacing:-.05em}.price small{font-size:11px;color:#777;letter-spacing:.02em}.desc{color:#888;line-height:1.5;min-height:52px;font-size:12px}.features{list-style:none;padding:0;margin:20px 0}.features li{padding:8px 0;border-top:1px solid var(--line);font-size:11px;color:#ccc}.features li.no{color:#666}.plan .btn{width:100%;margin-top:auto}.info{padding:0 0 75px}.panel{border:1px solid var(--line);border-radius:15px;background:#0b0b0d;padding:20px}.panel h2{margin:0 0 8px}.panel p{color:#888;line-height:1.6;font-size:12px}.hidden{display:none!important}.account{margin-bottom:18px}.account strong{color:#fff}.account .badge{display:inline-block;margin-left:6px;border:1px solid rgba(255,48,40,.45);color:#ff5d56;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:1000}.footer{border-top:1px solid var(--line);padding:28px 0 45px;color:#666;font-size:10px;display:flex;justify-content:space-between;gap:15px}@media(max-width:800px){.navlinks{display:none}.grid{grid-template-columns:1fr}.plan{min-height:0}.footer{display:block}.footer div+div{margin-top:8px}}
+</style></head>
+<body>
+<header class="top"><div class="wrap nav"><a class="brand" href="index.html">VEXARO <span>PRO</span></a><nav class="navlinks"><a href="index.html">Home</a><a href="clips.html">Clips</a><a href="loadouts.html">Loadouts</a><a href="community.html">Community</a><a class="active" href="membership.html">PRO</a></nav><a class="btn" href="community.html">Community</a></div></header>
+<main class="wrap">
+<section class="hero"><div class="kicker">VEXARO / MEMBERSHIP</div><h1>GO <span style="color:#ff3028">PRO.</span></h1><p>Affordable access to the next level of VEXARO. New members get one month of full PRO access free, then choose the level that works for them.</p><div class="status" id="status">Payments are being prepared. No membership charge is active yet.</div></section>
+<section class="account panel hidden" id="account"></section>
+<section class="grid">
+<article class="plan"><div class="kicker">TRY IT</div><h2>PRO WEEK</h2><div class="price">£1.49 <small>/ week</small></div><p class="desc">A low-cost taste of PRO with selected premium access.</p><ul class="features"><li>✓ PRO member badge</li><li>✓ Selected premium builds</li><li>✓ Selected Academy content</li><li>✓ Selected PRO drops</li><li class="no">× Full PRO library</li><li class="no">× Full Academy</li></ul><button class="btn" disabled>COMING SOON</button></article>
+<article class="plan featured"><div class="ribbon">BEST FOR MOST</div><div class="kicker">FULL ACCESS</div><h2>PRO MONTH</h2><div class="price">£3.99 <small>/ month</small></div><p class="desc">The full VEXARO PRO experience at an accessible monthly price.</p><ul class="features"><li>✓ Everything in PRO Week</li><li>✓ Full premium builds</li><li>✓ Full VEXARO Academy</li><li>✓ Full PRO content</li><li>✓ Exclusive member areas</li><li>✓ Future PRO features</li></ul><button class="btn red" disabled>COMING SOON</button></article>
+<article class="plan"><div class="kicker">BEST VALUE</div><h2>PRO YEAR</h2><div class="price">£29.99 <small>/ year</small></div><p class="desc">The same full PRO access as monthly, with a lower effective yearly cost.</p><ul class="features"><li>✓ Everything in PRO Month</li><li>✓ Full premium builds</li><li>✓ Full VEXARO Academy</li><li>✓ Full PRO content</li><li>✓ Exclusive member areas</li><li>✓ Future PRO features</li></ul><button class="btn" disabled>COMING SOON</button></article>
+</section>
+<section class="info"><div class="panel"><h2>ONE MONTH FREE FOR NEW MEMBERS.</h2><p>New VEXARO accounts are automatically given a one-month full PRO trial. The trial is stored against the account so access can be enforced consistently across the site. Payment is not collected during this foundation stage.</p><p>When billing launches, advertised prices will be the final consumer prices rather than adding surprise charges at checkout. Any applicable VAT and payment costs will be handled in the billing flow.</p><div style="display:flex;gap:9px;flex-wrap:wrap"><a class="btn red" href="community.html">JOIN VEXARO</a><a class="btn" href="index.html">BACK HOME</a></div></div></section>
+</main>
+<footer class="wrap footer"><div><b>VEXARO</b> — DOMINATE. CREATE. REPEAT.</div><div>© 2026 VEXARO · PRO FOUNDATION</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
+<script>
+const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+async function boot(){
+ try{
+  if(!window.supabase||!window.VEXARO_SUPABASE_URL||!window.VEXARO_SUPABASE_KEY)return;
+  const sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
+  const [{data:{session}},{data:plans},{data:memberships}]=await Promise.all([
+   sb.auth.getSession(),
+   sb.from('membership_plans').select('code,name,price_pence,interval_unit,access_level,active').eq('active',true).order('sort_order'),
+   sb.auth.getSession().then(async r=>r.data.session?sb.from('memberships').select('plan_code,status,starts_at,ends_at,is_trial').eq('user_id',r.data.session.user.id).order('ends_at',{ascending:false}).limit(1):{data:[]})
+  ]);
+  const a=document.getElementById('account');
+  if(session&&memberships?.[0]){
+   const m=memberships[0],p=(plans||[]).find(x=>x.code===m.plan_code);
+   const end=new Date(m.ends_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+   a.innerHTML='<strong>'+esc(p?.name||m.plan_code)+'</strong><span class="badge">'+(m.is_trial?'1 MONTH FREE TRIAL':esc(m.status.toUpperCase()))+'</span><p style="margin:8px 0 0">Access runs until '+esc(end)+'. '+(p?.access_level==='full'?'Full PRO access is enabled.':'Weekly PRO access is limited to selected premium areas.')+'</p>';
+   a.classList.remove('hidden');
+  }
+ }catch(e){}
+}
+boot();
+</script></body></html>
