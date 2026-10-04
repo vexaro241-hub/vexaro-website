@@ -32,6 +32,53 @@ function menuStyles(){
  s.id='vexaro-menu-responsive';
  s.textContent=`
 html,body{max-width:100%;overflow-x:hidden}
+/* Site-wide responsive baseline: keep every page usable across phones, tablets, desktop and landscape screens. */
+html{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
+body{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
+*,*:before,*:after{box-sizing:border-box!important}
+img,picture,video,canvas,svg,iframe{max-width:100%!important}
+img,video{height:auto}
+iframe{border:0}
+:where(.wrap,.container,.section,.hero,.hero-content,.poster,.content,.main,.page,.shell){width:min(1180px,calc(100% - 32px))!important;max-width:100%!important;min-width:0!important;margin-left:auto!important;margin-right:auto!important}
+:where(.grid,.hq,.code-grid,.clips,.loadouts,.socials,.hub-grid,.hub-strip,.cards,.card-grid,.tiles,.stats,.features){width:100%!important;max-width:100%!important;min-width:0!important}
+:where(.grid,.hq,.code-grid,.clips,.loadouts,.socials,.hub-grid,.hub-strip,.cards,.card-grid,.tiles,.stats,.features){grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))!important}
+:where(.row,.actions,.buttons,.button-row,.filters,.tabs,.form-row){max-width:100%!important;min-width:0!important;flex-wrap:wrap!important}
+:where(.card,.panel,.tile,.box,.item){min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important}
+:where(h1,h2,h3,h4,p,a,button,label,span){overflow-wrap:anywhere}
+h1{font-size:clamp(2rem,6vw,4.5rem)!important;line-height:1.02!important}
+h2{font-size:clamp(1.45rem,4vw,2.8rem)!important;line-height:1.08!important}
+h3{font-size:clamp(1.05rem,2.5vw,1.6rem)!important;line-height:1.15!important}
+:where(input,select,textarea,button,.btn){max-width:100%!important}
+:where(input,select,textarea){min-width:0!important}
+:where(.btn,button){white-space:normal!important;min-height:42px!important}
+:where(table){display:block!important;max-width:100%!important;overflow-x:auto!important}
+:where(pre,code){max-width:100%!important;overflow-x:auto!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important}
+:where(.hero,.poster){max-width:100vw!important;overflow:hidden!important}
+:where(.hero img,.poster img){max-width:100%!important;object-fit:cover!important}
+@media(max-width:800px){
+ :where(.wrap,.container,.section,.hero,.hero-content,.poster,.content,.main,.page,.shell){width:calc(100% - 24px)!important}
+ :where(.grid,.hq,.code-grid,.clips,.loadouts,.socials,.hub-grid,.hub-strip,.cards,.card-grid,.tiles,.stats,.features){grid-template-columns:1fr!important}
+ :where(.row,.actions,.buttons,.button-row,.filters,.tabs,.form-row){flex-direction:column!important;align-items:stretch!important}
+ :where(.btn,button){width:100%!important}
+}
+@media(min-width:801px) and (max-width:1100px){
+ :where(.grid,.hq,.code-grid,.clips,.loadouts,.socials,.hub-grid,.hub-strip,.cards,.card-grid,.tiles,.stats,.features){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:520px){
+ :where(.wrap,.container,.section,.hero,.hero-content,.poster,.content,.main,.page,.shell){width:calc(100% - 20px)!important}
+ body{font-size:clamp(14px,3.8vw,16px)}
+ :where(.topbar .nav){padding-left:0!important;padding-right:0!important}
+ :where(.card,.panel,.tile,.box,.item){padding-left:14px!important;padding-right:14px!important}
+}
+@media(orientation:landscape) and (max-height:600px){
+ :where(.hero,.poster){min-height:0!important}
+ :where(.hero-content,.poster-content){padding-top:24px!important;padding-bottom:24px!important}
+}
+@supports(padding:max(0px)){
+ body{padding-left:max(0px,env(safe-area-inset-left));padding-right:max(0px,env(safe-area-inset-right))}
+ .topbar .nav{padding-left:max(0px,env(safe-area-inset-left));padding-right:max(0px,env(safe-area-inset-right))}
+}
+
 /* Lock the site header to one consistent position across every page. */
 .topbar{width:100%!important;position:sticky!important;top:0!important;z-index:9990!important}
 .topbar .nav{width:min(1180px,calc(100% - 40px))!important;min-height:74px!important;height:74px!important;margin:0 auto!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;position:relative!important}
