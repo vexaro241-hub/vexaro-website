@@ -98,8 +98,9 @@ async function applySession(s){
   }else{
     profile=data;
     const isAdmin=String(profile.role||'').trim().toLowerCase()==='admin';
-    $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>';
+    $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>'+(isAdmin?' <button class="btn" id="openAdminAppBtn">Admin</button>':'');
     $('logout').onclick=signOut;
+    if(isAdmin)$('openAdminAppBtn').onclick=openAdminApp;
     localStorage.setItem('vexaro_last_active',String(Date.now()));
     localStorage.setItem('vexaro_session_role',isAdmin?'admin':'member');
     const activeIdentity=window.VEXARO_IDENTITIES?.active||null; const creatorMode=!activeIdentity || activeIdentity?.identity_type==='creator'; $('postComposer').classList.toggle('hidden',!creatorMode); $('signedOutNotice').classList.add('hidden'); if(!creatorMode){$('signedOutNotice').classList.remove('hidden');$('signedOutNotice').innerHTML='<div class="notice">👑 Admin mode is active. Admin mode cannot publish creator posts. <button class="btn mini accent" type="button" onclick="window.VEXARO_IDENTITIES.set(window.VEXARO_IDENTITIES.list.find(x=>x.identity_type===\'creator\')?.id)">Switch to VEXARO Creator</button></div>';} 
@@ -172,6 +173,11 @@ async function boot(){
     if(event==='INITIAL_SESSION')return;
     setTimeout(()=>{if(!authBusy)applySession(s||null)},0);
   });
+}
+async function openAdminApp(){
+  if(!session?.access_token||!session?.refresh_token)return;
+  const target='https://vexaro-admin.vexaro241.workers.dev/?handoff=1#vexaro_access='+encodeURIComponent(session.access_token)+'&vexaro_refresh='+encodeURIComponent(session.refresh_token);
+  location.href=target;
 }
 async function signOut(){
   if(!sb)return;
