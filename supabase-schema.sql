@@ -239,3 +239,54 @@ revoke all on function private.touch_membership_updated_at() from public;
 drop trigger if exists memberships_touch_updated_at on public.memberships;
 create trigger memberships_touch_updated_at before update on public.memberships
 for each row execute function private.touch_membership_updated_at();
+
+
+-- VEXARO 1.0 admin/analytics foundation.
+create table if not exists public.site_analytics (
+  id bigint generated always as identity primary key,
+  visitor_id text not null,
+  path text not null,
+  referrer text,
+  user_id uuid references public.profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+create index if not exists site_analytics_created_at_idx on public.site_analytics(created_at desc);
+create index if not exists site_analytics_path_created_idx on public.site_analytics(path,created_at desc);
+create index if not exists site_analytics_visitor_created_idx on public.site_analytics(visitor_id,created_at desc);
+create index if not exists site_analytics_user_id_idx on public.site_analytics(user_id);
+alter table public.site_analytics enable row level security;
+do $$ begin create policy "Analytics events can be recorded" on public.site_analytics for insert to anon,authenticated with check (char_length(visitor_id) between 8 and 80 and char_length(path) between 1 and 200); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Admins can read analytics" on public.site_analytics for select to authenticated using (private.is_admin()); exception when duplicate_object then null; end $$;
+
+create table if not exists public.notifications (
+  id uuid primary key default gen_random_uuid(), user_id uuid not null references public.profiles(id) on delete cascade,
+  type text not null check (type in ('follow','like','comment','mention','system','membership','admin')),
+  title text not null check (char_length(title) between 1 and 120), body text not null default '' check (char_length(body)<=500), link text,
+  actor_id uuid references public.profiles(id) on delete set null, read_at timestamptz, created_at timestamptz not null default now()
+);
+create index if not exists notifications_user_created_idx on public.notifications(user_id,created_at desc);
+create index if not exists notifications_user_unread_idx on public.notifications(user_id,read_at,created_at desc);
+create index if not exists notifications_actor_id_idx on public.notifications(actor_id);
+alter table public.notifications enable row level security;
+do $$ begin create policy "Users read own notifications" on public.notifications for select to authenticated using ((select auth.uid())=user_id); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Users mark own notifications read" on public.notifications for update to authenticated using ((select auth.uid())=user_id) with check ((select auth.uid())=user_id); exception when duplicate_object then null; end $$;
+
+create table if not exists public.business_expenses (
+  id uuid primary key default gen_random_uuid(), category text not null check (char_length(category) between 1 and 60), vendor text not null default '' check (char_length(vendor)<=120), description text not null default '' check (char_length(description)<=300), amount_pence integer not null check (amount_pence>=0), currency text not null default 'gbp' check (currency='gbp'), incurred_at date not null default current_date, recurring boolean not null default false, created_by uuid references public.profiles(id) on delete set null, created_at timestamptz not null default now()
+);
+create index if not exists business_expenses_incurred_idx on public.business_expenses(incurred_at desc);
+create index if not exists business_expenses_created_by_idx on public.business_expenses(created_by);
+alter table public.business_expenses enable row level security;
+do $$ begin create policy "Admins manage business expenses" on public.business_expenses for all to authenticated using (private.is_admin()) with check (private.is_admin()); exception when duplicate_object then null; end $$;
+
+create table if not exists public.admin_audit_log (
+  id bigint generated always as identity primary key, admin_id uuid references public.profiles(id) on delete set null, action text not null check (char_length(action) between 1 and 120), target_type text, target_id text, details jsonb not null default '{}'::jsonb, created_at timestamptz not null default now()
+);
+create index if not exists admin_audit_created_idx on public.admin_audit_log(created_at desc);
+create index if not exists admin_audit_admin_created_idx on public.admin_audit_log(admin_id,created_at desc);
+alter table public.admin_audit_log enable row level security;
+do $$ begin create policy "Admins read audit log" on public.admin_audit_log for select to authenticated using (private.is_admin()); exception when duplicate_object then null; end $$;
+do $$ begin create policy "Admins write audit log" on public.admin_audit_log for insert to authenticated with check (private.is_admin() and admin_id=(select auth.uid())); exception when duplicate_object then null; end $$;
+
+alter table public.membership_plans add column if not exists stripe_product_id text;
+alter table public.membership_plans add column if not exists stripe_price_id text;
