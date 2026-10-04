@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://vexaro-pwa2.vercel.app/</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/clips.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/loadouts.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/controller-settings.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/graphics-settings.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/live.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/about.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/community.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/marketplace.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/app.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/warzone-movement-settings.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/warzone-fov-settings.html</loc></url>
-  <url><loc>https://vexaro-pwa2.vercel.app/warzone-xbox-settings.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/clips.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/loadouts.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/controller-settings.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/graphics-settings.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/live/</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/about.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/community.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/marketplace.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/app.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/warzone-movement-settings.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/warzone-fov-settings.html</loc></url>
+  <url><loc>https://vexaro-website.vexaro241.workers.dev/warzone-xbox-settings.html</loc></url>
 </urlset>
