@@ -70,6 +70,8 @@ async function applySession(s){
     const isAdmin=String(profile.role||'').trim().toLowerCase()==='admin';
     $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>';
     $('logout').onclick=signOut;
+    localStorage.setItem('vexaro_last_active',String(Date.now()));
+    localStorage.setItem('vexaro_session_role',isAdmin?'admin':'member');
     $('postComposer').classList.remove('hidden');$('signedOutNotice').classList.add('hidden');
     $('sideTitle').textContent=profile.display_name||'VEXARO MEMBER';
     $('sideContent').innerHTML=`@${esc(profile.username||'member')}<br><br><span class="badge">${isAdmin?'ADMIN':'FREE MEMBER'}</span>`;
@@ -150,6 +152,8 @@ async function signOut(){
   if(!sb)return;
   const {error}=await sb.auth.signOut({scope:'local'});
   if(error){alert(error.message);return}
+  localStorage.removeItem('vexaro_last_active');
+  localStorage.removeItem('vexaro_session_role');
   await applySession(null);
 }
 let feedCache=[];
