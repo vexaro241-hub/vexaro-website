@@ -119,7 +119,7 @@ async function authSubmit(){
       if(username.length<3){msg('Username needs at least 3 letters/numbers.');return}
       const {data,error}=await sb.auth.signUp({email,password,options:{data:{username,display_name}}});
       if(error)throw error;
-      if(data.session){await applySession(data.session);location.replace('/');return}
+      if(data.session){await applySession(data.session);location.replace('/?view=feed');return}
       msg('Account created. Check your email to confirm your account, then sign in.');
     }else{
       const {data,error}=await sb.auth.signInWithPassword({email,password});
