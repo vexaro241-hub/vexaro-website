@@ -1,3 +1,4 @@
+(function(){try{if(!document.querySelector('script[data-vexaro-posthog]')){var s=document.createElement('script');s.src='/vexaro-posthog.js';s.async=true;s.dataset.vexaroPosthog='1';document.head.appendChild(s)}}catch(_){}})();
 (function(){
 'use strict';
 /* VEXARO site-wide rule: browser refresh returns to Home.
