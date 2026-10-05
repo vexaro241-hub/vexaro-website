@@ -328,39 +328,32 @@ let youtubeStatusCache=null;
 let youtubeStatusCacheAt=0;
 async function loadYouTubeConnection(){
   const el=$('youtubeConnection'); if(!el)return;
-  if(youtubeStatusPromise && youtubeStatusSessionId===session?.user?.id){ return youtubeStatusPromise; }
-  if(youtubeStatusCache && youtubeStatusSessionId===session?.user?.id && Date.now()-youtubeStatusCacheAt<15000){
-    if(youtubeStatusCache.error) throw new Error(youtubeStatusCache.error);
-    const d=youtubeStatusCache.data; if(!d?.connected){el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#777">Not connected to this VEXARO account.</span><div class="actions"><button class="btn accent" onclick="connectYouTube()">CONNECT YOUTUBE</button></div></div>';return d;}
-    const x=d.connection||{}; el.innerHTML='<div class="notice"><b>YOUTUBE CONNECTED</b><br><span style="color:#7cff9b">'+esc(x.channelTitle||'YouTube channel')+'</span>'+(x.channelHandle?'<br><small style="color:#777">'+esc(x.channelHandle)+'</small>':'')+'<div class="actions"><button class="btn" onclick="connectYouTube()">RECONNECT / CHECK</button><button class="btn" onclick="disconnectYouTube()">DISCONNECT</button></div></div>';return d;
-  }
-  youtubeStatusSessionId=session?.user?.id||null;
+  const uid=session?.user?.id||null;
   if(!session){el.innerHTML='';return}
+  if(youtubeStatusPromise&&youtubeStatusSessionId===uid)return youtubeStatusPromise;
+  if(youtubeStatusCache&&youtubeStatusSessionId===uid&&Date.now()-youtubeStatusCacheAt<15000){
+    const d=youtubeStatusCache.data;
+    if(youtubeStatusCache.error){el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#ff8b8b">'+esc(youtubeStatusCache.error)+'</span><div class="actions"><button class="btn" onclick="loadYouTubeConnection()">RETRY</button></div></div>';return Promise.reject(new Error(youtubeStatusCache.error))}
+    if(!d?.connected){el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#777">Not connected to this VEXARO account.</span><div class="actions"><button class="btn accent" onclick="connectYouTube()">CONNECT YOUTUBE</button></div></div>';return Promise.resolve(d)}
+    const x=d.connection||{};el.innerHTML='<div class="notice"><b>YOUTUBE CONNECTED</b><br><span style="color:#7cff9b">'+esc(x.channelTitle||'YouTube channel')+'</span>'+(x.channelHandle?'<br><small style="color:#777">'+esc(x.channelHandle)+'</small>':'')+'<div class="actions"><button class="btn" onclick="connectYouTube()">RECONNECT / CHECK</button><button class="btn" onclick="disconnectYouTube()">DISCONNECT</button></div></div>';return Promise.resolve(d)
+  }
+  youtubeStatusSessionId=uid;
   el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#777">Checking connection...</span></div>';
-  youtubeStatusPromise=(async()=>{try{
-    const ctl=new AbortController();
-    const timer=setTimeout(()=>ctl.abort(),10000);
-    const res=await fetch('https://vexaro-youtube-auth.vexaro241.workers.dev/status?ts='+Date.now(),{
-      method:'GET',
-      headers:{authorization:'Bearer '+session.access_token,accept:'application/json'},
-      cache:'no-store',
-      signal:ctl.signal
-    });
-    clearTimeout(timer);
-    let d=null;
-    try{d=await res.json()}catch(_){}
-    if(!res.ok)throw new Error((d&&d.error)||('YouTube status failed ('+res.status+').'));
-    youtubeStatusCache={data:d}; youtubeStatusCacheAt=Date.now();
-    if(!d.connected){
-      el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#777">Not connected to this VEXARO account.</span><div class="actions"><button class="btn accent" onclick="connectYouTube()">CONNECT YOUTUBE</button></div></div>';
-      return;
-    }
-    const x=d.connection||{};
-    el.innerHTML='<div class="notice"><b>YOUTUBE CONNECTED</b><br><span style="color:#7cff9b">'+esc(x.channelTitle||'YouTube channel')+'</span>'+(x.channelHandle?'<br><small style="color:#777">'+esc(x.channelHandle)+'</small>':'')+'<div class="actions"><button class="btn" onclick="connectYouTube()">RECONNECT / CHECK</button><button class="btn" onclick="disconnectYouTube()">DISCONNECT</button></div></div>';
-  }catch(e){
-    const m=e?.name==='AbortError'?'YouTube connection check timed out.':(e?.message||'Connection status unavailable.');
-    el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#ff8b8b">'+esc(m)+'</span><div class="actions"><button class="btn" onclick="loadYouTubeConnection()">RETRY</button></div></div>';
-  }catch(e){youtubeStatusCache={error:e?.message||'Connection status unavailable.'};youtubeStatusCacheAt=Date.now();throw e;}finally{youtubeStatusPromise=null;}
+  youtubeStatusPromise=(async()=>{
+    try{
+      const ctl=new AbortController();const timer=setTimeout(()=>ctl.abort(),10000);
+      const res=await fetch('https://vexaro-youtube-auth.vexaro241.workers.dev/status?ts='+Date.now(),{method:'GET',headers:{authorization:'Bearer '+session.access_token,accept:'application/json'},cache:'no-store',signal:ctl.signal});
+      clearTimeout(timer);let d=null;try{d=await res.json()}catch(_){}
+      if(!res.ok)throw new Error((d&&d.error)||('YouTube status failed ('+res.status+').'));
+      youtubeStatusCache={data:d};youtubeStatusCacheAt=Date.now();
+      if(!d.connected){el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#777">Not connected to this VEXARO account.</span><div class="actions"><button class="btn accent" onclick="connectYouTube()">CONNECT YOUTUBE</button></div></div>';return d}
+      const x=d.connection||{};el.innerHTML='<div class="notice"><b>YOUTUBE CONNECTED</b><br><span style="color:#7cff9b">'+esc(x.channelTitle||'YouTube channel')+'</span>'+(x.channelHandle?'<br><small style="color:#777">'+esc(x.channelHandle)+'</small>':'')+'<div class="actions"><button class="btn" onclick="connectYouTube()">RECONNECT / CHECK</button><button class="btn" onclick="disconnectYouTube()">DISCONNECT</button></div></div>';return d
+    }catch(e){
+      const m=e?.name==='AbortError'?'YouTube connection check timed out.':(e?.message||'Connection status unavailable.');
+      youtubeStatusCache={error:m};youtubeStatusCacheAt=Date.now();
+      el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#ff8b8b">'+esc(m)+'</span><div class="actions"><button class="btn" onclick="loadYouTubeConnection()">RETRY</button></div></div>';
+      return null;
+    }finally{youtubeStatusPromise=null}
   })();
   return youtubeStatusPromise;
 }
