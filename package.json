@@ -1,0 +1,10 @@
+{
+  "name": "vexaro-qa",
+  "private": true,
+  "scripts": {
+    "qa:browser": "node qa/vexaro-browser-qa.mjs"
+  },
+  "devDependencies": {
+    "agent-browser": "0.38.1"
+  }
+}
