@@ -29,7 +29,7 @@ window.VEXARO_IDENTITIES={
   const path=(location.pathname||'').toLowerCase();
   const wanted=preferredType||((path.includes('admin-app')||location.hostname.includes('vexaro-admin'))?'admin':((path.includes('community')||location.hostname.includes('vexaro-members')||path==='/')?'creator':null));
   const saved=localStorage.getItem(KEY);
-  this.active=this.list.find(x=>x.identity_type===wanted)||this.list.find(x=>x.id===saved)||this.list.find(x=>x.identity_type==='creator')||this.list[0]||null;
+  this.active=this.list.find(x=>x.identity_type===wanted)||this.list.find(x=>x.id===saved)||this.list.find(x=>x.identity_type==='admin')||this.list.find(x=>x.identity_type==='creator')||this.list[0]||null;
   if(this.active)localStorage.setItem(KEY,this.active.id);
   this.render();
   return this.active;
