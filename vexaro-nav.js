@@ -8,8 +8,10 @@ if(nav&&nav.type==='reload'&&(location.pathname!=='/'||location.search||location
  location.replace('/');
  return;
 }
+const isMemberApp=/vexaro-members\.vexaro241\.workers\.dev$/i.test(location.hostname);
+const homeHref=isMemberApp?'community.html?view=feed':'/';
 const links=[
- ['HOME','/'],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],
+ ['HOME',homeHref],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],
  ['SETTINGS','/settings.html'],['LIVE','/live/'],['COMMUNITY','/community.html'],
  ['MARKETPLACE','/marketplace.html'],['PRO','/membership.html'],['ABOUT','/about.html'],
  ['APP','/app.html'],['SEARCH','/search.html']
