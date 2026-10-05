@@ -113,13 +113,12 @@ async function checkPwnedPassword(password){
   const digest=await crypto.subtle.digest('SHA-1',bytes);
   const hash=[...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
   const prefix=hash.slice(0,5),suffix=hash.slice(5);
-  const res=await fetch('https://api.pwnedpasswords.com/range/'+prefix,{
-    headers:{'User-Agent':'VEXARO-Password-Security/1.0','Add-Padding':'true'},
+  const res=await fetch('https://vexaro-password-check.vexaro241.workers.dev/check/'+prefix,{
     cache:'no-store'
   });
   if(!res.ok)throw new Error('Password security check is temporarily unavailable. Please try again.');
   const text=await res.text();
-  const hit=text.split(/\\r?\\n/).some(line=>line.split(':')[0].trim().toUpperCase()===suffix);
+  const hit=text.split(/\r?\n/).some(line=>line.split(':')[0].trim().toUpperCase()===suffix);
   return {compromised:hit,checked:true};
 }
 async function authSubmit(){
