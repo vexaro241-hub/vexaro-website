@@ -189,18 +189,7 @@ function showAdminSection(section){
   if(target==='profile')loadAdminProfile().catch(e=>note(e?.message||'Profile could not be loaded.'));
 }
 document.getElementById('adminHeaderHome')?.addEventListener('click',()=>showAdminSection('overview'));
-document.getElementById('openMemberAppBtn')?.addEventListener('click',async()=>{
-  const popup=window.open('about:blank','_blank');
-  let target='https://vexaro-members.vexaro241.workers.dev/?view=feed';
-  try{
-    const session=(await sb?.auth.getSession())?.data?.session;
-    if(session?.access_token&&session?.refresh_token){
-      target+='&handoff=1#vexaro_access='+encodeURIComponent(session.access_token)+'&vexaro_refresh='+encodeURIComponent(session.refresh_token);
-    }
-  }catch(_){}
-  if(popup) popup.location.href=target;
-  else location.href=target;
-});
+document.getElementById('openMemberAppBtn')?.addEventListener('click',()=>openMemberApp());
 document.getElementById('adminHomeBtn')?.addEventListener('click',()=>showAdminSection('overview'));
 document.querySelectorAll('.toolbar [data-section]').forEach(b=>b.addEventListener('click',()=>showAdminSection(b.dataset.section)));
 document.getElementById('adminSearchBtn')?.addEventListener('click',async()=>{const q=$('adminSearchInput').value.trim();if(!q){$('adminSearchResults').innerHTML='<div class="empty">Enter a search term.</div>';return}const like='%'+q+'%';const [m,p,l]=await Promise.all([sb.from('profiles').select('username,display_name,role').or('username.ilike.'+like+',display_name.ilike.'+like).limit(20),sb.from('posts').select('body,created_at').ilike('body',like).limit(20),sb.from('marketplace_listings').select('title,description,status,created_at').or('title.ilike.'+like+',description.ilike.'+like).limit(20)]);if(m.error||p.error||l.error){note((m.error||p.error||l.error).message);return}const rows=[];(m.data||[]).forEach(x=>rows.push(item('@'+(x.username||''),'MEMBER · '+(x.role||''),x.display_name||'')));(p.data||[]).forEach(x=>rows.push(item('Community post',fmt(x.created_at),x.body||'')));(l.data||[]).forEach(x=>rows.push(item(x.title,fmt(x.created_at),x.description||'', '', x.status||'')));$('adminSearchResults').innerHTML=rows.length?rows.join(''):'<div class="empty">No matches found.</div>'});document.getElementById('adminSearchInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('adminSearchBtn')?.click()});
