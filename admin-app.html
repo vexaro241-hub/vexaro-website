@@ -39,13 +39,35 @@ body{overscroll-behavior-x:none}
  .section{min-width:0!important;max-width:100%!important;overflow:hidden!important}
  .item,.panel{min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important}
 }
+
+/* VEXARO ADMIN APP — polished app/dashboard shell */
+@media(max-width:800px){
+ body{background:#020203!important;padding-bottom:18px!important}
+ .top{background:rgba(7,7,9,.97)!important;box-shadow:0 8px 28px rgba(0,0,0,.45)!important}
+ .nav{height:58px!important;min-height:58px!important;padding:8px 10px!important}
+ .brand{font-size:12px!important;letter-spacing:.12em!important}
+ .brand span{font-size:8px!important}
+ #openMemberAppBtn{height:36px!important;min-height:36px!important;border-radius:9px!important;padding:7px 10px!important;font-size:8px!important}
+ main.wrap{width:100%!important;padding:0 10px!important}
+ .hero{padding:20px 2px 14px!important}
+ .hero h1{font-size:38px!important}
+ .hero p{font-size:12px!important}
+ .stats{gap:7px!important;margin:8px 0 14px!important}
+ .stat{border-radius:10px!important;background:#0b0b0e!important;box-shadow:inset 0 0 20px rgba(225,6,0,.025)!important}
+ .toolbar{top:58px!important;margin:0 -10px 12px!important;padding:8px 10px!important;border-radius:0!important;background:rgba(8,8,10,.97)!important;box-shadow:0 8px 20px rgba(0,0,0,.35)!important}
+ .toolbar .tab,.toolbar .btn{height:38px!important;min-height:38px!important;border-radius:9px!important;padding:7px 11px!important}
+ .toolbar .tab.active{background:rgba(225,6,0,.12)!important;border:1px solid rgba(225,6,0,.35)!important;color:#fff!important}
+ .toolbar .tab.active:after{display:none!important}
+ .panel{border-radius:15px!important;padding:15px!important;background:linear-gradient(145deg,#111115,#070708)!important;box-shadow:0 12px 35px rgba(0,0,0,.3)!important}
+ .panel h2{font-size:19px!important}
+}
 </style></head>
 <body><header class="top"><div class="wrap nav"><a class="brand" href="https://vexaro-website.vexaro241.workers.dev/">VEXARO <span>ADMIN HUB</span></a><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="badge">ADMIN ONLY</span><div id="identitySwitcher"></div><button class="btn" type="button" id="openMemberAppBtn">MEMBER HUB</button></div></div></header>
 <main class="wrap"><div id="loading" class="panel">Checking administrator access…</div><div id="app" class="hidden">
 <section class="hero"><div class="kicker">CONTROL CENTRE</div><h1>RUN <span style="color:#e10600">VEXARO.</span></h1><p>One place for moderation, marketplace approvals and the future VEXARO PRO controls. Database permissions remain the real security boundary.</p></section>
 <div class="stats"><div class="stat"><small>VISITORS 30D</small><div class="num" id="sVisitors">—</div></div><div class="stat"><small>PAGE VIEWS 30D</small><div class="num" id="sViews">—</div></div><div class="stat"><small>PRO MEMBERS</small><div class="num" id="sPro">—</div></div><div class="stat"><small>MEMBERS</small><div class="num" id="sMembers">—</div></div><div class="stat"><small>POSTS</small><div class="num" id="sPosts">—</div></div><div class="stat"><small>COMMENTS</small><div class="num" id="sComments">—</div></div><div class="stat"><small>OPEN REPORTS</small><div class="num" id="sReports">—</div></div><div class="stat"><small>PENDING SELLERS</small><div class="num" id="sSellers">—</div></div><div class="stat"><small>PENDING LISTINGS</small><div class="num" id="sListings">—</div></div><div class="stat"><small>OPEN REQUESTS</small><div class="num" id="sRequests">—</div></div></div>
 <div id="msg" class="notice hidden"></div>
-<div class="toolbar"><button class="tab active" id="adminHomeBtn" data-section="overview">HOME</button><button class="tab active" data-section="overview">OVERVIEW</button><button class="tab" data-section="finance">FINANCE</button><button class="tab" data-section="notifications">NOTIFICATIONS</button><button class="tab" data-section="audit">AUDIT</button><button class="tab" data-section="reports">REPORTS</button><button class="tab" data-section="members">MEMBERS</button><button class="tab" data-section="posts">POSTS</button><button class="tab" data-section="comments">COMMENTS</button><button class="tab" data-section="sellers">SELLERS</button><button class="tab" data-section="listings">LISTINGS</button><button class="tab" data-section="requests">REQUESTS</button><button class="btn" type="button" id="adminCommunityBtn">COMMUNITY</button><a class="btn" href="marketplace.html">MARKETPLACE</a><a class="btn" href="search.html">SEARCH</a><a class="btn" href="notifications.html">ALERTS</a><a class="btn" href="/#pro-lab">PRO LAB</a></div>
+<div class="toolbar"><button class="tab active" id="adminHomeBtn" data-section="overview">HOME</button><button class="tab" data-section="overview">OVERVIEW</button><button class="tab" data-section="finance">FINANCE</button><button class="tab" data-section="notifications">NOTIFICATIONS</button><button class="tab" data-section="audit">AUDIT</button><button class="tab" data-section="reports">REPORTS</button><button class="tab" data-section="members">MEMBERS</button><button class="tab" data-section="posts">POSTS</button><button class="tab" data-section="comments">COMMENTS</button><button class="tab" data-section="sellers">SELLERS</button><button class="tab" data-section="listings">LISTINGS</button><button class="tab" data-section="requests">REQUESTS</button><button class="btn" type="button" id="adminCommunityBtn">COMMUNITY</button><a class="btn" href="marketplace.html">MARKETPLACE</a><a class="btn" href="search.html">SEARCH</a><a class="btn" href="notifications.html">ALERTS</a><a class="btn" href="/#pro-lab">PRO LAB</a></div>
 <section id="overview" class="panel section"><h2>Business overview</h2><div class="muted">VEXARO growth and engagement in one place.</div><div id="overviewGrid" class="list"></div></section>
 <section id="finance" class="panel section hidden"><h2>Finance & PRO</h2><div class="muted">Stripe remains the source of truth for actual payments and payouts. This panel tracks VEXARO membership state and operating costs; live Stripe revenue sync appears once the Stripe secrets are configured.</div><div id="financeGrid" class="list"></div><div class="actions"><input id="expenseCategory" placeholder="Expense category" style="background:#08080a;color:#fff;border:1px solid var(--line);padding:10px;border-radius:8px"><input id="expenseVendor" placeholder="Vendor" style="background:#08080a;color:#fff;border:1px solid var(--line);padding:10px;border-radius:8px"><input id="expenseAmount" type="number" min="0" step="0.01" placeholder="£ amount" style="background:#08080a;color:#fff;border:1px solid var(--line);padding:10px;border-radius:8px"><button class="btn accent" onclick="addExpense()">ADD EXPENSE</button></div><div id="expensesList" class="list"></div></section>
 <section id="notifications" class="panel section hidden"><h2>Notifications</h2><div class="muted">System notification queue and recent activity.</div><div id="notificationsList" class="list"></div></section>
