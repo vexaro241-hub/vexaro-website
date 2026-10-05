@@ -126,4 +126,5 @@ try{await window.VEXARO_IDENTITIES?.init(sb,uid,'admin');}catch(_){}try{window.V
   fail(e?.message||'Unable to verify administrator access.')
 }})();
 /* Watchdog runs after the full app script so it cannot race Supabase/CDN loading. */
-<script>(function(){setTimeout(function(){const l=document.getElementById('loading'),app=document.getElementById('app');if(l&&app?.classList.contains('hidden')&&l.textContent.includes('Checking administrator access')){if(typeof showAdminSignIn==='function')showAdminSignIn();else l.innerHTML='<div class="notice">Administrator sign-in could not be initialized. Please retry.</div><div class="actions"><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">OPEN VEXARO MEMBERS</a></div>'; }},12000);})();</script></body></html>
+setTimeout(function(){const l=document.getElementById('loading'),app=document.getElementById('app');if(l&&app?.classList.contains('hidden')&&l.textContent.includes('Checking administrator access')){if(typeof showAdminSignIn==='function')showAdminSignIn();else l.innerHTML='<div class="notice">Administrator sign-in could not be initialized. Please retry.</div><div class="actions"><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">OPEN VEXARO MEMBERS</a></div>'; }},12000);
+</script></body></html>
