@@ -325,14 +325,30 @@ async function disconnectTwitch(){if(!session)return;if(!confirm('Disconnect Twi
 async function loadYouTubeConnection(){
   const el=$('youtubeConnection'); if(!el)return;
   if(!session){el.innerHTML='';return}
+  el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#777">Checking connection...</span></div>';
   try{
-    const res=await fetch('https://vexaro-youtube-auth.vexaro241.workers.dev/status',{headers:{authorization:'Bearer '+session.access_token}});
-    const d=await res.json();
-    if(!res.ok)throw new Error(d.error||'Status unavailable');
-    if(!d.connected){el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#777">Not connected to this VEXARO account.</span><div class="actions"><button class="btn accent" onclick="connectYouTube()">CONNECT YOUTUBE</button></div></div>';return}
+    const ctl=new AbortController();
+    const timer=setTimeout(()=>ctl.abort(),10000);
+    const res=await fetch('https://vexaro-youtube-auth.vexaro241.workers.dev/status?ts='+Date.now(),{
+      method:'GET',
+      headers:{authorization:'Bearer '+session.access_token,accept:'application/json'},
+      cache:'no-store',
+      signal:ctl.signal
+    });
+    clearTimeout(timer);
+    let d=null;
+    try{d=await res.json()}catch(_){}
+    if(!res.ok)throw new Error((d&&d.error)||('YouTube status failed ('+res.status+').'));
+    if(!d.connected){
+      el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#777">Not connected to this VEXARO account.</span><div class="actions"><button class="btn accent" onclick="connectYouTube()">CONNECT YOUTUBE</button></div></div>';
+      return;
+    }
     const x=d.connection||{};
     el.innerHTML='<div class="notice"><b>YOUTUBE CONNECTED</b><br><span style="color:#7cff9b">'+esc(x.channelTitle||'YouTube channel')+'</span>'+(x.channelHandle?'<br><small style="color:#777">'+esc(x.channelHandle)+'</small>':'')+'<div class="actions"><button class="btn" onclick="connectYouTube()">RECONNECT / CHECK</button><button class="btn" onclick="disconnectYouTube()">DISCONNECT</button></div></div>';
-  }catch(e){el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#777">Connection status unavailable.</span></div>'}
+  }catch(e){
+    const m=e?.name==='AbortError'?'YouTube connection check timed out.':(e?.message||'Connection status unavailable.');
+    el.innerHTML='<div class="notice"><b>YOUTUBE</b><br><span style="color:#ff8b8b">'+esc(m)+'</span><div class="actions"><button class="btn" onclick="loadYouTubeConnection()">RETRY</button></div></div>';
+  }
 }
 async function connectYouTube(){
   if(!session){openAuth('signin');return}
