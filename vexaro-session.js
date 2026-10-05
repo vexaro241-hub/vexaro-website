@@ -1,35 +1,57 @@
 (function(){
 'use strict';
-const IDLE_LIMIT=24*60*60*1000;
-const now=Date.now();
-const last=Number(localStorage.getItem('vexaro_last_active')||0);
-const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
-/* VEXARO rule: a browser reload starts a clean auth state and returns to Home. */
-if(nav&&nav.type==='reload'){
+/* VEXARO auth hygiene: sessions are intentionally short-lived and never survive a reload. */
+const IDLE_LIMIT=30*60*1000;
+const HIDDEN_LIMIT=15*60*1000;
+const now=()=>Date.now();
+const clearSession=()=>{
   try{
     Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)).forEach(k=>localStorage.removeItem(k));
     localStorage.removeItem('vexaro_last_active');
     localStorage.removeItem('vexaro_session_role');
   }catch(e){}
-  if(location.pathname!=='/'||location.search||location.hash){
-    location.replace('/');
-    return;
-  }
-}
-if(!last||now-last<=IDLE_LIMIT){
-  localStorage.setItem('vexaro_last_active',String(now));
-}else{
-  localStorage.removeItem('vexaro_last_active');
-  localStorage.removeItem('vexaro_session_role');
-}
-let timer=0;
-const touch=()=>{
- if(!timer)timer=setTimeout(()=>{
-  localStorage.setItem('vexaro_last_active',String(Date.now()));
-  timer=0;
- },60000);
 };
-['pointerdown','keydown','touchstart','scroll'].forEach(ev=>window.addEventListener(ev,touch,{passive:true}));
+const forceSignedOut=()=>{
+  clearSession();
+  try{sessionStorage.setItem('vexaro_signed_out','1')}catch(e){}
+  if(location.pathname!=='/'||location.search||location.hash) location.replace('/');
+  else location.reload();
+};
+const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
+/* A browser reload is always a clean, signed-out start. */
+if(nav&&nav.type==='reload'){
+  clearSession();
+  if(location.pathname!=='/'||location.search||location.hash){location.replace('/');return;}
+}
+let last=Number(localStorage.getItem('vexaro_last_active')||0);
+if(last&&now()-last>IDLE_LIMIT) clearSession();
+else localStorage.setItem('vexaro_last_active',String(now()));
+let hiddenAt=0, timer=0;
+const touch=()=>{
+  localStorage.setItem('vexaro_last_active',String(now()));
+  hiddenAt=0;
+  if(timer){clearTimeout(timer);timer=0;}
+};
+const check=()=>{
+  const lastSeen=Number(localStorage.getItem('vexaro_last_active')||0);
+  if(lastSeen&&now()-lastSeen>IDLE_LIMIT){forceSignedOut();return;}
+  if(hiddenAt&&now()-hiddenAt>HIDDEN_LIMIT){forceSignedOut();return;}
+  timer=setTimeout(check,60000);
+};
+['pointerdown','keydown','touchstart','scroll','click'].forEach(ev=>window.addEventListener(ev,touch,{passive:true}));
+window.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'){hiddenAt=now();}
+  else{
+    const lastSeen=Number(localStorage.getItem('vexaro_last_active')||0);
+    if((lastSeen&&now()-lastSeen>IDLE_LIMIT)||(hiddenAt&&now()-hiddenAt>HIDDEN_LIMIT)){forceSignedOut();return;}
+    touch();
+  }
+});
+window.addEventListener('pageshow',()=>{
+  const lastSeen=Number(localStorage.getItem('vexaro_last_active')||0);
+  if(lastSeen&&now()-lastSeen>IDLE_LIMIT) forceSignedOut();
+});
+check();
 try{
  if('serviceWorker' in navigator)navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{});
  if('caches' in window)caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))).catch(()=>{});
