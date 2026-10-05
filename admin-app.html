@@ -43,12 +43,15 @@ body{background:#030303;padding-bottom:28px}.top{position:sticky;top:0}.nav{min-
 </div></main>
 <script>
 (function(){
-  setTimeout(function(){
+  const started=Date.now();
+  const waitForAdminInit=()=>{
     const l=document.getElementById('loading'), app=document.getElementById('app');
-    if(l && app?.classList.contains('hidden') && l.textContent.includes('Checking administrator access')){
-      if(typeof showAdminSignIn==='function'){showAdminSignIn();}else{l.innerHTML='<div class="notice">Administrator sign-in could not be initialized.</div><div class="actions"><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">OPEN VEXARO MEMBERS</a></div>';}
-    }
-  },4000);
+    if(!l || !app?.classList.contains('hidden') || !l.textContent.includes('Checking administrator access')) return;
+    if(typeof showAdminSignIn==='function'){showAdminSignIn();return;}
+    if(Date.now()-started<15000){setTimeout(waitForAdminInit,500);return;}
+    l.innerHTML='<div class="notice">Administrator sign-in could not be initialized. Please retry.</div><div class="actions"><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">OPEN VEXARO MEMBERS</a></div>';
+  };
+  setTimeout(waitForAdminInit,500);
 })();
 </script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script>window.VEXARO_SUPABASE_URL="https://gyapnhfsbsnxkyfqlsxh.supabase.co";window.VEXARO_SUPABASE_KEY="sb_publishable_dF6rhER_VnFcTtvBPQzZLA_4TEAbup3";</script>
 <script>
