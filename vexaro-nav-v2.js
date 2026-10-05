@@ -1,6 +1,15 @@
 (function(){try{if(!document.querySelector('script[data-vexaro-posthog]')){var s=document.createElement('script');s.src='/vexaro-posthog.js';s.async=true;s.dataset.vexaroPosthog='1';document.head.appendChild(s)}}catch(_){}})();
 (function(){
 'use strict';
+/* VEXARO refresh-to-top fix */
+const __vexaroNavEntry=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
+if(__vexaroNavEntry&&__vexaroNavEntry.type==='reload'){
+ try{history.scrollRestoration='manual'}catch(_){ }
+ const __vexaroTop=()=>window.scrollTo({top:0,left:0,behavior:'auto'});
+ requestAnimationFrame(__vexaroTop);
+ setTimeout(__vexaroTop,80);
+}
+
 /* VEXARO site-wide rule: browser refresh returns to Home.
    Normal navigation and back/forward history are unchanged. */
 const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
