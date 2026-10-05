@@ -190,8 +190,13 @@ async function boot(){
 }
 async function openAdminApp(){
   if(!session?.access_token||!session?.refresh_token)return;
+  try{
+    const identity=window.VEXARO_IDENTITIES;
+    const admin=identity?.list?.find(x=>x.identity_type==='admin');
+    if(admin){await identity.switchTo(admin.id);return;}
+  }catch(_){}
   const target='https://vexaro-admin.vexaro241.workers.dev/?handoff=1#vexaro_access='+encodeURIComponent(session.access_token)+'&vexaro_refresh='+encodeURIComponent(session.refresh_token);
-  location.href=target;
+  location.replace(target);
 }
 async function signOut(){
   if(!sb)return;
