@@ -130,6 +130,49 @@ body{background:#020203}
  .clip,.clip.big{min-height:360px}
  .poster-bar .inner{grid-template-columns:repeat(5,1fr)}
 }
+/* VEXARO DESIGN PASS — cinematic esports website */
+body{
+ background:
+   linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+   linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),
+   radial-gradient(circle at 50% -10%,rgba(225,6,0,.22),transparent 30%),
+   #030303;
+ background-size:48px 48px,48px 48px,auto;
+}
+.topbar{background:rgba(3,3,3,.86);border-bottom:1px solid rgba(225,6,0,.22)}
+.brand{gap:12px}
+.brand span{letter-spacing:.16em}
+.links{gap:26px}
+.btn{border-radius:2px;position:relative;overflow:hidden}
+.btn.accent{background:linear-gradient(110deg,#e10600,#9c0000);box-shadow:0 10px 35px rgba(225,6,0,.22)}
+.hero{min-height:940px}
+.hero:before{background:linear-gradient(90deg,rgba(2,2,2,.98) 0%,rgba(2,2,2,.84) 35%,rgba(2,2,2,.34) 70%,rgba(2,2,2,.58) 100%),url("/hero.webp?v=20261005-2") center/cover no-repeat}
+.hero:after{background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 48%,rgba(0,0,0,.88)),linear-gradient(90deg,transparent 0 70%,rgba(225,6,0,.07) 100%)}
+h1{font-weight:950;letter-spacing:-.085em}
+.eyebrow{letter-spacing:.28em}
+.section{position:relative}
+.section:before{content:"";display:block;width:46px;height:2px;background:#e10600;margin-bottom:24px;box-shadow:0 0 18px rgba(225,6,0,.45)}
+.hq-main,.hq-card,.code-card,.clip,.loadout,.social,.live,.livecard{
+ border-radius:2px;
+}
+.hq-main,.hq-card,.code-card,.loadout,.social{
+ background:linear-gradient(145deg,rgba(20,20,23,.94),rgba(6,6,7,.96));
+}
+.hq-main,.clip.big{border-left:2px solid rgba(225,6,0,.42)}
+.hq-card:hover,.social:hover,.hq-main:hover{border-color:rgba(225,6,0,.62)}
+.clip{border-radius:2px}
+.clip .play{border-radius:2px;transform:translate(-50%,-50%) rotate(45deg)}
+.clip .play::first-letter{display:inline-block}
+.loadout .tag{border-radius:2px}
+.live{border-radius:2px}
+.livecard{border-radius:2px}
+.social{border-radius:2px}
+.footer{background:linear-gradient(180deg,transparent,rgba(225,6,0,.035))}
+@media(max-width:850px){
+ .links{gap:16px}
+ .hero{min-height:820px}
+ .section:before{margin-bottom:18px}
+}
 </style></head>
 <body>
 <header class="topbar"><div class="wrap nav"><a class="brand" href="#top" aria-label="VEXARO home"><svg class="vxmark" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="vxg2" x1="8" y1="6" x2="92" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="#ff3028"/><stop offset=".55" stop-color="#e10600"/><stop offset="1" stop-color="#780000"/></linearGradient></defs><path d="M8 10 24 66 50 35 76 66 92 10" stroke="url(#vxg2)" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter"/><path d="M25 10 50 41 75 10" stroke="#fff" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter"/><path d="M37 50 50 66 63 50" stroke="#e10600" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"/></svg><span>VEXARO</span></a><nav class="links"><a href="#top">Home</a><a href="#hq">HQ</a><a href="clips.html">Clips</a><a href="loadouts.html">Loadouts</a><a href="settings.html">Settings</a><a href="live/">Live</a><a href="community.html">Community</a><a href="marketplace.html">Marketplace</a><a href="membership.html">PRO</a></nav><div class="navstatus"><a class="admin-chip" id="adminChip" href="admin-app.html" style="display:none">ADMIN HUB</a></div><button class="hamb" id="hamb" aria-label="Open menu">☰</button></div></header>
