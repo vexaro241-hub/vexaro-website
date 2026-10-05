@@ -6,8 +6,8 @@ const OUT = "qa-results";
 mkdirSync(OUT, { recursive: true });
 
 const targets = [
-  { name: "main", url: "https://vexaro241.workers.dev/" },
-  { name: "member", url: "https://vexaro-members.vexaro241.workers.dev/community.html?view=feed" },
+  { name: "main", url: "https://vexaro-website.vexaro241.workers.dev/" },
+  { name: "member", url: "https://vexaro-members.vexaro241.workers.dev/?view=feed" },
   { name: "admin", url: "https://vexaro-admin.vexaro241.workers.dev/" }
 ];
 
