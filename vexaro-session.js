@@ -19,8 +19,9 @@ const forceSignedOut=()=>{
   if(location.pathname==='/'&&!location.search&&!location.hash) location.reload();
 };
 const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
-/* A browser reload is always a clean, signed-out start. */
-if(nav&&nav.type==='reload'){
+/* Member/main apps intentionally sign out on reload. Admin keeps its Supabase session so the secure Admin profile can survive reloads/profile restores. */
+const isAdminApp=location.hostname==='vexaro-admin.vexaro241.workers.dev';
+if(nav&&nav.type==='reload'&&!isAdminApp){
   clearSession();
 }
 let last=Number(localStorage.getItem('vexaro_last_active')||0);
