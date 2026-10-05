@@ -184,6 +184,27 @@ function mobileMenu(){
  n.querySelectorAll('a').forEach(a=>a.onclick=close);
  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
 }
+/* VEXARO install + mobile utility controls */
+let __vexaroInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();__vexaroInstallPrompt=e;});
+function setupVexaroUtilities(){
+ const modal=document.getElementById('installModal');
+ const openInstall=async()=>{
+  if(__vexaroInstallPrompt){try{await __vexaroInstallPrompt.prompt();await __vexaroInstallPrompt.userChoice}catch(_){ } __vexaroInstallPrompt=null;return;}
+  if(modal)modal.classList.add('open');
+ };
+ const closeInstall=()=>{if(modal)modal.classList.remove('open');};
+ ['installApp','showIos'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('click',openInstall);});
+ ['closeInstall','closeInstall2'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('click',closeInstall);});
+ if(modal)modal.addEventListener('click',e=>{if(e.target===modal)closeInstall();});
+ const signOut=document.getElementById('mobileSignOut');
+ if(signOut)signOut.addEventListener('click',async e=>{
+  e.preventDefault();
+  try{if(window.sb?.auth)await window.sb.auth.signOut();}catch(_){ }
+  try{Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)).forEach(k=>localStorage.removeItem(k));}catch(_){ }
+  location.reload();
+ });
+}
 cleanupLegacyCache();
 cleanHome();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mobileMenu,{once:true});else mobileMenu();
