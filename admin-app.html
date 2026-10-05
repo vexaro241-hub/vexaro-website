@@ -68,7 +68,15 @@ function showAdminSignIn(){
     try{
       const r=await sb.auth.signInWithPassword({email,password});
       if(r.error)throw r.error;
-      location.reload();
+      uid=r.data?.user?.id;
+      if(!uid)throw new Error('Sign in succeeded but no administrator user was returned.');
+      try{await window.VEXARO_IDENTITIES?.init(sb,uid,'admin');}catch(_){}
+      const p=await sb.from('profiles').select('role').eq('id',uid).single();
+      if(p.error)throw p.error;
+      if(String(p.data?.role||'').toLowerCase()!=='admin')throw new Error('This account does not have administrator access.');
+      $('loading').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      try{await reloadAll()}catch(e){note(e?.message||'Some admin data could not be loaded yet.');}
     }catch(e){m.textContent=e?.message||'Sign in failed.';m.classList.remove('hidden');b.disabled=false;b.textContent='SIGN IN AS ADMIN'}
   };
 }
@@ -115,5 +123,8 @@ if(result?.error)throw result.error;
 const session=result?.data?.session;
 if(!session?.user){showAdminSignIn();return;}
 uid=session.user.id;
-try{await window.VEXARO_IDENTITIES?.init(sb,uid,'admin');}catch(_){}try{window.VEXARO_POSTHOG_IDENTIFY(uid,{app:'admin',role:'admin'});}catch(_){}const p=await Promise.race([sb.from('profiles').select('role').eq('id',uid).single(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Administrator profile check timed out.')),5000))]);if(p.error)throw p.error;if(String(p.data?.role||'').toLowerCase()!=='admin')throw new Error('Admin access required.');$('loading').classList.add('hidden');$('app').classList.remove('hidden');try{await reloadAll()}catch(e){note(e?.message||'Some admin data could not be loaded yet.');}}catch(e){fail(e?.message||'Unable to verify administrator access.')}})();
+try{await window.VEXARO_IDENTITIES?.init(sb,uid,'admin');}catch(_){}try{window.VEXARO_POSTHOG_IDENTIFY(uid,{app:'admin',role:'admin'});}catch(_){}const p=await Promise.race([sb.from('profiles').select('role').eq('id',uid).single(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Administrator profile check timed out.')),5000))]);if(p.error)throw p.error;if(String(p.data?.role||'').toLowerCase()!=='admin')throw new Error('Admin access required.');$('loading').classList.add('hidden');$('app').classList.remove('hidden');try{await reloadAll()}catch(e){note(e?.message||'Some admin data could not be loaded yet.');}}catch(e){
+  if(String(e?.message||'').includes('Administrator session check timed out.')){showAdminSignIn();return;}
+  fail(e?.message||'Unable to verify administrator access.')
+}})();
 </script></body></html>
