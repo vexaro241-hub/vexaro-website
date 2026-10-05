@@ -173,6 +173,40 @@ h1{font-weight:950;letter-spacing:-.085em}
  .hero{min-height:820px}
  .section:before{margin-bottom:18px}
 }
+</style><style id="vexaro-visual-v4">
+/* VEXARO VISUAL V4 — deliberately obvious homepage redesign */
+.poster{background:#010101}
+.poster:before{transform:scale(1.055);filter:saturate(1.45) contrast(1.2)}
+.poster:after{background:
+ linear-gradient(115deg,transparent 0 57%,rgba(225,6,0,.30) 57.3%,rgba(225,6,0,.08) 61%,transparent 61.4%),
+ linear-gradient(180deg,rgba(0,0,0,.05),transparent 42%,rgba(0,0,0,.92));
+}
+.poster-grid:after{display:block;content:"VXR / 2026";position:absolute;right:3vw;top:23%;writing-mode:vertical-rl;transform:rotate(180deg);color:rgba(255,255,255,.16);font-size:10px;font-weight:1000;letter-spacing:.35em}
+.poster-content{border-left:3px solid #e10600;padding-left:30px}
+.poster-brand{font-size:clamp(92px,15vw,215px);transform:skewX(-5deg);transform-origin:left center;text-shadow:10px 10px 0 rgba(225,6,0,.78),0 0 85px rgba(225,6,0,.3)}
+.poster-sub{font-size:12px;letter-spacing:.30em}
+.poster-copy{max-width:500px;font-size:15px;color:#d0d0d4}
+.poster-actions .btn{min-width:170px;border-radius:2px}
+.poster-bar{border-top:2px solid #e10600;background:rgba(0,0,0,.88)}
+.poster-link{padding:19px 16px;border-right:1px solid rgba(255,255,255,.12)}
+.poster-link b{font-size:9px}
+.section{background:linear-gradient(180deg,#030303 0%,#070708 100%)}
+.section:nth-of-type(even){background:linear-gradient(135deg,#100303 0%,#030303 38%,#080809 100%)}
+.section-head{border-left:4px solid #e10600;padding-left:18px;border-bottom:0}
+.section-head:before{display:none}
+.section h2{font-size:clamp(48px,6vw,84px);letter-spacing:-.065em}
+.hq-main,.hq-card,.code-card,.clip,.loadout,.social,.live,.livecard{border-radius:2px}
+.hq-main{box-shadow:0 35px 90px rgba(0,0,0,.6),inset 0 0 90px rgba(225,6,0,.06)}
+.clip,.loadout,.social,.code-card{box-shadow:0 22px 70px rgba(0,0,0,.5)}
+@media(max-width:850px){
+ .poster-content{border-left:2px solid #e10600;padding-left:16px}
+ .poster-brand{font-size:clamp(74px,21vw,125px)}
+ .poster-grid:after{right:8px;top:20%;font-size:7px}
+ .poster-bar{border-top-width:1px}
+ .poster-link{padding:14px 5px}
+ .section-head{padding-left:12px;border-left-width:3px}
+ .section h2{font-size:clamp(42px,13vw,66px)}
+}
 </style></head>
 <body>
 <header class="topbar"><div class="wrap nav"><a class="brand" href="#top" aria-label="VEXARO home"><svg class="vxmark" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="vxg2" x1="8" y1="6" x2="92" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="#ff3028"/><stop offset=".55" stop-color="#e10600"/><stop offset="1" stop-color="#780000"/></linearGradient></defs><path d="M8 10 24 66 50 35 76 66 92 10" stroke="url(#vxg2)" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter"/><path d="M25 10 50 41 75 10" stroke="#fff" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter"/><path d="M37 50 50 66 63 50" stroke="#e10600" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"/></svg><span>VEXARO</span></a><nav class="links"><a href="#top">Home</a><a href="#hq">HQ</a><a href="clips.html">Clips</a><a href="loadouts.html">Loadouts</a><a href="settings.html">Settings</a><a href="live/">Live</a><a href="community.html">Community</a><a href="marketplace.html">Marketplace</a><a href="membership.html">PRO</a></nav><div class="navstatus"><a class="admin-chip" id="adminChip" href="admin-app.html" style="display:none">ADMIN HUB</a></div><button class="hamb" id="hamb" aria-label="Open menu">☰</button></div></header>
