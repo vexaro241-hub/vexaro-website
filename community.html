@@ -114,7 +114,6 @@ async function applySession(s){
     if(isAdmin)$('openAdminAppBtn').onclick=openAdminApp;
     localStorage.setItem('vexaro_last_active',String(Date.now()));
     localStorage.setItem('vexaro_session_role',isAdmin?'admin':'member');
-    const activeIdentity=window.VEXARO_IDENTITIES?.active||null; const creatorMode=!activeIdentity || activeIdentity?.identity_type==='creator'; $('postComposer').classList.toggle('hidden',!creatorMode); $('signedOutNotice').classList.add('hidden'); if(!creatorMode){$('signedOutNotice').classList.remove('hidden');$('signedOutNotice').innerHTML='<div class="notice">👑 Admin mode is active. Admin mode cannot publish creator posts. <button class="btn mini accent" type="button" onclick="window.VEXARO_IDENTITIES.set(window.VEXARO_IDENTITIES.list.find(x=>x.identity_type===\'creator\')?.id)">Switch to VEXARO Creator</button></div>';} 
     const activeIdentity=window.VEXARO_IDENTITIES?.active||null;
     const creatorMode=activeIdentity?.identity_type==='creator';
     const publicName=creatorMode?(activeIdentity.display_name||'VEXARO'):(profile.display_name||'VEXARO MEMBER');
