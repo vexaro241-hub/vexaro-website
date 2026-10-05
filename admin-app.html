@@ -45,7 +45,7 @@ body{background:#030303;padding-bottom:28px}.top{position:sticky;top:0}.nav{min-
 (function(){
   setTimeout(function(){
     const l=document.getElementById('loading'), app=document.getElementById('app');
-    if(l && !app?.classList.contains('hidden') && l.textContent.includes('Checking administrator access')){
+    if(l && app?.classList.contains('hidden') && l.textContent.includes('Checking administrator access')){
       l.innerHTML='<div class="notice">Administrator verification did not start correctly. The app has stopped waiting so you are not left on this screen.</div><div class="actions"><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">OPEN VEXARO MEMBERS</a><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">MEMBER HUB</a></div>';
     }
   },4000);
