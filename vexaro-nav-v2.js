@@ -11,7 +11,7 @@ if(nav&&nav.type==='reload'&&(location.pathname!=='/'||location.search||location
 const links=[
  ['HOME','/'],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],
  ['SETTINGS','/settings.html'],['LIVE','/live/'],['COMMUNITY','/community.html'],
- ['MARKETPLACE','/marketplace.html'],['PRO','/membership.html'],['ABOUT','/about.html'],
+ ['MARKETPLACE','/marketplace.html'],['PROFILE','/community.html?view=profile'],['PRO','/membership.html'],['ABOUT','/about.html'],
  ['APP','/app.html'],['SEARCH','/search.html']
 ];
 function cleanupLegacyCache(){
