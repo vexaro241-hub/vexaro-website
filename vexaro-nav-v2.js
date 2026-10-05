@@ -168,7 +168,6 @@ function mobileMenu(){
   };
   menu.setAttribute('aria-hidden','true');
   button.addEventListener('click',toggle,{passive:false});
-  button.addEventListener('touchend',toggle,{passive:false});
   menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));
   document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
   document.addEventListener('click',e=>{if(menu.classList.contains('open')&&!menu.contains(e.target)&&e.target!==button)close();});
