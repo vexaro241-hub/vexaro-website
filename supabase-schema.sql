@@ -49,6 +49,9 @@ create table if not exists public.loadouts (
   weapon text not null check (char_length(weapon) between 1 and 80),
   category text not null default 'Warzone' check (char_length(category) <= 40),
   attachments jsonb not null default '[]'::jsonb,
+  perks jsonb not null default '[]'::jsonb,
+  equipment jsonb not null default '[]'::jsonb,
+  image_url text,
   notes text not null default '' check (char_length(notes) <= 500),
   created_at timestamptz not null default now()
 );
