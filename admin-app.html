@@ -46,9 +46,9 @@ body{background:#030303;padding-bottom:28px}.top{position:sticky;top:0}.nav{min-
   setTimeout(function(){
     const l=document.getElementById('loading'), app=document.getElementById('app');
     if(l && !app?.classList.contains('hidden') && l.textContent.includes('Checking administrator access')){
-      l.innerHTML='<div class="notice">Administrator verification did not start correctly. The app has stopped waiting so you are not left on this screen.</div><div class="actions"><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">OPEN VEXARO MEMBERS</a><a class="btn" href="https://vexaro241.workers.dev/">BACK TO VEXARO</a></div>';
+      l.innerHTML='<div class="notice">Administrator verification did not start correctly. The app has stopped waiting so you are not left on this screen.</div><div class="actions"><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">OPEN VEXARO MEMBERS</a><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">MEMBER HUB</a></div>';
     }
-  },6500);
+  },4000);
 })();
 </script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script>window.VEXARO_SUPABASE_URL="https://gyapnhfsbsnxkyfqlsxh.supabase.co";window.VEXARO_SUPABASE_KEY="sb_publishable_dF6rhER_VnFcTtvBPQzZLA_4TEAbup3";</script>
 <script>
@@ -109,7 +109,7 @@ if(access&&refresh){
 }
 const result=await Promise.race([
   sb.auth.getSession(),
-  new Promise((_,reject)=>setTimeout(()=>reject(new Error('Administrator session check timed out.')),7000))
+  new Promise((_,reject)=>setTimeout(()=>reject(new Error('Administrator session check timed out.')),4000))
 ]);
 if(result?.error)throw result.error;
 const session=result?.data?.session;
