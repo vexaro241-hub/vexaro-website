@@ -9,7 +9,7 @@ if(nav&&nav.type==='reload'&&(location.pathname!=='/'||location.search||location
  return;
 }
 const isMemberApp=/vexaro-members\.vexaro241\.workers\.dev$/i.test(location.hostname);
-const homeHref=isMemberApp?'community.html?view=feed':'/';
+const homeHref=isMemberApp?'community.html?view=home':'/';
 const links=[
  ['HOME',homeHref],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],
  ['SETTINGS','/settings.html'],['LIVE','/live/'],['COMMUNITY','/community.html'],
