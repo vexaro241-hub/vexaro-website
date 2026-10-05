@@ -14,14 +14,14 @@ const clearSession=()=>{
 const forceSignedOut=()=>{
   clearSession();
   try{sessionStorage.setItem('vexaro_signed_out','1')}catch(e){}
-  if(location.pathname!=='/'||location.search||location.hash) location.replace('/');
-  else location.reload();
+  /* Sign out in-place. Do not redirect: app shells must remain on their own app. */
+  try{window.dispatchEvent(new CustomEvent('vexaro:signed-out'))}catch(e){}
+  if(location.pathname==='/'&&!location.search&&!location.hash) location.reload();
 };
 const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
 /* A browser reload is always a clean, signed-out start. */
 if(nav&&nav.type==='reload'){
   clearSession();
-  if(location.pathname!=='/'||location.search||location.hash){location.replace('/');return;}
 }
 let last=Number(localStorage.getItem('vexaro_last_active')||0);
 if(last&&now()-last>IDLE_LIMIT) clearSession();
