@@ -89,7 +89,7 @@ async function applySession(s){
     $('sideTitle').textContent='COMMUNITY.';$('sideContent').textContent='Create an account to post, build a profile and share your loadouts/settings.';
     
     $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
-    showView('feed');
+    showView(currentView||'home');
     return;
   }
   const {data,error}=await sb.from('profiles').select('id,username,display_name,bio,avatar_url,created_at,role').eq('id',session.user.id).maybeSingle();
