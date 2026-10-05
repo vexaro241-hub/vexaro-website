@@ -48,7 +48,7 @@ window.VEXARO_IDENTITIES={
     target+='?handoff=1#vexaro_access='+encodeURIComponent(s.access_token)+'&vexaro_refresh='+encodeURIComponent(s.refresh_token);
    }
   }catch(_){}
-  location.href=target;
+  location.replace(target);
  },
  render(){
   const el=document.getElementById('identitySwitcher');
