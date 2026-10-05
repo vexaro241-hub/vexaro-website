@@ -184,11 +184,17 @@ if(access&&refresh){
   try{history.replaceState({},document.title,location.pathname+location.search)}catch(_){}
   if(handoff.error)throw handoff.error;
 }
-const result=await Promise.race([
-  sb.auth.getSession(),
-  new Promise((_,reject)=>setTimeout(()=>reject(new Error('Administrator session check timed out.')),4000))
-]);
-if(result?.error)throw result.error;
+let result;
+try{
+  result=await Promise.race([
+    sb.auth.getSession(),
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error('Administrator session check timed out.')),8000))
+  ]);
+}catch(_){
+  showAdminSignIn();
+  return;
+}
+if(result?.error){showAdminSignIn();return;}
 const session=result?.data?.session;
 if(!session?.user){showAdminSignIn();return;}
 uid=session.user.id;
