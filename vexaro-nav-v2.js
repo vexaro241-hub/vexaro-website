@@ -207,5 +207,5 @@ function setupVexaroUtilities(){
 }
 cleanupLegacyCache();
 cleanHome();
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mobileMenu,{once:true});else mobileMenu();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{mobileMenu();setupVexaroUtilities();},{once:true});else{mobileMenu();setupVexaroUtilities();}
 })();
