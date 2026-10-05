@@ -22,7 +22,7 @@ a:visited{color:inherit;text-decoration:none}
 .tab.active:after{content:"";position:absolute;left:6px;right:6px;bottom:2px;height:2px;background:var(--accent);border-radius:2px}
 
 /* ADMIN APP SHELL */
-body{background:#030303;padding-bottom:28px}.top{position:sticky;top:0}.nav{min-height:64px}.brand{font-size:13px}.brand span{font-size:9px}.hero{padding:22px 0 12px}.hero h1{font-size:clamp(34px,8vw,58px);margin:6px 0}.hero p{font-size:12px;max-width:680px}.stats{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:12px 0 18px}.stat{padding:11px;border-radius:8px}.stat small{font-size:8px}.num{font-size:22px}.toolbar{position:sticky;top:64px;z-index:8;margin:0 -12px 14px;padding:8px 12px;background:rgba(5,5,5,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow-x:auto;flex-wrap:nowrap}.toolbar .tab,.toolbar .btn{white-space:nowrap;flex:0 0 auto}.panel{border-radius:10px;padding:14px;margin-bottom:12px}.panel h2{font-size:18px}.section{min-height:120px}.item{border-radius:8px}.btn{border-radius:7px}.identity-admin{font-size:10px}@media(max-width:800px){.wrap{width:min(100% - 18px,1180px)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stats .stat:first-child{grid-column:span 2}.toolbar{top:58px}.nav{min-height:58px}.hero{padding-top:18px}.nav>.wrap{} }@media(min-width:801px){.toolbar{border-radius:10px;margin-left:0;margin-right:0}.stats{grid-template-columns:repeat(5,1fr)}}
+body{background:#030303;padding-bottom:28px}.top{position:sticky;top:0}.nav{min-height:64px}.brand{font-size:13px}.brand span{font-size:9px}.hero{padding:22px 0 12px}.hero h1{font-size:clamp(34px,8vw,58px);margin:6px 0}.hero p{font-size:12px;max-width:680px}.stats{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:12px 0 18px}.stat{padding:11px;border-radius:8px}.stat small{font-size:8px}.num{font-size:22px}.toolbar{position:relative;z-index:8;margin:0 -12px 14px;padding:8px 12px;background:rgba(5,5,5,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow-x:auto;flex-wrap:nowrap}.toolbar .tab,.toolbar .btn{white-space:nowrap;flex:0 0 auto}.panel{border-radius:10px;padding:14px;margin-bottom:12px}.panel h2{font-size:18px}.section{min-height:120px}.item{border-radius:8px}.btn{border-radius:7px}.identity-admin{font-size:10px}@media(max-width:800px){.wrap{width:min(100% - 18px,1180px)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stats .stat:first-child{grid-column:span 2}.toolbar{top:auto}.nav{min-height:58px}.hero{padding-top:18px}.nav>.wrap{} }@media(min-width:801px){.toolbar{border-radius:10px;margin-left:0;margin-right:0}.stats{grid-template-columns:repeat(5,1fr)}}
 
 /* VEXARO ADMIN APP — mobile app shell hardening */
 html,body{width:100%;max-width:100%;min-width:0;overflow-x:hidden!important}
@@ -54,7 +54,7 @@ body{overscroll-behavior-x:none}
  .hero p{font-size:12px!important}
  .stats{gap:7px!important;margin:8px 0 14px!important}
  .stat{border-radius:10px!important;background:#0b0b0e!important;box-shadow:inset 0 0 20px rgba(225,6,0,.025)!important}
- .toolbar{top:58px!important;margin:0 -10px 12px!important;padding:8px 10px!important;border-radius:0!important;background:rgba(8,8,10,.97)!important;box-shadow:0 8px 20px rgba(0,0,0,.35)!important}
+ .toolbar{top:auto!important;margin:0 -10px 12px!important;padding:8px 10px!important;border-radius:0!important;background:rgba(8,8,10,.97)!important;box-shadow:0 8px 20px rgba(0,0,0,.35)!important}
  .toolbar .tab,.toolbar .btn{height:38px!important;min-height:38px!important;border-radius:9px!important;padding:7px 11px!important}
  .toolbar .tab.active{background:rgba(225,6,0,.12)!important;border:1px solid rgba(225,6,0,.35)!important;color:#fff!important}
  .toolbar .tab.active:after{display:none!important}
@@ -175,6 +175,18 @@ function showAdminSection(section){
   if(target==='profile')loadAdminProfile().catch(e=>note(e?.message||'Profile could not be loaded.'));
 }
 document.getElementById('adminHeaderHome')?.addEventListener('click',()=>showAdminSection('overview'));
+document.getElementById('openMemberAppBtn')?.addEventListener('click',async()=>{
+  const popup=window.open('about:blank','_blank');
+  let target='https://vexaro-members.vexaro241.workers.dev/?view=feed';
+  try{
+    const session=(await sb?.auth.getSession())?.data?.session;
+    if(session?.access_token&&session?.refresh_token){
+      target+='&handoff=1#vexaro_access='+encodeURIComponent(session.access_token)+'&vexaro_refresh='+encodeURIComponent(session.refresh_token);
+    }
+  }catch(_){}
+  if(popup) popup.location.href=target;
+  else location.href=target;
+});
 document.getElementById('adminHomeBtn')?.addEventListener('click',()=>showAdminSection('overview'));
 document.querySelectorAll('.toolbar [data-section]').forEach(b=>b.addEventListener('click',()=>showAdminSection(b.dataset.section)));
 document.getElementById('adminSearchBtn')?.addEventListener('click',async()=>{const q=$('adminSearchInput').value.trim();if(!q){$('adminSearchResults').innerHTML='<div class="empty">Enter a search term.</div>';return}const like='%'+q+'%';const [m,p,l]=await Promise.all([sb.from('profiles').select('username,display_name,role').or('username.ilike.'+like+',display_name.ilike.'+like).limit(20),sb.from('posts').select('body,created_at').ilike('body',like).limit(20),sb.from('marketplace_listings').select('title,description,status,created_at').or('title.ilike.'+like+',description.ilike.'+like).limit(20)]);if(m.error||p.error||l.error){note((m.error||p.error||l.error).message);return}const rows=[];(m.data||[]).forEach(x=>rows.push(item('@'+(x.username||''),'MEMBER · '+(x.role||''),x.display_name||'')));(p.data||[]).forEach(x=>rows.push(item('Community post',fmt(x.created_at),x.body||'')));(l.data||[]).forEach(x=>rows.push(item(x.title,fmt(x.created_at),x.description||'', '', x.status||'')));$('adminSearchResults').innerHTML=rows.length?rows.join(''):'<div class="empty">No matches found.</div>'});document.getElementById('adminSearchInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('adminSearchBtn')?.click()});
