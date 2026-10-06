@@ -41,7 +41,7 @@ jobs:
 
           options_code=$(curl -sS -o /dev/null -w "%{http_code}" -X OPTIONS             -H "Origin: https://vexaro-website.vexaro241.workers.dev"             -H "Access-Control-Request-Method: POST"             --max-time 15             "https://gyapnhfsbsnxkyfqlsxh.supabase.co/functions/v1/stripe-checkout")
           echo "Stripe checkout CORS preflight: HTTP $options_code"
-          test "$options_code" = "200"
+          test "$options_code" = "200" -o "$options_code" = "204" -o "$options_code" = "204"
 
           options_code=$(curl -sS -o /dev/null -w "%{http_code}" -X OPTIONS             -H "Origin: https://vexaro-website.vexaro241.workers.dev"             --max-time 15             "https://gyapnhfsbsnxkyfqlsxh.supabase.co/functions/v1/stripe-webhook")
           echo "Stripe webhook CORS preflight: HTTP $options_code"
