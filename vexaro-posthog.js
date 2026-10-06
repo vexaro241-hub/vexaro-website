@@ -7,11 +7,11 @@
     window.posthog.init(TOKEN,{
       api_host:HOST,
       defaults:"2026-05-30",
-      autocapture:true,
+      autocapture:false,
       capture_pageview:true,
       capture_pageleave:true,
       person_profiles:"identified_only",
-      session_recording:{maskAllInputs:true}
+      session_recording:false
     });
     window.posthog.capture("vexaro_app_loaded",{app:document.title||"VEXARO"});
   }
@@ -19,7 +19,7 @@
     var s=document.createElement("script");
     s.src="https://eu-assets.i.posthog.com/static/array.js";
     s.async=true;
-    s.onload=start;
+    s.onload=function(){setTimeout(start,2500)};
     document.head.appendChild(s);
   }else start();
   window.VEXARO_POSTHOG_IDENTIFY=function(id,props){
