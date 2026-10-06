@@ -4,6 +4,10 @@ on:
   push:
     branches: [production]
 
+concurrency:
+  group: vexaro-production
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
