@@ -50,7 +50,8 @@ window.addEventListener('pageshow',()=>{
 });
 check();
 try{
- if('serviceWorker' in navigator)navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{});
- if('caches' in window)caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))).catch(()=>{});
+  if('serviceWorker' in navigator && !localStorage.getItem('vexaro_sw_cleanup_v1')){
+    navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))).then(()=>localStorage.setItem('vexaro_sw_cleanup_v1','1')).catch(()=>{});
+  }
 }catch(e){}
 })();
