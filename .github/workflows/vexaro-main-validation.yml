@@ -15,9 +15,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate site structure
         run: node scripts/validate-vexaro.mjs
-      - name: Check required security/config files
+      - name: Check required future-ready files
         run: |
           test -f .github/dependabot.yml
           test -f docs/RELEASE-CHECKLIST.md
           test -f docs/DISASTER-RECOVERY.md
           test -f docs/SECURITY-RUNBOOK.md
+          test -f docs/OPERATIONS.md
+          test -f scripts/site-audit.mjs
+          test -f robots.txt
+          test -f sitemap.xml
