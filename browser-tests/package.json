@@ -1,0 +1,9 @@
+{
+  "name": "vexaro-live-browser-tests",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@cloudflare/puppeteer": "latest",
+    "wrangler": "latest"
+  }
+}

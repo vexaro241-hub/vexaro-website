@@ -1,0 +1,28 @@
+name: VEXARO Live Browser Test
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vexaro-live-browser
+  cancel-in-progress: true
+
+jobs:
+  live-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Run Cloudflare Browser Run suite
+        env:
+          TEST_TOKEN: ${{ secrets.VEXARO_BROWSER_TEST_TOKEN }}
+          BROWSER_TEST_URL: ${{ secrets.VEXARO_BROWSER_TEST_URL }}
+        run: |
+          set -euo pipefail
+          test -n "$TEST_TOKEN"
+          test -n "$BROWSER_TEST_URL"
+          curl --fail-with-body --silent --show-error             --request POST             --header "Authorization: Bearer $TEST_TOKEN"             "$BROWSER_TEST_URL/run?target=production"
