@@ -11,33 +11,54 @@ permissions:
 jobs:
   health:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Check Website
         run: |
-          set -e
-          code=$(curl -L -sS -o /tmp/vexaro-home.html -w "%{http_code}" --max-time 20 https://vexaro-website.vexaro241.workers.dev/)
+          set -euo pipefail
+          code=$(curl -L -sS -o /tmp/vexaro-home.html -w "%{http_code}" --max-time 15 https://vexaro-website.vexaro241.workers.dev/)
           echo "Website HTTP $code"
           test "$code" = "200"
           grep -qi "VEXARO" /tmp/vexaro-home.html
 
       - name: Check Members
         run: |
-          set -e
-          code=$(curl -L -sS -o /tmp/vexaro-members.html -w "%{http_code}" --max-time 20 https://vexaro-members.vexaro241.workers.dev/)
+          set -euo pipefail
+          code=$(curl -L -sS -o /tmp/vexaro-members.html -w "%{http_code}" --max-time 15 https://vexaro-members.vexaro241.workers.dev/)
           echo "Members HTTP $code"
           test "$code" = "200"
           grep -qi "VEXARO" /tmp/vexaro-members.html
 
       - name: Check Admin
         run: |
-          set -e
-          code=$(curl -L -sS -o /tmp/vexaro-admin.html -w "%{http_code}" --max-time 20 https://vexaro-admin.vexaro241.workers.dev/)
+          set -euo pipefail
+          code=$(curl -L -sS -o /tmp/vexaro-admin.html -w "%{http_code}" --max-time 15 https://vexaro-admin.vexaro241.workers.dev/)
           echo "Admin HTTP $code"
           test "$code" = "200"
           grep -qi "VEXARO" /tmp/vexaro-admin.html
 
       - name: Check Website health endpoint
         run: |
-          set -e
-          curl --fail --silent --show-error --max-time 20 https://vexaro-website.vexaro241.workers.dev/health
-          echo
+          set -euo pipefail
+          body=$(curl --fail --silent --show-error --max-time 15 https://vexaro-website.vexaro241.workers.dev/health)
+          echo "$body" | grep -q '"status":"ok"'
+          echo "$body"
+
+      - name: Check API and security headers
+        run: |
+          set -euo pipefail
+          for url in             "https://vexaro-website.vexaro241.workers.dev/"             "https://vexaro-members.vexaro241.workers.dev/"             "https://vexaro-admin.vexaro241.workers.dev/"; do
+            headers=$(curl -L -sS -I --max-time 15 "$url")
+            echo "$headers"
+            echo "$headers" | grep -qi '^x-content-type-options: nosniff'
+            echo "$headers" | grep -qi '^referrer-policy:'
+          done
+
+      - name: Check critical routes
+        run: |
+          set -euo pipefail
+          for path in             "/community.html"             "/settings.html"             "/notifications.html"; do
+            code=$(curl -L -sS -o /dev/null -w "%{http_code}" --max-time 15 "https://vexaro-members.vexaro241.workers.dev$path")
+            echo "$path HTTP $code"
+            test "$code" = "200"
+          done
