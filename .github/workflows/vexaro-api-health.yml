@@ -1,6 +1,8 @@
 name: VEXARO API & Integration Health
 
 on:
+  push:
+    branches: ["production"]
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
