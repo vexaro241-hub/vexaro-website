@@ -1,0 +1,26 @@
+name: VEXARO Production Health Monitor
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check production health
+        run: |
+          set -e
+          curl --fail --silent --show-error --max-time 20 https://vexaro-website.vexaro241.workers.dev/health
+          echo
+      - name: Check critical production page
+        run: |
+          set -e
+          code=$(curl -L -sS -o /tmp/vexaro-home.html -w "%{http_code}" --max-time 20 https://vexaro-website.vexaro241.workers.dev/)
+          echo "HTTP $code"
+          test "$code" = "200"
+          grep -qi "VEXARO" /tmp/vexaro-home.html
