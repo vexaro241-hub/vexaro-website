@@ -1,0 +1,22 @@
+name: VEXARO Production Guard
+
+on:
+  push:
+    branches: [production]
+
+permissions:
+  contents: read
+
+jobs:
+  production-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate production branch
+        run: node scripts/validate-vexaro.mjs
+      - name: Verify no legacy sign-in route
+        run: |
+          if grep -R "community.html?signin=1" --exclude-dir=.git .; then
+            echo "Legacy sign-in route found in production."
+            exit 1
+          fi
