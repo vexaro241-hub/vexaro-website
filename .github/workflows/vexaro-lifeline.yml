@@ -1,4 +1,3 @@
-# Automated lifeline: health, performance, headers, routes, links, incident creation
 name: VEXARO Lifeline
 
 on:
@@ -10,13 +9,15 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 jobs:
   lifeline:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Check public services and critical routes
         shell: bash
         run: |
@@ -69,23 +70,3 @@ jobs:
           name: vexaro-lifeline-report
           path: /tmp/lifeline-report.txt
           if-no-files-found: ignore
-
-      - name: Open incident issue on failure
-        if: failure()
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set +e
-          existing=$(gh issue list --state open --search "VEXARO Lifeline failure in:title" --json number --jq '.[0].number')
-          body="Automated VEXARO lifeline failure detected.
-
-Commit: ${GITHUB_SHA}
-Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
-
-The automated health, route, header, performance, or link checks failed. Review the workflow logs and resolve the underlying issue."
-          if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body "$body"
-          else
-            gh issue create --title "VEXARO Lifeline failure" --body "$body" --label "incident" 2>/dev/null || gh issue create --title "VEXARO Lifeline failure" --body "$body"
-          fi
