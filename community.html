@@ -240,7 +240,8 @@ async function loadAdmin(){
 async function resolveReport(id){if(String(profile?.role||'').toLowerCase()!=='admin')return;const {error}=await sb.from('reports').update({status:'reviewed',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',id);if(error)alert(error.message);else loadAdmin()}
 async function adminDeletePost(postId,reportId){if(String(profile?.role||'').toLowerCase()!=='admin')return;if(!confirm('Remove this post from the community?'))return;const {error}=await sb.from('posts').delete().eq('id',postId);if(error){alert(error.message);return}await sb.from('reports').update({status:'actioned',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',reportId);loadAdmin();loadFeed()}
 async function adminDeleteComment(commentId,reportId){if(String(profile?.role||'').toLowerCase()!=='admin')return;if(!confirm('Remove this comment from the community?'))return;const {error}=await sb.from('comments').delete().eq('id',commentId);if(error){alert(error.message);return}if(reportId)await sb.from('reports').update({status:'actioned',resolved_by:session.user.id,resolved_at:new Date().toISOString()}).eq('id',reportId);loadAdmin();loadFeed()}
-const homepageAuth=new URLSearchParams(window.location.search).get('signin')==='1'||new URLSearchParams(window.location.search).get('auth')==='signin';
+const requestedAuth=new URLSearchParams(window.location.search).get('auth');
+const homepageAuth=new URLSearchParams(window.location.search).get('signin')==='1'||requestedAuth==='signin'||requestedAuth==='signup';
 async function boot(){
   if(!readyConfig()){
     $('configNotice').textContent='Community backend not connected yet. Add your Supabase URL and publishable key to supabase-config.js, then deploy.';
@@ -260,7 +261,7 @@ async function boot(){
   const requested=new URLSearchParams(location.search).get('view')||'feed';
   if(new URLSearchParams(location.search).get('user')) showView('profile');
   else showView(requested);
-  if(homepageAuth){ if(session){ try{ await sb.auth.signOut({scope:'local'}); }catch(_){ } session=null; profile=null; sessionVersion++; await applySession(null); } openAuth('signin'); }
+  if(homepageAuth){ if(session){ try{ await sb.auth.signOut({scope:'local'}); }catch(_){ } session=null; profile=null; sessionVersion++; await applySession(null); } openAuth(requestedAuth==='signup'?'signup':'signin'); }
   sb.auth.onAuthStateChange((event,s)=>{
     if(authInitializing || authBusy)return;
     if(event==='INITIAL_SESSION')return;
