@@ -1,0 +1,37 @@
+name: VEXARO Fast QA Gate
+
+on:
+  push:
+    branches: ["production"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: HTTP smoke tests
+        run: |
+          set -euo pipefail
+          urls=(
+            "https://vexaro-website.vexaro241.workers.dev/"
+            "https://vexaro-members.vexaro241.workers.dev/"
+            "https://vexaro-admin.vexaro241.workers.dev/"
+            "https://vexaro-members.vexaro241.workers.dev/community.html"
+            "https://vexaro-members.vexaro241.workers.dev/settings.html"
+            "https://vexaro-members.vexaro241.workers.dev/notifications.html"
+          )
+          for u in "${urls[@]}"; do
+            code=$(curl -L -sS -o /tmp/body -w "%{http_code}" --max-time 15 "$u")
+            echo "$code $u"
+            test "$code" = "200"
+          done
+
+      - name: Link monitor
+        run: python3 qa/check_links.py
