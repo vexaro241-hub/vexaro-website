@@ -3,6 +3,7 @@
 /* VEXARO auth hygiene: member sessions persist across normal reloads. Explicit sign-out and inactivity/hidden-time limits still clear them. */
 const IDLE_LIMIT=30*60*1000;
 const HIDDEN_LIMIT=15*60*1000;
+const isAdminApp=location.hostname==='vexaro-admin.vexaro241.workers.dev';
 const now=()=>Date.now();
 const clearSession=()=>{
   try{
@@ -18,8 +19,10 @@ const forceSignedOut=()=>{
   if(location.pathname==='/'&&!location.search&&!location.hash) location.reload();
 };
 let last=Number(localStorage.getItem('vexaro_last_active')||0);
-if(last&&now()-last>IDLE_LIMIT) clearSession();
-else localStorage.setItem('vexaro_last_active',String(now()));
+if(!isAdminApp){
+  if(last&&now()-last>IDLE_LIMIT) clearSession();
+  else localStorage.setItem('vexaro_last_active',String(now()));
+}
 let hiddenAt=0, timer=0;
 const touch=()=>{
   localStorage.setItem('vexaro_last_active',String(now()));
@@ -28,8 +31,8 @@ const touch=()=>{
 };
 const check=()=>{
   const lastSeen=Number(localStorage.getItem('vexaro_last_active')||0);
-  if(lastSeen&&now()-lastSeen>IDLE_LIMIT){forceSignedOut();return;}
-  if(hiddenAt&&now()-hiddenAt>HIDDEN_LIMIT){forceSignedOut();return;}
+  if(!isAdminApp && lastSeen&&now()-lastSeen>IDLE_LIMIT){forceSignedOut();return;}
+  if(!isAdminApp && hiddenAt&&now()-hiddenAt>HIDDEN_LIMIT){forceSignedOut();return;}
   timer=setTimeout(check,60000);
 };
 ['pointerdown','keydown','touchstart','scroll','click'].forEach(ev=>window.addEventListener(ev,touch,{passive:true}));
@@ -37,13 +40,13 @@ window.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='hidden'){hiddenAt=now();}
   else{
     const lastSeen=Number(localStorage.getItem('vexaro_last_active')||0);
-    if((lastSeen&&now()-lastSeen>IDLE_LIMIT)||(hiddenAt&&now()-hiddenAt>HIDDEN_LIMIT)){forceSignedOut();return;}
+    if(!isAdminApp && ((lastSeen&&now()-lastSeen>IDLE_LIMIT)||(hiddenAt&&now()-hiddenAt>HIDDEN_LIMIT))){forceSignedOut();return;}
     touch();
   }
 });
 window.addEventListener('pageshow',()=>{
   const lastSeen=Number(localStorage.getItem('vexaro_last_active')||0);
-  if(lastSeen&&now()-lastSeen>IDLE_LIMIT) forceSignedOut();
+  if(!isAdminApp && lastSeen&&now()-lastSeen>IDLE_LIMIT) forceSignedOut();
 });
 check();
 try{
