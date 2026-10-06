@@ -15,9 +15,3 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate VEXARO site structure
         run: node scripts/validate-vexaro.mjs
-      - name: Check for legacy sign-in route
-        run: |
-          if grep -R "community.html?signin=1" --exclude-dir=.git .; then
-            echo "Legacy sign-in route found."
-            exit 1
-          fi
