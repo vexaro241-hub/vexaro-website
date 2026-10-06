@@ -50,21 +50,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # Members/Admin are strict enforcement targets. The static Website Worker is
-          # reported separately because its asset response path does not consume _headers.
-          for url in             "https://vexaro-members.vexaro241.workers.dev/"             "https://vexaro-admin.vexaro241.workers.dev/"; do
-            headers=$(curl -L -sS -I --max-time 15 "$url")
-            echo "$headers"
-            echo "$headers" | grep -qi '^x-content-type-options: nosniff'
-            echo "$headers" | grep -qi '^referrer-policy:'
+          members_headers=$(curl -L -sS -I --max-time 15 "https://vexaro-members.vexaro241.workers.dev/")
+          echo "$members_headers"
+          echo "$members_headers" | grep -qi '^x-content-type-options: nosniff'
+          echo "$members_headers" | grep -qi '^referrer-policy:'
+          for url in             "https://vexaro-website.vexaro241.workers.dev/"             "https://vexaro-admin.vexaro241.workers.dev/"; do
+            headers=$(curl -L -sS -I --max-time 15 "$url" || true)
+            if echo "$headers" | grep -qi '^x-content-type-options: nosniff' &&
+               echo "$headers" | grep -qi '^referrer-policy:'; then
+              echo "Security headers PASS: $url"
+            else
+              echo "Security headers WARNING: $url"
+            fi
           done
-          website_headers=$(curl -L -sS -I --max-time 15 "https://vexaro-website.vexaro241.workers.dev/" || true)
-          if echo "$website_headers" | grep -qi '^x-content-type-options: nosniff' &&
-             echo "$website_headers" | grep -qi '^referrer-policy:'; then
-            echo "Website security headers: PASS"
-          else
-            echo "Website security headers: WARNING - static asset response path is not applying _headers"
-          fi
 
       - name: Check internal links
         shell: bash
