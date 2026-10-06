@@ -1,0 +1,55 @@
+name: VEXARO API & Integration Health
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: vexaro-api-health
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check public APIs and integrations
+        shell: bash
+        env:
+          SUPABASE_URL: https://gyapnhfsbsnxkyfqlsxh.supabase.co
+          SUPABASE_KEY: sb_publishable_dF6rhER_VnFcTtvBPQzZLA_4TEAbup3
+        run: |
+          set -euo pipefail
+
+          check_http() {
+            local name="$1"
+            local url="$2"
+            local expected="$3"
+            local code
+            code=$(curl -L -sS -o /tmp/api-body -w "%{http_code}" --max-time 15 "$url")
+            echo "$name: HTTP $code"
+            test "$code" = "$expected"
+          }
+
+          check_http "Supabase REST root" "$SUPABASE_URL/rest/v1/" "200"
+
+          options_code=$(curl -sS -o /dev/null -w "%{http_code}" -X OPTIONS             -H "Origin: https://vexaro-website.vexaro241.workers.dev"             -H "Access-Control-Request-Method: POST"             --max-time 15             "https://gyapnhfsbsnxkyfqlsxh.supabase.co/functions/v1/stripe-checkout")
+          echo "Stripe checkout CORS preflight: HTTP $options_code"
+          test "$options_code" = "200"
+
+          options_code=$(curl -sS -o /dev/null -w "%{http_code}" -X OPTIONS             -H "Origin: https://vexaro-website.vexaro241.workers.dev"             --max-time 15             "https://gyapnhfsbsnxkyfqlsxh.supabase.co/functions/v1/stripe-webhook")
+          echo "Stripe webhook CORS preflight: HTTP $options_code"
+          test "$options_code" = "200"
+
+          check_http "Website health" "https://vexaro-website.vexaro241.workers.dev/health" "200"
+
+      - name: Record health evidence
+        if: always()
+        shell: bash
+        run: |
+          date -u
+          echo "VEXARO API and integration health checks completed."
