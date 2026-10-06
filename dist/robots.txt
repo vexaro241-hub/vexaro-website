@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vexaro-website.vexaro241.workers.dev/sitemap.xml

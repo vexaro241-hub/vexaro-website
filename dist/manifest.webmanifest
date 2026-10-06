@@ -1,0 +1,16 @@
+{
+  "name": "VEXARO",
+  "short_name": "VEXARO",
+  "start_url": "https://vexaro-website.vexaro241.workers.dev/",
+  "scope": "https://vexaro-website.vexaro241.workers.dev/",
+  "id": "https://vexaro-website.vexaro241.workers.dev/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#070707",
+  "description": "VEXARO — Warzone gaming community for clips, loadouts, settings, live streams and creator content.",
+  "icons": [
+    {"src":"icon-192.svg","sizes":"192x192","type":"image/svg+xml","purpose":"any maskable"},
+    {"src":"icon-512.svg","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}
+  ],
+  "orientation":"portrait-primary"
+}

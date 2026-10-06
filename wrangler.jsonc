@@ -2,9 +2,5 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "vexaro-website",
   "compatibility_date": "2026-10-06",
-  "assets": {
-    "directory": ".",
-    "html_handling": "auto-trailing-slash",
-    "not_found_handling": "none"
-  }
+  "assets": {"directory":"./dist","html_handling":"auto-trailing-slash","not_found_handling":"none"}
 }

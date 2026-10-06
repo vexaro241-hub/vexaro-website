@@ -1,0 +1,12 @@
+/*.html
+  Content-Type: text/html; charset=UTF-8
+  Content-Disposition: inline
+
+/
+  Content-Type: text/html; charset=UTF-8
+  Content-Disposition: inline
+
+/*.js
+  Content-Type: application/javascript; charset=UTF-8
+  Content-Disposition: inline
+  Cache-Control: no-cache, must-revalidate
