@@ -196,6 +196,7 @@ async function applySession(s){
     $('sideTitle').textContent=publicName;
     $('sideContent').innerHTML='<span>@'+esc(publicUsername)+'</span><br><br><span class="badge">'+(creatorMode?'MEMBER':(isAdmin?'ADMIN':'FREE MEMBER'))+'</span>';
   }
+  $('postComposer').classList.remove('hidden');$('signedOutNotice').classList.add('hidden');
   $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
   showView(currentView||'feed');
 }
