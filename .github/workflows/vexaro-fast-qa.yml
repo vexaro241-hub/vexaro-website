@@ -5,6 +5,10 @@ on:
     branches: ["production"]
   workflow_dispatch:
 
+concurrency:
+  group: vexaro-production
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
