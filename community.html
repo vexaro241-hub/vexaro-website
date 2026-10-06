@@ -260,7 +260,7 @@ async function boot(){
   const requested=new URLSearchParams(location.search).get('view')||'feed';
   if(new URLSearchParams(location.search).get('user')) showView('profile');
   else showView(requested);
-  if(homepageAuth && !session) openAuth('signin');
+  if(homepageAuth){ if(session){ try{ await sb.auth.signOut({scope:'local'}); }catch(_){ } session=null; profile=null; sessionVersion++; await applySession(null); } openAuth('signin'); }
   sb.auth.onAuthStateChange((event,s)=>{
     if(authInitializing || authBusy)return;
     if(event==='INITIAL_SESSION')return;
