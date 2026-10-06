@@ -22,6 +22,8 @@ jobs:
           test -f docs/DISASTER-RECOVERY.md
           test -f docs/SECURITY-RUNBOOK.md
           test -f docs/OPERATIONS.md
+          test -f docs/FEATURE-FLAGS.md
+          test -f docs/RELEASE-FREEZE.md
           test -f scripts/site-audit.mjs
           test -f robots.txt
           test -f sitemap.xml
