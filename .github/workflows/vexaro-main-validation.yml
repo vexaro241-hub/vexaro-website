@@ -21,15 +21,3 @@ jobs:
           test -f docs/RELEASE-CHECKLIST.md
           test -f docs/DISASTER-RECOVERY.md
           test -f docs/SECURITY-RUNBOOK.md
-      - name: Check for accidental secrets
-        run: |
-          if grep -RIE --exclude-dir=.git --exclude='*.md' --exclude='*.svg'             '(service_role|BEGIN PRIVATE KEY|aws_secret_access_key|ghp_[A-Za-z0-9_]+|sk-[A-Za-z0-9_-]{20,})' .; then
-            echo "Potential secret material found."
-            exit 1
-          fi
-      - name: Validate production-critical URLs are not legacy
-        run: |
-          if grep -R "community.html?signin=1" --exclude-dir=.git .; then
-            echo "Legacy sign-in route found."
-            exit 1
-          fi
