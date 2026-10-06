@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "qa:browser": "node qa/vexaro-browser-qa.mjs",
-    "qa:platform": "node scripts/vexaro-platform-audit.mjs"
+    "qa:platform": "node scripts/vexaro-platform-audit.mjs",
+    "qa:static": "node scripts/vexaro-static-js-audit.mjs"
   },
   "devDependencies": {
     "agent-browser": "0.38.1"
