@@ -10,6 +10,6 @@
       sb.auth.getSession().then(({data})=>sb.from('site_analytics').insert({visitor_id:visitor,path,referrer:document.referrer?document.referrer.slice(0,500):null,user_id:data.session?.user?.id||null}));
     }catch(e){}
   }
-  function ready(){ if(window.supabase&&window.VEXARO_SUPABASE_URL){send();return} setTimeout(ready,300); }
-  ready();
+  function ready(){ if(window.supabase&&window.VEXARO_SUPABASE_URL){send();} }
+  if(document.readyState==='complete')setTimeout(ready,1200);else window.addEventListener('load',()=>setTimeout(ready,1200),{once:true});
 })();
