@@ -1,0 +1,23 @@
+name: VEXARO Main Validation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate site structure
+        run: node scripts/validate-vexaro.mjs
+      - name: Check required security/config files
+        run: |
+          test -f .github/dependabot.yml
+          test -f docs/RELEASE-CHECKLIST.md
+          test -f docs/DISASTER-RECOVERY.md
+          test -f docs/SECURITY-RUNBOOK.md
