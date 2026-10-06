@@ -1,0 +1,19 @@
+name: VEXARO Production Site Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "31 */4 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run production audit
+        env:
+          VEXARO_BASE_URL: https://vexaro-website.vexaro241.workers.dev
+        run: node scripts/site-audit.mjs
