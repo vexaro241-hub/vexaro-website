@@ -37,7 +37,7 @@ jobs:
             test "$code" = "$expected"
           }
 
-          check_http "Supabase REST root" "$SUPABASE_URL/rest/v1/" "200"
+          check_http "Supabase REST root" "$SUPABASE_URL/rest/v1/profiles?select=id&limit=1" "200"
 
           options_code=$(curl -sS -o /dev/null -w "%{http_code}" -X OPTIONS             -H "Origin: https://vexaro-website.vexaro241.workers.dev"             -H "Access-Control-Request-Method: POST"             --max-time 15             "https://gyapnhfsbsnxkyfqlsxh.supabase.co/functions/v1/stripe-checkout")
           echo "Stripe checkout CORS preflight: HTTP $options_code"
