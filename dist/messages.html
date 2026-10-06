@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#070707"><meta name="robots" content="noindex,nofollow">
+<title>VEXARO Messages</title>
+<style>
+:root{--bg:#050505;--panel:#0c0c0f;--text:#f5f5f5;--muted:#8f8f98;--accent:#e10600;--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,rgba(225,6,0,.14),transparent 30%),var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
+.wrap{width:min(900px,calc(100% - 24px));margin:auto}.top{border-bottom:1px solid var(--line);padding:16px 0}.brand{font-weight:1000;letter-spacing:.15em;text-decoration:none;color:#fff}.brand span{color:var(--accent)}
+.hero{padding:38px 0 20px}.kicker{color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.2em}.hero h1{font-size:clamp(42px,8vw,72px);margin:8px 0}
+.panel{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:16px;margin-bottom:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:160px}
+select,textarea{width:100%;background:#08080a;color:#fff;border:1px solid var(--line);border-radius:9px;padding:11px}
+textarea{min-height:90px;resize:vertical}.btn{border:1px solid var(--line);background:#111114;color:#fff;border-radius:9px;padding:10px 13px;font-weight:900;cursor:pointer}.btn.accent{background:var(--accent);border-color:var(--accent)}
+.messages{display:grid;gap:8px;max-height:480px;overflow:auto}.msg{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#09090b}.mine{border-color:rgba(225,6,0,.35)}.meta{color:#666;font-size:10px;margin-top:5px}.empty{padding:24px;text-align:center;color:#777}
+a{color:inherit}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/">VEXARO <span>MESSAGES</span></a></div></header>
+<main class="wrap">
+<section class="hero"><div class="kicker">VEXARO / PRIVATE</div><h1>MESSAGES.</h1></section>
+<section class="panel"><div class="row"><select id="person"><option>Loading members…</option></select><button class="btn" id="load">OPEN CHAT</button></div></section>
+<section class="panel"><div id="thread" class="messages"><div class="empty">Select a member to open a private conversation.</div></div></section>
+<section class="panel"><textarea id="body" maxlength="2000" placeholder="Write a private message…"></textarea><div style="margin-top:9px"><button class="btn accent" id="send">SEND MESSAGE</button></div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/supabase-config.js"></script>
+<script>
+const sb=supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
+let session=null, selected=null, people=[];
+const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const $=id=>document.getElementById(id);
+async function boot(){
+ const r=await sb.auth.getSession(); session=r.data.session;
+ if(!session){$('thread').innerHTML='<div class="empty">Sign in to use private messages.</div>';return}
+ const p=await sb.from('profiles').select('id,username,display_name').neq('id',session.user.id).neq('role','admin').order('created_at',{ascending:false}).limit(100);
+ people=p.data||[];
+ $('person').innerHTML=people.length?people.map(x=>'<option value="'+x.id+'">'+esc(x.display_name||x.username||'VEXARO Member')+' (@'+esc(x.username||'member')+')</option>').join(''):'<option>No other members yet</option>';
+ if(people.length){selected=people[0].id;await loadThread()}
+}
+async function loadThread(){
+ selected=$('person').value;if(!selected||!session)return;
+ const r=await sb.from('messages').select('id,sender_id,recipient_id,body,read_at,created_at').or('sender_id.eq.'+session.user.id+',recipient_id.eq.'+session.user.id).order('created_at',{ascending:true}).limit(200);
+ if(r.error){$('thread').innerHTML='<div class="empty">'+esc(r.error.message)+'</div>';return}
+ const rows=(r.data||[]).filter(m=>(m.sender_id===session.user.id&&m.recipient_id===selected)||(m.sender_id===selected&&m.recipient_id===session.user.id));
+ $('thread').innerHTML=rows.length?rows.map(m=>'<div class="msg '+(m.sender_id===session.user.id?'mine':'')+'"><div>'+esc(m.body)+'</div><div class="meta">'+new Date(m.created_at).toLocaleString('en-GB')+(m.read_at?' · READ':'')+'</div></div>').join(''):'<div class="empty">No messages yet. Start the conversation.</div>';
+ const unread=rows.filter(m=>m.recipient_id===session.user.id&&!m.read_at).map(m=>m.id);
+ if(unread.length)await sb.from('messages').update({read_at:new Date().toISOString()}).in('id',unread);
+ $('thread').scrollTop=$('thread').scrollHeight;
+}
+$('load').onclick=loadThread;
+$('person').onchange=loadThread;
+$('send').onclick=async()=>{
+ if(!session||!selected)return;
+ const body=$('body').value.trim();if(!body)return;
+ $('send').disabled=true;
+ const r=await sb.from('messages').insert({sender_id:session.user.id,recipient_id:selected,body});
+ if(r.error)alert(r.error.message);else{
+   await sb.from('notifications').insert({user_id:selected,type:'message',title:'New private message',body:'You have a new VEXARO private message.',link:'messages.html',actor_id:session.user.id});
+   $('body').value='';await loadThread();
+ }
+ $('send').disabled=false;
+};
+boot();
+</script>
+</body></html>
