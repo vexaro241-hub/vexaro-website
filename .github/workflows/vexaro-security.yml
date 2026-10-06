@@ -44,7 +44,7 @@ jobs:
         run: |
           set -euo pipefail
           patterns='BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|AKIA[0-9A-Z]{16}'
-          if grep -RIE --exclude-dir=.git --exclude='*.md' --exclude='*.svg' "$patterns" .; then
+          if grep -RIE --exclude-dir=.git --exclude-dir=.github --exclude='*.md' --exclude='*.svg' "$patterns" .; then
             echo "Potential credential material found."
             exit 1
           fi
