@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-/* VEXARO auth hygiene: sessions are intentionally short-lived and never survive a reload. */
+/* VEXARO auth hygiene: member sessions persist across normal reloads. Explicit sign-out and inactivity/hidden-time limits still clear them. */
 const IDLE_LIMIT=30*60*1000;
 const HIDDEN_LIMIT=15*60*1000;
 const now=()=>Date.now();
@@ -14,16 +14,9 @@ const clearSession=()=>{
 const forceSignedOut=()=>{
   clearSession();
   try{sessionStorage.setItem('vexaro_signed_out','1')}catch(e){}
-  /* Sign out in-place. Do not redirect: app shells must remain on their own app. */
   try{window.dispatchEvent(new CustomEvent('vexaro:signed-out'))}catch(e){}
   if(location.pathname==='/'&&!location.search&&!location.hash) location.reload();
 };
-const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
-/* Member/main apps intentionally sign out on reload. Admin keeps its Supabase session so the secure Admin profile can survive reloads/profile restores. */
-const isAdminApp=location.hostname==='vexaro-admin.vexaro241.workers.dev';
-if(nav&&nav.type==='reload'&&!isAdminApp){
-  clearSession();
-}
 let last=Number(localStorage.getItem('vexaro_last_active')||0);
 if(last&&now()-last>IDLE_LIMIT) clearSession();
 else localStorage.setItem('vexaro_last_active',String(now()));
