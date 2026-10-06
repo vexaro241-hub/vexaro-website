@@ -1,0 +1,117 @@
+name: VEXARO Lifeline
+
+on:
+  push:
+    branches: [production]
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  lifeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Check public services and critical routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          urls=(
+            "https://vexaro-website.vexaro241.workers.dev/"
+            "https://vexaro-members.vexaro241.workers.dev/"
+            "https://vexaro-admin.vexaro241.workers.dev/"
+            "https://vexaro-members.vexaro241.workers.dev/community.html"
+            "https://vexaro-members.vexaro241.workers.dev/settings.html"
+            "https://vexaro-members.vexaro241.workers.dev/notifications.html"
+            "https://vexaro-website.vexaro241.workers.dev/health"
+          )
+          : > /tmp/lifeline-report.txt
+          for url in "${urls[@]}"; do
+            line=$(curl -L -sS -o /tmp/lifeline-body -w "%{http_code} %{time_total}" --max-time 15 "$url")
+            code=${line%% *}
+            time=${line#* }
+            echo "$code $time $url" | tee -a /tmp/lifeline-report.txt
+            test "$code" = "200"
+            if [[ "$url" == */health ]]; then
+              grep -q '"status":"ok"' /tmp/lifeline-body
+            else
+              grep -qi "VEXARO" /tmp/lifeline-body
+            fi
+            awk -v t="$time" 'BEGIN { exit !(t < 5) }'
+          done
+
+      - name: Check security headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          for url in             "https://vexaro-website.vexaro241.workers.dev/"             "https://vexaro-members.vexaro241.workers.dev/"             "https://vexaro-admin.vexaro241.workers.dev/"; do
+            headers=$(curl -L -sS -I --max-time 15 "$url")
+            echo "$headers"
+            echo "$headers" | grep -qi '^x-content-type-options: nosniff'
+            echo "$headers" | grep -qi '^referrer-policy:'
+          done
+
+      - name: Check internal links
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import re, urllib.request
+          seeds = [
+              "https://vexaro-website.vexaro241.workers.dev/",
+              "https://vexaro-members.vexaro241.workers.dev/",
+              "https://vexaro-admin.vexaro241.workers.dev/",
+              "https://vexaro-members.vexaro241.workers.dev/community.html",
+              "https://vexaro-members.vexaro241.workers.dev/settings.html",
+              "https://vexaro-members.vexaro241.workers.dev/notifications.html",
+          ]
+          hosts = {"vexaro-website.vexaro241.workers.dev","vexaro-members.vexaro241.workers.dev","vexaro-admin.vexaro241.workers.dev"}
+          seen=set(); queue=list(seeds)
+          while queue and len(seen)<250:
+              url=queue.pop(0)
+              if url in seen: continue
+              seen.add(url)
+              req=urllib.request.Request(url, headers={"User-Agent":"VEXARO-Lifeline/1.0"})
+              with urllib.request.urlopen(req, timeout=12) as r:
+                  if r.status >= 400: raise RuntimeError(f"{r.status} {url}")
+                  if "text/html" not in r.headers.get("content-type",""): continue
+                  body=r.read().decode("utf-8","ignore")
+              for href in re.findall(r'href=["\']([^"\'#]+)', body, re.I):
+                  if href.startswith("/"):
+                      from urllib.parse import urljoin, urlparse
+                      target=urljoin(url,href)
+                      if urlparse(target).netloc in hosts: queue.append(target)
+          print(f"Checked {len(seen)} internal URLs")
+          PY
+
+      - name: Upload lifeline report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vexaro-lifeline-report
+          path: /tmp/lifeline-report.txt
+          if-no-files-found: ignore
+
+      - name: Open incident issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set +e
+          existing=$(gh issue list --state open --search "VEXARO Lifeline failure in:title" --json number --jq '.[0].number')
+          body="Automated VEXARO lifeline failure detected.
+
+Commit: ${GITHUB_SHA}
+Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+
+The automated health, route, header, performance, or link checks failed. Review the workflow logs and resolve the underlying issue."
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "VEXARO Lifeline failure" --body "$body" --label "incident" 2>/dev/null || gh issue create --title "VEXARO Lifeline failure" --body "$body"
+          fi
