@@ -1,0 +1,50 @@
+name: VEXARO Security Checks
+
+on:
+  push:
+    branches: [main, production]
+  pull_request:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+      - uses: github/codeql-action/autobuild@v3
+      - uses: github/codeql-action/analyze@v3
+
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    name: Dependency review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+
+  secret-patterns:
+    name: Secret pattern scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          patterns='service_role|BEGIN PRIVATE KEY|aws_secret_access_key|ghp_[A-Za-z0-9_]+|xox[baprs]-[A-Za-z0-9-]+'
+          if grep -RIE --exclude-dir=.git --exclude='*.md' --exclude='*.svg' "$patterns" .; then
+            echo "Potential secret material found."
+            exit 1
+          fi
