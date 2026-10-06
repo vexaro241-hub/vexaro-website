@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developers.cloudflare.com/workers/wrangler/config-schema.json",
+  "name": "vexaro-live-browser-tests",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-06",
+  "compatibility_flags": ["nodejs_compat_v2"],
+  "workers_dev": true,
+  "browser": { "binding": "BROWSER" },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "redact_query_string": true,
+    "logs": { "enabled": true, "invocation_logs": true, "persist": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "persist": true, "head_sampling_rate": 1 },
+    "issues": { "enabled": true }
+  }
+}
