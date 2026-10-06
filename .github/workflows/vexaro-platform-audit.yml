@@ -1,0 +1,26 @@
+name: VEXARO Unified Platform Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7,37 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vexaro-unified-platform-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Website + Members + Admin audit
+        env:
+          VEXARO_WEBSITE_URL: https://vexaro-website.vexaro241.workers.dev
+          VEXARO_MEMBERS_URL: https://vexaro-members.vexaro241.workers.dev
+          VEXARO_ADMIN_URL: https://vexaro-admin.vexaro241.workers.dev
+        run: node scripts/vexaro-platform-audit.mjs
