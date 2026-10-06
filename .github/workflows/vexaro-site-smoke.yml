@@ -1,0 +1,29 @@
+name: VEXARO Site Smoke Tests
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 */2 * * *"
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Homepage
+        run: |
+          set -e
+          code=$(curl -L -sS -o /tmp/home.html -w "%{http_code}" --max-time 30 https://vexaro-website.vexaro241.workers.dev/)
+          test "$code" = "200"
+          grep -qi "VEXARO" /tmp/home.html
+      - name: Health
+        run: |
+          set -e
+          curl --fail --silent --show-error --max-time 30 https://vexaro-website.vexaro241.workers.dev/health
+      - name: Critical static routes
+        run: |
+          set -e
+          for path in community.html manifest.webmanifest; do
+            code=$(curl -L -sS -o /dev/null -w "%{http_code}" --max-time 20 "https://vexaro-website.vexaro241.workers.dev/$path")
+            echo "$path -> $code"
+            test "$code" = "200"
+          done
