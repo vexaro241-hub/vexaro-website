@@ -118,7 +118,7 @@ function showAdminSignIn(){
       }
       const r=await sb.auth.signInWithPassword({email,password});
       if(r.error)throw r.error;
-      uid=r.data?.user?.id;
+      uid=r.data?.user?.id;sessionStorage.setItem('vexaro_admin_gate_v1','1');
       if(!uid)throw new Error('Sign in succeeded but no administrator user was returned.');
       try{await window.VEXARO_IDENTITIES?.init(sb,uid,'admin');}catch(_){}
       const p=await sb.from('profiles').select('role').eq('id',uid).single();
@@ -189,7 +189,7 @@ function showAdminSection(section){
 }
 document.getElementById('adminHeaderHome')?.addEventListener('click',()=>showAdminSection('overview'));
 document.getElementById('openMemberAppBtn')?.addEventListener('click',()=>openMemberApp());
-document.getElementById('adminSignOutTop')?.addEventListener('click',async()=>{try{await sb?.auth.signOut({scope:'local'});}catch(_){}location.replace('https://vexaro-members.vexaro241.workers.dev/?auth=signin');});
+document.getElementById('adminSignOutTop')?.addEventListener('click',async()=>{try{sessionStorage.removeItem('vexaro_admin_gate_v1')}catch(_){} try{await sb?.auth.signOut({scope:'local'});}catch(_){}location.replace('https://vexaro-members.vexaro241.workers.dev/?auth=signin');});
 document.getElementById('adminHomeBtn')?.addEventListener('click',()=>showAdminSection('overview'));
 document.querySelectorAll('.toolbar [data-section]').forEach(b=>b.addEventListener('click',()=>showAdminSection(b.dataset.section)));
 document.getElementById('adminSearchBtn')?.addEventListener('click',async()=>{const q=$('adminSearchInput').value.trim();if(!q){$('adminSearchResults').innerHTML='<div class="empty">Enter a search term.</div>';return}const like='%'+q.replace(/[(),]/g,'')+'%';const [mu,md,p,l1,l2]=await Promise.all([sb.from('profiles').select('username,display_name,role').ilike('username',like).limit(20),sb.from('profiles').select('username,display_name,role').ilike('display_name',like).limit(20),sb.from('posts').select('body,created_at').ilike('body',like).limit(20),sb.from('marketplace_listings').select('title,description,status,created_at').ilike('title',like).limit(20),sb.from('marketplace_listings').select('title,description,status,created_at').ilike('description',like).limit(20)]);const err=[mu,md,p,l1,l2].find(x=>x.error);if(err){note(err.error.message);return}const memberMap=new Map();[...(mu.data||[]),...(md.data||[])].forEach(x=>memberMap.set(x.username||x.display_name,x));const listingMap=new Map();[...(l1.data||[]),...(l2.data||[])].forEach(x=>listingMap.set(x.title+'|'+x.created_at,x));const rows=[];memberMap.forEach(x=>rows.push(item('@'+(x.username||''),'MEMBER · '+(x.role||''),x.display_name||'')));(p.data||[]).forEach(x=>rows.push(item('Community post',fmt(x.created_at),x.body||'')));listingMap.forEach(x=>rows.push(item(x.title,fmt(x.created_at),x.description||'', '', x.status||'')));$('adminSearchResults').innerHTML=rows.length?rows.join(''):'<div class="empty">No matches found.</div>'});document.getElementById('adminSearchInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('adminSearchBtn')?.click()});
@@ -213,8 +213,8 @@ try{
 if(result?.error){showAdminSignIn();return;}
 const session=result?.data?.session;
 const hadHandoff=Boolean(access&&refresh);
-if(!hadHandoff && session?.user){
-  try{await sb.auth.signOut({scope:'local'});}catch(_){}
+const adminGate=sessionStorage.getItem('vexaro_admin_gate_v1')==='1';
+if(!adminGate){
   showAdminSignIn();
   return;
 }
