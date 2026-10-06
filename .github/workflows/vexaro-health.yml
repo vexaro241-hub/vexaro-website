@@ -12,15 +12,32 @@ jobs:
   health:
     runs-on: ubuntu-latest
     steps:
-      - name: Check production health
+      - name: Check Website
+        run: |
+          set -e
+          code=$(curl -L -sS -o /tmp/vexaro-home.html -w "%{http_code}" --max-time 20 https://vexaro-website.vexaro241.workers.dev/)
+          echo "Website HTTP $code"
+          test "$code" = "200"
+          grep -qi "VEXARO" /tmp/vexaro-home.html
+
+      - name: Check Members
+        run: |
+          set -e
+          code=$(curl -L -sS -o /tmp/vexaro-members.html -w "%{http_code}" --max-time 20 https://vexaro-members.vexaro241.workers.dev/)
+          echo "Members HTTP $code"
+          test "$code" = "200"
+          grep -qi "VEXARO" /tmp/vexaro-members.html
+
+      - name: Check Admin
+        run: |
+          set -e
+          code=$(curl -L -sS -o /tmp/vexaro-admin.html -w "%{http_code}" --max-time 20 https://vexaro-admin.vexaro241.workers.dev/)
+          echo "Admin HTTP $code"
+          test "$code" = "200"
+          grep -qi "VEXARO" /tmp/vexaro-admin.html
+
+      - name: Check Website health endpoint
         run: |
           set -e
           curl --fail --silent --show-error --max-time 20 https://vexaro-website.vexaro241.workers.dev/health
           echo
-      - name: Check critical production page
-        run: |
-          set -e
-          code=$(curl -L -sS -o /tmp/vexaro-home.html -w "%{http_code}" --max-time 20 https://vexaro-website.vexaro241.workers.dev/)
-          echo "HTTP $code"
-          test "$code" = "200"
-          grep -qi "VEXARO" /tmp/vexaro-home.html
