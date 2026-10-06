@@ -18,6 +18,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Run static JavaScript + asset regression audit
+        run: node scripts/vexaro-static-js-audit.mjs
       - name: Run Website + Members + Admin audit
         env:
           VEXARO_WEBSITE_URL: https://vexaro-website.vexaro241.workers.dev
