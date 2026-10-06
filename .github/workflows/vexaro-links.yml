@@ -1,0 +1,19 @@
+name: VEXARO Broken Link Monitor
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Crawl production links
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/vexaro241-hub/vexaro-website/production/qa/check_links.py -o /tmp/check_links.py
+          python3 /tmp/check_links.py
