@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: vexaro-production
+  group: vexaro-fast-qa
   cancel-in-progress: true
 
 permissions:
@@ -20,7 +20,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: HTTP smoke tests
+      - name: Validate production source
+        run: node scripts/validate-vexaro.mjs
+
+      - name: HTTP smoke tests and performance budget
+        shell: bash
         run: |
           set -euo pipefail
           urls=(
@@ -31,11 +35,23 @@ jobs:
             "https://vexaro-members.vexaro241.workers.dev/settings.html"
             "https://vexaro-members.vexaro241.workers.dev/notifications.html"
           )
+          : > /tmp/vexaro-fast-qa.txt
           for u in "${urls[@]}"; do
-            code=$(curl -L -sS -o /tmp/body -w "%{http_code}" --max-time 15 "$u")
-            echo "$code $u"
+            line=$(curl -L -sS -o /tmp/body -w "%{http_code} %{time_total}" --max-time 15 "$u")
+            code=${line%% *}
+            time=${line#* }
+            echo "$code $time $u" | tee -a /tmp/vexaro-fast-qa.txt
             test "$code" = "200"
+            awk -v t="$time" 'BEGIN { exit !(t < 5) }'
           done
 
       - name: Link monitor
         run: python3 qa/check_links.py
+
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vexaro-fast-qa-evidence
+          path: /tmp/vexaro-fast-qa.txt
+          if-no-files-found: ignore
