@@ -18,7 +18,7 @@
 <section class="info"><div class="panel"><h2>ONE MONTH FREE FOR NEW MEMBERS.</h2><p>New VEXARO accounts are automatically given a one-month full PRO trial. The trial is stored against the account so access can be enforced consistently across the site. Payment is not currently being collected for any membership option during this foundation stage.</p><p>When billing launches, advertised prices will be the final consumer prices rather than adding surprise charges at checkout. Any applicable VAT and payment costs will be handled in the billing flow.</p><div style="display:flex;gap:9px;flex-wrap:wrap"><a class="btn accent" href="community.html">JOIN VEXARO</a><a class="btn" href="/">BACK HOME</a></div></div></section>
 </main>
 <footer class="wrap footer"><div><b>VEXARO</b> — DOMINATE. CREATE. REPEAT.</div><div>© 2026 VEXARO · PRO FOUNDATION</div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
+
 <script>
 const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 async function boot(){
@@ -40,5 +40,5 @@ async function boot(){
  }catch(e){}
 }
 boot();
-// Payments are intentionally paused across every membership option until billing is enabled.const params=new URLSearchParams(location.search);if(params.get('checkout')==='success')document.getElementById('status').textContent='Checkout completed. Your membership will update when Stripe confirms the subscription.';if(params.get('checkout')==='cancelled')document.getElementById('status').textContent='Checkout cancelled. No membership change was made.';
+// Payments are intentionally paused across every membership option until billing is enabled.\nconst params=new URLSearchParams(location.search);if(params.get('checkout')==='success')document.getElementById('status').textContent='Checkout completed. Your membership will update when Stripe confirms the subscription.';if(params.get('checkout')==='cancelled')document.getElementById('status').textContent='Checkout cancelled. No membership change was made.';
 </script><script src="/vexaro-nav.js"></script></body></html>
