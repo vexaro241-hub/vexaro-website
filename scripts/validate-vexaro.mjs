@@ -22,8 +22,8 @@ if (!index.includes("vexaro-nav-v2.js?v=")) failures.push("Navigation cache-bust
 const files = ["index.html","app.html","about.html","clips.html","loadouts.html"];
 for (const file of files) {
   const html = fs.readFileSync(file, "utf8");
-  if (/https?:\/\/localhost(?::\\d+)?/.test(html)) failures.push(`Localhost reference in ${file}`);
-  if (/href=["'](?:\\/)?live\\/["']/.test(html)) failures.push(`Legacy relative Live route in ${file}`);
+  if (html.includes("http://localhost") || html.includes("https://localhost")) failures.push(`Localhost reference in ${file}`);
+  if (html.includes('href="/live/"') || html.includes('href="live/"')) failures.push(`Legacy relative Live route in ${file}`);
 }
 if (!index.includes("https://vexaro-website.vexaro241.workers.dev/live/")) failures.push("Canonical Live route missing");
 if (fs.existsSync("dist/index.html")) {
