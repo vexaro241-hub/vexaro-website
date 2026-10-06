@@ -19,6 +19,17 @@ const nav = fs.readFileSync("vexaro-nav-v2.js","utf8");
 if (nav.includes("community.html?signin=1")) failures.push("Legacy sign-in route still present");
 if (!index.includes("auth=signin")) failures.push("Main-site sign-in route missing");
 if (!index.includes("vexaro-nav-v2.js?v=")) failures.push("Navigation cache-busting reference missing");
+const files = ["index.html","app.html","about.html","clips.html","loadouts.html"];
+for (const file of files) {
+  const html = fs.readFileSync(file, "utf8");
+  if (/https?:\/\/localhost(?::\\d+)?/.test(html)) failures.push(`Localhost reference in ${file}`);
+  if (/href=["'](?:\\/)?live\\/["']/.test(html)) failures.push(`Legacy relative Live route in ${file}`);
+}
+if (!index.includes("https://vexaro-website.vexaro241.workers.dev/live/")) failures.push("Canonical Live route missing");
+if (fs.existsSync("dist/index.html")) {
+  const distIndex = fs.readFileSync("dist/index.html","utf8");
+  if (!distIndex.includes("https://vexaro-website.vexaro241.workers.dev/live/")) failures.push("Dist canonical Live route missing");
+}
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exit(1);
