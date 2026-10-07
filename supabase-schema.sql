@@ -406,3 +406,27 @@ do $$ begin create policy "Offer owners or admins update offers" on public.marke
 
 alter table public.marketplace_listings drop constraint if exists marketplace_listings_seller_id_fkey;
 alter table public.marketplace_listings add constraint marketplace_listings_seller_id_fkey foreign key (seller_id) references public.marketplace_sellers(user_id) on update cascade on delete restrict;
+
+
+-- Public RLS hardening: never invoke the admin-only helper from anon policies.
+-- The authenticated policy keeps member-owned/admin visibility without exposing the
+-- private.is_admin() function to the anonymous Data API role.
+drop policy if exists "Marketplace approved sellers public" on public.marketplace_sellers;
+drop policy if exists "Marketplace sellers member access" on public.marketplace_sellers;
+create policy "Marketplace approved sellers public" on public.marketplace_sellers for select to anon using (status='approved');
+create policy "Marketplace sellers member access" on public.marketplace_sellers for select to authenticated using ((status='approved') or ((select auth.uid())=user_id) or private.is_admin());
+
+drop policy if exists "Approved marketplace listings public" on public.marketplace_listings;
+drop policy if exists "Marketplace listings member access" on public.marketplace_listings;
+create policy "Approved marketplace listings public" on public.marketplace_listings for select to anon using (status='approved');
+create policy "Marketplace listings member access" on public.marketplace_listings for select to authenticated using ((status='approved') or ((select auth.uid())=seller_id) or private.is_admin());
+
+drop policy if exists "Public open requests" on public.marketplace_requests;
+drop policy if exists "Marketplace requests member access" on public.marketplace_requests;
+create policy "Public open requests" on public.marketplace_requests for select to anon using (status='open');
+create policy "Marketplace requests member access" on public.marketplace_requests for select to authenticated using ((status='open') or ((select auth.uid())=requester_id) or private.is_admin());
+
+drop policy if exists "Membership plans are public" on public.membership_plans;
+drop policy if exists "Membership plans member access" on public.membership_plans;
+create policy "Membership plans are public" on public.membership_plans for select to anon using (active=true);
+create policy "Membership plans member access" on public.membership_plans for select to authenticated using (active=true or private.is_admin());
