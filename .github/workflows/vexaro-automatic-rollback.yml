@@ -58,7 +58,6 @@ jobs:
           set -euo pipefail
           CF_ACCOUNT_ID="50b698b841707f4c5dfca8023d156283"
           test -n "$CF_API_TOKEN"
-          CF_ACCOUNT_ID="50b698b841707f4c5dfca8023d156283"
           test -n "$CF_ACCOUNT_ID"
           for worker in vexaro-website vexaro-members vexaro-admin; do
             echo "Checking $worker deployment history..."
