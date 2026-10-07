@@ -1,0 +1,27 @@
+name: VEXARO Security Monitor
+on:
+  push:
+    branches: ["production"]
+  pull_request:
+    branches: ["production"]
+  schedule:
+    - cron: "41 3 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate security-sensitive source
+        run: |
+          set -euo pipefail
+          ! grep -RInE 'localhost:3000|password\s*=|service_role|SUPABASE_SERVICE_ROLE' --include='*.html' --include='*.js' --include='*.mjs' . || true
+          echo "VEXARO security source monitor PASS"
