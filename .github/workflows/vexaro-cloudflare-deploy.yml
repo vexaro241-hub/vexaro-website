@@ -20,6 +20,9 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm install
+      - name: Stamp deployment version
+        run: printf '%s\n' "$GITHUB_SHA" > dist/deploy-version.txt
+
       - name: Deploy VEXARO website Worker
         run: npx wrangler deploy --config wrangler.jsonc
         env:
