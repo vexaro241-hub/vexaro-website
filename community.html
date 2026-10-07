@@ -414,7 +414,7 @@ async function postSubmit(){
       const ins=await sb.from('post_media').insert({
         post_id:post.id,user_id:session.user.id,media_type:kind,
         storage_path:item.path,public_url:pub,mime_type:item.file.type,size_bytes:item.file.size
-      });
+      }).select('id').single();
       if(ins.error)throw new Error('Media record failed: '+ins.error.message);
       if(kind==='video'){
         const q=await sb.from('video_processing_queue').insert({post_media_id:ins.data?.[0]?.id||null});
