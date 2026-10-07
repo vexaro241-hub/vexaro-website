@@ -84,5 +84,5 @@ jobs:
             version_id="$(python -c 'import json,sys; d=json.load(sys.stdin); ds=d.get("result",{}).get("deployments",[]); print(ds[1]["versions"][0]["version_id"] if len(ds)>1 and ds[1].get("versions") else "")' <<< "$deployments")"
             test -n "$version_id"
 
-            curl -fsS -X POST "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts/$worker/deployments"               -H "Authorization: Bearer $CF_API_TOKEN"               -H "Content-Type: application/json"               --data "{"strategy":"percentage","versions":[{"version_id":"$version_id","percentage":100}],"annotations":{"workers/message":"VEXARO automatic rollback","workers/triggered_by":"automatic-rollback"}}"               | grep -q '"success":true'
+            curl -fsS -X POST "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts/$worker/deployments"               -H "Authorization: Bearer $CF_API_TOKEN"               -H "Content-Type: application/json"               --data "{"strategy":"percentage","versions":[{"version_id":"$version_id","percentage":100}]}"               | grep -q '"success":true'
           done
