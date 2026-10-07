@@ -63,8 +63,18 @@ body{overscroll-behavior-x:none}
 }
  .section{scroll-margin-top:140px}.toolbar [data-section]{color:#777!important}.toolbar [data-section]:hover{color:#fff!important}.toolbar [data-section].active{color:#fff!important}.toolbar .tab.active{background:transparent!important;border:0!important}.toolbar .btn.active{background:linear-gradient(135deg,var(--accent),#e10600)!important;border-color:#e10600!important;color:#fff!important}@media(max-width:800px){.toolbar .tab.active{background:rgba(225,6,0,.12)!important;border:1px solid rgba(225,6,0,.35)!important;border-radius:9px!important}.toolbar .tab.active:after{display:none!important}}
 
-/* VEXARO ADMIN — header/hero spacing fix */
-@media(max-width:800px){.nav{align-items:center!important;gap:8px!important}.nav>.brand{flex:1 1 auto!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}.nav>div:last-child{flex:0 1 auto!important;max-width:58vw!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;scrollbar-width:none!important}.nav>div:last-child::-webkit-scrollbar{display:none!important}.nav>div:last-child .btn{height:34px!important;min-height:34px!important;padding:6px 9px!important;font-size:7px!important}.hero{position:relative!important;clear:both!important;padding-top:22px!important}.hero p{max-width:100%!important;margin:10px 0 0!important;line-height:1.5!important}}
+/* VEXARO ADMIN — compact mobile hero/header fix */
+@media(max-width:800px){
+  .nav{align-items:center!important;gap:6px!important}
+  .nav>.brand{flex:1 1 auto!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  .nav>div:last-child{flex:0 1 auto!important;max-width:58vw!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;scrollbar-width:none!important}
+  .nav>div:last-child::-webkit-scrollbar{display:none!important}
+  .nav>div:last-child .btn{height:30px!important;min-height:30px!important;padding:5px 8px!important;font-size:7px!important}
+  .hero{position:relative!important;clear:both!important;padding:10px 0 4px!important}
+  .hero .kicker{font-size:7px!important;line-height:1.1!important;margin:0 0 4px!important}
+  .hero h1{font-size:clamp(24px,8vw,38px)!important;line-height:.95!important;margin:0!important}
+  .hero p{max-width:100%!important;margin:7px 0 0!important;line-height:1.35!important;font-size:11px!important}
+}
 </style></head>
 <body><header class="top"><div class="wrap nav"><h1 class="brand"><a href="https://vexaro-website.vexaro241.workers.dev/">VEXARO ADMIN HUB</a></h1><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="badge">ADMIN ONLY</span><button class="btn" type="button" id="adminHeaderHome">HOME</button><div id="identitySwitcher"></div><button class="btn" type="button" id="openMemberAppBtn">MEMBER HUB</button><button class="btn" type="button" id="adminSignOutTop">SIGN OUT</button></div></div></header>
 <main class="wrap"><div id="loading" class="panel"><div class="kicker">VEXARO / ADMIN ACCESS</div><h1>ADMIN SIGN IN.</h1><div class="muted">Sign in here to access the VEXARO Admin app.</div><div class="actions" style="display:grid;gap:8px;margin-top:14px"><input id="adminEmail" type="email" autocomplete="username" placeholder="Email" style="background:#08080a;color:#fff;border:1px solid var(--line);padding:11px;border-radius:8px"><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password" style="background:#08080a;color:#fff;border:1px solid var(--line);padding:11px;border-radius:8px"><button class="btn accent" id="adminSignIn">SIGN IN AS ADMIN</button><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">OPEN MEMBERS</a></div><div id="adminSignInMsg" class="notice hidden" style="margin-top:12px"></div></div><div id="app" class="hidden">
