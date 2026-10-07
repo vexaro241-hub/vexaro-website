@@ -1,6 +1,8 @@
 name: VEXARO Production Site Audit
 
 on:
+  push:
+    branches: ["main"]
   workflow_dispatch:
   schedule:
     - cron: "31 */4 * * *"
