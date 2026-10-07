@@ -19,7 +19,7 @@ jobs:
           set -euo pipefail
           check(){ code=$(curl -L -sS -o /tmp/body -w "%{http_code}" --max-time 15 "$1"); test "$code" = "200"; }
           check https://vexaro-website.vexaro241.workers.dev/health
-          check https://vexaro-members.vexaro241.workers.dev/health
+          check https://vexaro-members.vexaro241.workers.dev/health.html
           check https://vexaro-twitch-auth.vexaro241.workers.dev/
           check https://vexaro-youtube-auth.vexaro241.workers.dev/
           grep -qi "Twitch OAuth\|Twitch" /tmp/body || true
