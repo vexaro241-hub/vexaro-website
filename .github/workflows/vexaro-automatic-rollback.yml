@@ -1,6 +1,8 @@
 name: VEXARO Automatic Rollback Guard
 
 on:
+  push:
+    branches: ["main"]
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
@@ -42,7 +44,7 @@ jobs:
 
 
   credential-preflight:
-    if: ${{ inputs.verify_credentials == true }}
+    if: ${{ github.event_name == 'push' || inputs.verify_credentials == true }}
     runs-on: ubuntu-latest
     environment: production
     steps:
