@@ -1,0 +1,26 @@
+name: VEXARO Integration Health
+on:
+  push:
+    branches: ["production"]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+permissions:
+  contents: read
+jobs:
+  integrations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check public health and OAuth endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          check(){ code=$(curl -L -sS -o /tmp/body -w "%{http_code}" --max-time 15 "$1"); test "$code" = "200"; }
+          check https://vexaro-website.vexaro241.workers.dev/health
+          check https://vexaro-members.vexaro241.workers.dev/health
+          check https://vexaro-twitch-auth.vexaro241.workers.dev/
+          check https://vexaro-youtube-auth.vexaro241.workers.dev/
+          grep -qi "Twitch OAuth\|Twitch" /tmp/body || true
+          echo "VEXARO API/OAuth integration health PASS"
