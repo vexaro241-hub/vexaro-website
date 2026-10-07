@@ -14,7 +14,7 @@ const links=[
  ['HOME',homeHref],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],
  ['SETTINGS','/settings.html'],['LIVE','https://vexaro-website.vexaro241.workers.dev/live/'],['COMMUNITY','/community.html'],
  ['MARKETPLACE','/marketplace.html'],['PRO','/membership.html'],['ABOUT','/about.html'],
- ['APP','/app.html'],['SEARCH','/search.html']
+ ['APP','/app.html'],['SEARCH','/search.html'],['HELP','/faq.html'],['SUPPORT','/contact.html']
 ];
 function cleanupLegacyCache(){
  try{
