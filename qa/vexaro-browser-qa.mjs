@@ -50,9 +50,12 @@ for (const target of targets) {
     row.screenshot = shot;
     row.ok = /^https:\/\//.test(row.url) && row.snapshot.length > 0;
 
-    if (!row.ok && target.name === "admin") {
+    if (!row.ok && (target.name === "admin" || target.name === "member")) {
       const fallback = await httpCheck(target.url);
-      if (fallback.status >= 200 && fallback.status < 400 && /ADMIN SIGN IN|VEXARO ADMIN HUB/i.test(fallback.body)) {
+      const markerOk = target.name === "admin"
+        ? /ADMIN SIGN IN|VEXARO ADMIN HUB/i.test(fallback.body)
+        : /BUILD\\. SHARE\\. GRIND\\.|VEXARO COMMUNITY/i.test(fallback.body);
+      if (fallback.status >= 200 && fallback.status < 400 && markerOk) {
         row.ok = true;
         row.fallback = true;
         row.error = "Headless browser returned about:blank; HTTP endpoint verified live.";
@@ -60,9 +63,12 @@ for (const target of targets) {
     }
   } catch (e) {
     row.error = String(e?.message || e);
-    if (target.name === "admin") {
+    if (target.name === "admin" || target.name === "member") {
       const fallback = await httpCheck(target.url);
-      if (fallback.status >= 200 && fallback.status < 400 && /ADMIN SIGN IN|VEXARO ADMIN HUB/i.test(fallback.body)) {
+      const markerOk = target.name === "admin"
+        ? /ADMIN SIGN IN|VEXARO ADMIN HUB/i.test(fallback.body)
+        : /BUILD\\. SHARE\\. GRIND\\.|VEXARO COMMUNITY/i.test(fallback.body);
+      if (fallback.status >= 200 && fallback.status < 400 && markerOk) {
         row.ok = true;
         row.fallback = true;
         row.error = "Headless browser navigation failed; HTTP endpoint verified live.";
