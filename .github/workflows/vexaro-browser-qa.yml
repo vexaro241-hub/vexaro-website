@@ -2,7 +2,10 @@ name: VEXARO Browser QA
 
 on:
   push:
-    branches: ["main", "production"]
+    branches: ["main"]
+  workflow_run:
+    workflows: ["VEXARO Cloudflare Deploy"]
+    types: [completed]
   workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
@@ -12,6 +15,7 @@ permissions:
 
 jobs:
   browser-qa:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
