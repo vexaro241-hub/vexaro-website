@@ -3,6 +3,7 @@ name: VEXARO Production Guard
 on:
   push:
     branches: [production]
+  workflow_dispatch:
 
 concurrency:
   group: vexaro-production
