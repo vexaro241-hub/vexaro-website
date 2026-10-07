@@ -32,9 +32,12 @@ jobs:
           set +e
           ok=0
           for i in 1 2 3; do
-            if curl -fsS --max-time 15 "https://vexaro-website.vexaro241.workers.dev/health" | grep -q '"status":"ok"' &&
-               curl -fsS --max-time 15 "https://vexaro-members.vexaro241.workers.dev/health.html" | grep -q '"status":"ok"' &&
-               curl -fsS --max-time 15 "https://vexaro-admin.vexaro241.workers.dev/" | grep -q "ADMIN SIGN IN"; then
+            website_health="$(curl -fsS --max-time 15 "https://vexaro-website.vexaro241.workers.dev/health" 2>/dev/null || true)"
+            members_health="$(curl -fsS --max-time 15 "https://vexaro-members.vexaro241.workers.dev/health.html" 2>/dev/null || true)"
+            admin_health="$(curl -fsS --max-time 15 "https://vexaro-admin.vexaro241.workers.dev/" 2>/dev/null || true)"
+            if printf "%s" "$website_health" | grep -q '"status":"ok"' &&
+               printf "%s" "$members_health" | grep -q '"status":"ok"' &&
+               printf "%s" "$admin_health" | grep -q "ADMIN SIGN IN"; then
               ok=1
               break
             fi
@@ -50,12 +53,12 @@ jobs:
       - name: Verify Cloudflare rollback credentials and deployment history
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         shell: bash
         run: |
           set -euo pipefail
           CF_ACCOUNT_ID="50b698b841707f4c5dfca8023d156283"
           test -n "$CF_API_TOKEN"
+          CF_ACCOUNT_ID="50b698b841707f4c5dfca8023d156283"
           test -n "$CF_ACCOUNT_ID"
           for worker in vexaro-website vexaro-members vexaro-admin; do
             echo "Checking $worker deployment history..."
@@ -72,11 +75,11 @@ jobs:
       - name: Automatic rollback
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         shell: bash
         run: |
           set -euo pipefail
           test -n "$CF_API_TOKEN"
+          CF_ACCOUNT_ID="50b698b841707f4c5dfca8023d156283"
           test -n "$CF_ACCOUNT_ID"
 
           for worker in vexaro-website vexaro-members vexaro-admin; do
