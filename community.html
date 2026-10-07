@@ -204,6 +204,7 @@ async function openAuth(mode='signup'){
   if(mode==='signin'&&sb){
     try{
       const live=await sb.auth.getSession();
+  loadRuntimeFlags();;
       const existing=live?.data?.session||null;
       if(existing?.user){
         session=existing;
@@ -358,6 +359,8 @@ function setPostStatus(text,kind=''){
   el.style.color=kind==='error'?'#e10600':kind==='success'?'#7dff9b':'#777';
 }
 async function postSubmit(){
+  if(!VEXARO_RUNTIME_FLAGS.posting_enabled){setPostStatus('Posting is temporarily disabled.','error');return}
+  if(!VEXARO_RUNTIME_FLAGS.uploads_enabled && ($('postMedia')?.files?.length||0)){setPostStatus('Uploads are temporarily disabled.','error');return}
   if(!session){openAuth('signin');return}
   const body=$('postBody').value.trim();
   const files=[...($('postMedia')?.files||[])];
