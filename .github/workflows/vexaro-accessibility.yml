@@ -1,12 +1,14 @@
 name: VEXARO Accessibility Checks
 on:
-  push:
-    branches: ["production"]
+  workflow_run:
+    workflows: ["VEXARO Cloudflare Deploy"]
+    types: [completed]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   a11y:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
