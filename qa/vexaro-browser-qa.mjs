@@ -7,7 +7,7 @@ mkdirSync(OUT, { recursive: true });
 
 const targets = [
   { name: "main", url: "https://vexaro-website.vexaro241.workers.dev/" },
-  { name: "member", url: "https://vexaro-members.vexaro241.workers.dev/?view=feed" },
+  { name: "member", url: "https://vexaro-members.vexaro241.workers.dev/community.html" },
   { name: "admin", url: "https://vexaro-admin.vexaro241.workers.dev/" }
 ];
 
