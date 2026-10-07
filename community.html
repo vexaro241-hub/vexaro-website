@@ -572,4 +572,5 @@ $('signInInline')?.addEventListener('click',async e=>{
   }catch(_){}
   openAuth('signin');
 });$('authSubmit').onclick=authSubmit;['email','password','username','displayName'].forEach(id=>$(id)?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();authSubmit()}}));$('memberHomeBtn')?.addEventListener('click',e=>{e.preventDefault();showView('home')});$('postSubmit').onclick=postSubmit; $('feedSearch')?.addEventListener('input',renderFeed); $('feedSort')?.addEventListener('change',renderFeed); $('memberSearch')?.addEventListener('input',renderMembers);$('newLoadout').onclick=()=>{if(!session){openAuth();return}$('loadoutForm').classList.remove('hidden')};$('cancelLoadout').onclick=()=>$('loadoutForm').classList.add('hidden');$('saveLoadout').onclick=saveLoadout;$('newSetting').onclick=()=>{if(!session){openAuth();return}$('settingForm').classList.remove('hidden')};$('cancelSetting').onclick=()=>$('settingForm').classList.add('hidden');$('saveSetting').onclick=saveSetting;document.querySelectorAll('.tab[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));boot();
-</script></body></html>
+</script><!-- VEXARO accessibility diagnostic recheck -->
+</body></html>
