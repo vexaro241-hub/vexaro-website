@@ -1,8 +1,7 @@
 name: VEXARO Accessibility Checks
 on:
-  workflow_run:
-    workflows: ["VEXARO Cloudflare Deploy"]
-    types: [completed]
+  push:
+    branches: ["production"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -16,6 +15,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Wait for this commit to reach the live Worker
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 36); do
+            live="$(curl -fsS --max-time 10 https://vexaro-website.vexaro241.workers.dev/deploy-version.txt 2>/dev/null || true)"
+            if [ "$live" = "$GITHUB_SHA" ]; then
+              echo "Live deployment marker matches $GITHUB_SHA"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Live deployment marker did not reach production in time." >&2
+          exit 1
+
       - name: Accessibility smoke
         run: |
           set -euo pipefail
