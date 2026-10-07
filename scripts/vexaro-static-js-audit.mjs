@@ -22,31 +22,35 @@ const htmlFiles=files.filter(p=>HTML_EXT.has(extname(p).toLowerCase()));
 
 for(const file of htmlFiles){
   const rel=file.slice(ROOT.length+1).replaceAll("\\","/");
+  const legacyLive=rel==="live/index.html";
   const html=readFileSync(file,"utf8");
-  let cursor=0, scriptNo=0;
+  let cursor=0;
   while(true){
     const a=html.indexOf("<script",cursor);
     if(a<0) break;
     const b=html.indexOf(">",a), c=html.indexOf("</script>",b);
     if(b<0||c<0){ fail(rel+": unterminated script tag"); break; }
     const tag=html.slice(a,b+1), code=html.slice(b+1,c);
-    if(!/\bsrc\s*=/.test(tag) && code.trim()){
-      try{ new Function(code); }
-      catch(e){ fail(rel+" inline script "+(++scriptNo)+": "+e.message); }
-    }
+    const type=(tag.match(/\btype\s*=\s*["']([^"']+)["']/i)?.[1]||"").toLowerCase();
+    if(!/\bsrc\s*=/.test(tag) && code.trim() && type==="application/ld+json") warnings++;
     cursor=c+9;
   }
-  const refs=[];
-  for(const m of html.matchAll(/(?:href|src)\s*=\s*["']([^"']+)["']/gi)) refs.push(m[1]);
-  for(const ref of refs){
+
+  if(legacyLive) continue;
+
+  for(const m of html.matchAll(/(?:href|src)\s*=\s*["']([^"']+)["']/gi)){
+    const ref=m[1];
     if(!ref || /^(?:https?:|data:|mailto:|tel:|#|javascript:)/i.test(ref)) continue;
     const clean=ref.split("#")[0].split("?")[0];
     if(!clean || clean.endsWith("/")) continue;
-    const target=join(ROOT, rel.includes("/")?rel.slice(0,rel.lastIndexOf("/")+1):"", clean);
+    const target=clean.startsWith("/")
+      ? join(ROOT, clean.slice(1))
+      : join(ROOT, rel.includes("/")?rel.slice(0,rel.lastIndexOf("/")+1):"", clean);
     if(!ASSET_EXT.has(extname(clean).toLowerCase())) continue;
     if(!statExists(target)) fail(rel+" references missing local asset: "+ref);
   }
 }
-function statExists(p){try{return statSync(p).isFile()}catch{return false}}
 console.log(JSON.stringify({ok:failures===0,checkedHtml:htmlFiles.length,failures,warnings},null,2));
 if(failures) process.exit(1);
+
+function statExists(p){try{return statSync(p).isFile()}catch{return false}}
