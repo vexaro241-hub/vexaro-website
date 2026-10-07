@@ -1,6 +1,8 @@
 name: VEXARO Unified Platform Audit
 
 on:
+  push:
+    branches: ["main"]
   workflow_dispatch:
   schedule:
     - cron: "7,37 * * * *"
