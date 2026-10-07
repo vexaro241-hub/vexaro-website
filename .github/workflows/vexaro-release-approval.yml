@@ -1,0 +1,23 @@
+name: VEXARO Release Approval
+on:
+  workflow_dispatch:
+    inputs:
+      release_note:
+        description: "Release note / reason"
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  approved-release:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Production release gate
+        run: |
+          set -euo pipefail
+          test -s index.html
+          test -s community.html
+          test -s admin-app.html
+          echo "VEXARO production release approved: ${{ inputs.release_note }}"
