@@ -1,6 +1,8 @@
 name: VEXARO Automatic Rollback Guard
 
 on:
+  push:
+    branches: ["production"]
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
