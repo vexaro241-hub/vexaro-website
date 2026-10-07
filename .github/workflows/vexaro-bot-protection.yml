@@ -1,0 +1,25 @@
+name: VEXARO Bot Protection Check
+
+on:
+  push:
+    branches: ["production"]
+  schedule:
+    - cron: "37 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bot-protection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify production community honeypot
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --max-time 20 "https://vexaro-members.vexaro241.workers.dev/" -o /tmp/community.html
+          grep -q 'id="postWebsite"' /tmp/community.html
+          grep -q 'honeypot' <(printf '%s' "$(curl -fsSL --max-time 20 https://raw.githubusercontent.com/vexaro241-hub/vexaro-website/production/community.html)")
+          echo "VEXARO bot honeypot protection is present in production source."
