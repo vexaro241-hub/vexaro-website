@@ -53,7 +53,7 @@ jobs:
           for worker in vexaro-website vexaro-members vexaro-admin; do
             deployments="$(curl -fsS "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts/$worker/deployments"               -H "Authorization: Bearer $CF_API_TOKEN")"
 
-            version_id="$(python -c 'import json,sys; d=json.load(sys.stdin); ds=d.get("result",[]); print(next((x.get("version_id") for x in ds if x.get("version_id")), ""))' <<< "$deployments")"
+            version_id="$(python -c 'import json,sys; d=json.load(sys.stdin); ds=d.get("result",{}).get("deployments",[]); print(ds[1]["versions"][0]["version_id"] if len(ds)>1 and ds[1].get("versions") else "")' <<< "$deployments")"
             test -n "$version_id"
 
             curl -fsS -X POST "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts/$worker/deployments"               -H "Authorization: Bearer $CF_API_TOKEN"               -H "Content-Type: application/json"               --data "{"strategy":"percentage","versions":[{"version_id":"$version_id","percentage":100}}"               | grep -q '"success":true'
