@@ -28,4 +28,4 @@
   window.VEXARO_POSTHOG_RESET=function(){
     try{if(window.posthog)window.posthog.reset();}catch(_){}
   };
-})();
+window.addEventListener('error',function(e){try{window.posthog?.capture('vexaro_client_error',{message:String(e.message||'Unknown error'),source:String(e.filename||location.href),line:e.lineno||0,column:e.colno||0})}catch(_){}});window.addEventListener('unhandledrejection',function(e){try{window.posthog?.capture('vexaro_unhandled_rejection',{message:String(e.reason?.message||e.reason||'Unknown rejection'),page:location.href})}catch(_){}});\n})();
