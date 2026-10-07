@@ -1,0 +1,23 @@
+name: VEXARO Accessibility Checks
+on:
+  push:
+    branches: ["production"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  a11y:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Accessibility smoke
+        run: |
+          set -euo pipefail
+          npx --yes @axe-core/cli https://vexaro-website.vexaro241.workers.dev/ --exit
+          npx --yes @axe-core/cli https://vexaro-members.vexaro241.workers.dev/ --exit
+          npx --yes @axe-core/cli https://vexaro-admin.vexaro241.workers.dev/ --exit
+          echo "VEXARO accessibility checks PASS"
