@@ -1,0 +1,22 @@
+name: VEXARO Migration Guard
+on:
+  push:
+    branches: ["production"]
+  pull_request:
+    branches: ["production"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  migration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate database migration source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s supabase-schema.sql
+          grep -q "create table" supabase-schema.sql
+          grep -q "enable row level security" supabase-schema.sql
+          echo "VEXARO database migration source guard PASS"
