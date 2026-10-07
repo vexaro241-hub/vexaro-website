@@ -1,0 +1,27 @@
+name: VEXARO SEO Monitor
+on:
+  push:
+    branches: ["production"]
+  workflow_dispatch:
+  schedule:
+    - cron: "23 4 * * *"
+permissions:
+  contents: read
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate SEO files and metadata
+        run: |
+          test -s robots.txt
+          test -s sitemap.xml
+          grep -q "Sitemap:" robots.txt
+          grep -q "<urlset" sitemap.xml
+          for f in index.html community.html membership.html app.html search.html; do
+            test -s "$f"
+            grep -qi "<title>" "$f"
+            grep -qi 'name="description"' "$f"
+            grep -qi 'rel="canonical"' "$f"
+          done
+          echo "VEXARO SEO monitor PASS"
