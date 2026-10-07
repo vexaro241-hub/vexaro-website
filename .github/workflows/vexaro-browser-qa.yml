@@ -26,6 +26,9 @@ jobs:
       - name: Install QA runner
         run: npm install
 
+      - name: Install browser QA binary
+        run: npm install agent-browser@0.38.2 --no-save
+
       - name: Install browser
         run: npx agent-browser install --with-deps
 
