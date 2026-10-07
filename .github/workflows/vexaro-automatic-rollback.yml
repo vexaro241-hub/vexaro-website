@@ -1,0 +1,60 @@
+name: VEXARO Automatic Rollback Guard
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vexaro-automatic-rollback
+  cancel-in-progress: false
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    outputs:
+      healthy: ${{ steps.check.outputs.healthy }}
+    steps:
+      - id: check
+        shell: bash
+        run: |
+          set +e
+          ok=0
+          for i in 1 2 3; do
+            if curl -fsS --max-time 15 "https://vexaro-website.vexaro241.workers.dev/health" >/dev/null &&
+               curl -fsS --max-time 15 "https://vexaro-members.vexaro241.workers.dev/health.html" >/dev/null &&
+               curl -fsS --max-time 15 "https://vexaro-admin.vexaro241.workers.dev/" >/dev/null; then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          echo "healthy=$ok" >> "$GITHUB_OUTPUT"
+
+  rollback:
+    needs: health
+    if: needs.health.outputs.healthy != '1'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Automatic rollback
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CF_API_TOKEN"
+          test -n "$CF_ACCOUNT_ID"
+
+          for worker in vexaro-website vexaro-members vexaro-admin; do
+            deployments="$(curl -fsS "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts/$worker/deployments"               -H "Authorization: Bearer $CF_API_TOKEN")"
+
+            version_id="$(python -c 'import json,sys; d=json.load(sys.stdin); ds=d.get("result",{}).get("deployments",[]); print(ds[1]["versions"][0]["version_id"] if len(ds)>1 and ds[1].get("versions") else "")' <<< "$deployments")"
+            test -n "$version_id"
+
+            curl -fsS -X POST "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts/$worker/deployments"               -H "Authorization: Bearer $CF_API_TOKEN"               -H "Content-Type: application/json"               --data "{\"strategy\":\"percentage\",\"versions\":[{\"version_id\":\"$version_id\",\"percentage\":100}]}"               | grep -q '"success":true'
+          done
