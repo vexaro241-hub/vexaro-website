@@ -3,9 +3,6 @@ name: VEXARO Browser QA
 on:
   push:
     branches: ["main"]
-  workflow_run:
-    workflows: ["VEXARO Cloudflare Deploy"]
-    types: [completed]
   workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
@@ -15,7 +12,6 @@ permissions:
 
 jobs:
   browser-qa:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -26,6 +22,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+
+      - name: Wait for production deployment
+        if: github.ref_name == 'production'
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 36); do
+            live="$(curl -fsS --max-time 10 https://vexaro-website.vexaro241.workers.dev/deploy-version.txt 2>/dev/null || true)"
+            if [ "$live" = "$GITHUB_SHA" ]; then
+              echo "Live deployment marker matches $GITHUB_SHA"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Live deployment marker did not reach production in time." >&2
+          exit 1
 
       - name: Install QA runner
         run: npm install
