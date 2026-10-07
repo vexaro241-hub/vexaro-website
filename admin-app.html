@@ -121,7 +121,7 @@ function showAdminSignIn(){
       }
       const r=await sb.auth.signInWithPassword({email,password});
       if(r.error)throw r.error;
-      uid=r.data?.user?.id;sessionStorage.setItem('vexaro_admin_gate_v1','1');
+      uid=r.data?.user?.id;
       if(!uid)throw new Error('Sign in succeeded but no administrator user was returned.');
       try{await window.VEXARO_IDENTITIES?.init(sb,uid,'admin');}catch(_){}
       const p=await sb.from('profiles').select('role').eq('id',uid).single();
@@ -199,8 +199,6 @@ document.getElementById('adminSearchBtn')?.addEventListener('click',async()=>{co
 (async()=>{const fail=(m)=>{$('loading').innerHTML='<div class="notice">'+esc(m||'Unable to verify administrator access.')+'</div><div class="actions"><a class="btn" href="https://vexaro-members.vexaro241.workers.dev/">OPEN VEXARO MEMBERS</a><a class="btn" href="https://vexaro-website.vexaro241.workers.dev/">BACK TO VEXARO</a></div>'};try{if(!window.supabase?.createClient)throw new Error('Supabase client failed to load.');sb=supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
 try{sessionStorage.removeItem('vexaro_admin_gate_v1')}catch(_){}
 try{history.replaceState({},document.title,location.pathname+location.search)}catch(_){}
-showAdminSignIn();
-return;
 showAdminSignIn();
 /* Immediate fallback: never leave Admin Hub stuck on the access-check screen. */
 /* Watchdog runs after the full app script so it cannot race Supabase/CDN loading. */
