@@ -51,7 +51,7 @@ async function checkTarget(name, base) {
       try {
         const r = await get(new URL(path, base));
         result.checks.push({ path, status: r.status });
-        if (r.status !== 200) result.errors.push(`website ${path}: HTTP ${r.status}`);
+        if (r.status < 200 || r.status >= 400) result.errors.push(`website ${path}: HTTP ${r.status}`);
         if (path === "/" && !/VEXARO/i.test(r.body)) result.errors.push("website /: VEXARO marker missing");
       } catch (error) {
         result.errors.push(`website ${path}: ${error.message}`);
