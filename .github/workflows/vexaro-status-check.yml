@@ -1,0 +1,26 @@
+name: VEXARO Status Check
+
+on:
+  push:
+    branches: ["production"]
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check production services
+        shell: bash
+        run: |
+          set -euo pipefail
+          for url in             "https://vexaro-website.vexaro241.workers.dev/health"             "https://vexaro-members.vexaro241.workers.dev/health.html"             "https://vexaro-admin.vexaro241.workers.dev/"; do
+            code=$(curl -L -sS -o /dev/null -w "%{http_code}" --max-time 20 "$url")
+            test "$code" = "200"
+          done
+          echo "VEXARO status check PASS"
