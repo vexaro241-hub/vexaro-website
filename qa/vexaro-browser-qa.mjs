@@ -29,6 +29,7 @@ for (const target of targets) {
   const row = { ...target, ok: false, url: null, snapshot: null, screenshot: null, error: null };
   try {
     run(["open", target.url]);
+    run(["wait", "2000"], true);
     row.url = run(["get", "url"], true).trim();
     row.snapshot = run(["snapshot", "-i", "-c"], true);
     const shot = join(OUT, target.name + ".png");
