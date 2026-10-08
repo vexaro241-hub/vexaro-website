@@ -13,13 +13,14 @@ async function scan(){const b=await chromium.launch(),c=await b.newContext(),url
 async function refreshSignOut(path="/"){
   let b,c,p;try{
     b=await chromium.launch();c=await b.newContext();p=await c.newPage();
+    const dialogs=[];p.on("dialog",d=>{dialogs.push(d.message());d.dismiss().catch(()=>{})});
     await p.goto(BASE+path,{waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
     const markerBefore=await p.evaluate(()=>sessionStorage.getItem("vexaro_last_page_url")||"");
     await p.evaluate(()=>{localStorage.setItem("vexaro-members-auth-v2","qa-sentinel");localStorage.setItem("vexaro-admin-auth","qa-sentinel");localStorage.setItem("sb-gyapnhfsbsnxkyfqlsxh-auth-token","qa-sentinel")});
     await p.reload({waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
     await p.waitForTimeout(250);
     const result=await p.evaluate(()=>({navType:performance.getEntriesByType("navigation")[0]?.type||"",legacyNavigationType:performance.navigation?.type??null,previousPage:sessionStorage.getItem("vexaro_last_page_url")||"",currentPage:location.href,remaining:["vexaro-members-auth-v2","vexaro-admin-auth","sb-gyapnhfsbsnxkyfqlsxh-auth-token"].filter(k=>localStorage.getItem(k)!==null)}));
-    return {path,ok:result.remaining.length===0,markerBefore,...result};
+    return {path,ok:result.remaining.length===0&&dialogs.length===0,dialogs,markerBefore,...result};
   }catch(e){return {path,ok:false,error:e.message}}finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
 }
 async function adminHeroLayout(){
@@ -38,7 +39,7 @@ async function adminHeroLayout(){
   }catch(e){return {ok:false,error:e.message}}finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
 }
 const suites=[];for(const [bt,label,opts] of [[chromium,"Chromium"],[firefox,"Firefox"],[webkit,"WebKit"],[chromium,"iPhone 15 Pro Max",devices["iPhone 15 Pro Max"]||{viewport:{width:430,height:932},isMobile:true,hasTouch:true}]])suites.push(await timed(smoke(bt,label,opts),240000,label+" suite"));
-const refreshChecks=[];for(const path of ["/","/community"])refreshChecks.push(await refreshSignOut(path));
+const refreshChecks=[];for(const path of ["/","/community?view=feed"])refreshChecks.push(await refreshSignOut(path));
 const refresh={ok:refreshChecks.every(x=>x.ok),checks:refreshChecks};
 const adminHero=await adminHeroLayout();
 const assets=await scan(),meta=await metadata(),report={generatedAt:new Date().toISOString(),suites,refreshSignOut:refresh,adminHeroLayout:adminHero,assets,metadata:meta};writeFileSync("qa-results/cross-browser/report.json",JSON.stringify(report,null,2));console.log(JSON.stringify({suites:suites.map(s=>({label:s.label,passed:s.out.filter(x=>x.status>=200&&x.status<400&&x.body&&!x.errors.length).length,total:s.out.length})),refreshSignOut:refresh,adminHeroLayout:adminHero,assets,metadata:meta},null,2));if(suites.some(s=>s.out.some(x=>!(x.status>=200&&x.status<400&&x.body&&!x.errors.length)))||!refresh.ok||!adminHero.ok||assets.bad.length||meta.bad.length)process.exit(1);

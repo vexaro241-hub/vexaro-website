@@ -23,7 +23,7 @@ window.VEXARO_IDENTITIES={
  async init(sb,userId,preferredType){
   if(!sb||!userId)return null;
   this.sb=sb;
-  const {data,error}=await sb.from('profile_identities').select('id,slug,username,display_name,bio,avatar_url,identity_type,can_post,can_moderate,can_view_business').eq('user_id',userId).order('identity_type');
+  const {data,error}=await sb.from('profile_identities').select('id,slug,username,display_name,bio,avatar_url,identity_type,can_post').eq('user_id',userId).order('identity_type');
   if(error){console.warn('Identity switcher:',error.message);return null}
   this.list=data||[];
   const path=(location.pathname||'').toLowerCase();
