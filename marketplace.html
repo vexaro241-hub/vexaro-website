@@ -46,7 +46,7 @@ function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function money(p){return '£'+(Number(p||0)/100).toFixed(2)}
 async function boot(){
  if(!window.VEXARO_SUPABASE_URL||!window.VEXARO_SUPABASE_KEY){$('listings').innerHTML='<div class="empty">Marketplace backend is not connected.</div>';return}
- sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
+ sb=window.vexaroSupabase;
  session=(await sb.auth.getSession()).data.session||null;
  $('accountBtn').textContent=session?'VEXARO ACCOUNT':'JOIN VEXARO';
  $('accountBtn').onclick=()=>location.href=session?'community.html':'community.html?signin=1';
