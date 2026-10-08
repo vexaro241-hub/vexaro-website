@@ -22,6 +22,15 @@ const forceSignedOut=()=>{
 let navType='';
 try{navType=performance.getEntriesByType('navigation')[0]?.type||''}catch(e){}
 if(!isAdminApp && navType==='reload'){
+  /* Clear the live Supabase client as well as storage; removing only the token
+     from localStorage can leave an already-created client authenticated in memory. */
+  try{
+    const client=window.vexaroSupabase;
+    if(client&&client.auth&&typeof client.auth.signOut==='function'){
+      const signOutResult=client.auth.signOut({scope:'local'});
+      if(signOutResult&&typeof signOutResult.catch==='function')signOutResult.catch(()=>{});
+    }
+  }catch(e){}
   clearSession();
   try{sessionStorage.setItem('vexaro_signed_out','1')}catch(e){}
 }
