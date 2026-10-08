@@ -10,7 +10,7 @@
     try{
       if(automation||qa)return;
       if(!window.supabase||!window.VEXARO_SUPABASE_URL||!window.VEXARO_SUPABASE_KEY)return;
-      const sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
+      const sb=window.vexaroSupabase;
       sb.auth.getSession().then(({data})=>{
         const userId=data.session?.user?.id||null;
         return sb.from('site_analytics').insert({
