@@ -5,6 +5,7 @@ const IDLE_LIMIT=30*60*1000;
 const HIDDEN_LIMIT=15*60*1000;
 const isAdminApp=location.hostname==='vexaro-admin.vexaro241.workers.dev';
 const now=()=>Date.now();
+const isReload=()=>{try{const n=performance.getEntriesByType('navigation')[0];return !!n&&n.type==='reload'}catch(e){return false}};
 const clearSession=()=>{
   try{
     Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)).forEach(k=>localStorage.removeItem(k));
@@ -18,6 +19,7 @@ const forceSignedOut=()=>{
   try{window.dispatchEvent(new CustomEvent('vexaro:signed-out'))}catch(e){}
   if(location.pathname==='/'&&!location.search&&!location.hash) location.reload();
 };
+if(isReload()) clearSession();
 let last=Number(localStorage.getItem('vexaro_last_active')||0);
 if(!isAdminApp){
   if(last&&now()-last>IDLE_LIMIT) clearSession();
