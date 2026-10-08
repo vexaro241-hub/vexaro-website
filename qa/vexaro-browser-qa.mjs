@@ -7,9 +7,9 @@ const OUT = "qa-results";
 mkdirSync(OUT, { recursive: true });
 
 const targets = [
-  { name: "main", url: "https://vexaro-website.vexaro241.workers.dev/" },
-  { name: "member", url: "https://vexaro-members.vexaro241.workers.dev/?view=feed" },
-  { name: "admin", url: "https://vexaro-admin.vexaro241.workers.dev/" }
+  { name: "main", url: "https://vexaro-website.vexaro241.workers.dev/?vexaro_qa=1" },
+  { name: "member", url: "https://vexaro-members.vexaro241.workers.dev/?view=feed&vexaro_qa=1" },
+  { name: "admin", url: "https://vexaro-admin.vexaro241.workers.dev/?vexaro_qa=1" }
 ];
 
 function run(args, allowFail = false) {
