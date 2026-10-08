@@ -518,7 +518,7 @@ async function openPublicProfile(userId){
   history.pushState({},'',url.pathname+url.search);
   showView('profile');
 }
-window.addEventListener('popstate',()=>{const p=new URLSearchParams(location.search);showView(p.get('user')?'profile':(p.get('view')||'feed'));});
+window.addEventListener('popstate',()=>{const p=new URLSearchParams(location.search);showView(p.get('user')?'profile':(p.get('view')||'home'));});
 async function renderPublicProfile(userId){
   if(!sb||!userId){renderProfile();return}
   const [p,posts,loadouts,settings]=await Promise.all([
