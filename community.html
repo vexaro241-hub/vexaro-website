@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><script src="/vexaro-session.js" defer></script><script src="/vexaro-posthog.js" defer></script><script src="/vexaro-identities.js" defer></script><script>
+<html lang="en"><head><script src="/vexaro-posthog.js" defer></script><script src="/vexaro-identities.js" defer></script><script>
 (function(){
   window.showView=window.showView||function(view){
     document.querySelectorAll('.tab[data-view]').forEach(function(b){b.classList.toggle('active',b.dataset.view===view)});
@@ -291,7 +291,15 @@ async function boot(){
     if(event==='PASSWORD_RECOVERY'){authBusy=false;authInitializing=false;openAuth('recovery');return}
     if(authInitializing || authBusy)return;
     if(event==='INITIAL_SESSION')return;
-    setTimeout(()=>{if(!authBusy)applySession(s||null)},0);
+    setTimeout(async()=>{
+      if(authBusy)return;
+      try{const res=await sb.auth.getSession();await applySession(res.data?.session||null)}
+      catch(_){await applySession(s||null)}
+    },0);
+  });
+  window.addEventListener('pageshow',async()=>{
+    if(authBusy||authInitializing||!sb)return;
+    try{const res=await sb.auth.getSession();await applySession(res.data?.session||null)}catch(_){}
   });
 }
 async function openAdminApp(){
