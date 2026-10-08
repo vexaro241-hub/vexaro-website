@@ -180,6 +180,8 @@ async function applySession(s){
      signed-in account could be shown as FREE MEMBER and miss its creator/admin UI. */
   if(session){
     try{ await window.VEXARO_IDENTITIES?.init(sb,session.user.id,'creator'); }catch(_){}
+    /* A sign-out or newer login may happen while identity data is loading. */
+    if(version!==sessionVersion)return;
   }
   try{ if(session) window.VEXARO_POSTHOG_IDENTIFY(session.user.id,{app:'members'}); else window.VEXARO_POSTHOG_RESET(); }catch(_){}
   if(!session){
