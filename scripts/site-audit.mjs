@@ -1,20 +1,20 @@
-import https from "node:https";
-
 const base = process.env.VEXARO_BASE_URL || "https://vexaro-website.vexaro241.workers.dev";
+const baseUrl = new URL(base);
 const paths = ["/","/health","/community.html","/manifest.webmanifest","/robots.txt","/sitemap.xml","/clips.html","/loadouts.html","/settings.html","/marketplace.html","/membership.html","/about.html","/controller-settings.html","/graphics-settings.html","/warzone-movement-settings.html","/warzone-fov-settings.html","/warzone-xbox-settings.html"];
 const requiredHeaders = ["content-security-policy","x-content-type-options","referrer-policy","permissions-policy"];
 
-function get(path){
-  return new Promise((resolve,reject)=>{
-    const req=https.get(new URL(path,base),{headers:{"user-agent":"VEXARO-site-audit/1.1"}},res=>{
-      let body="";
-      res.setEncoding("utf8");
-      res.on("data",c=>body+=c);
-      res.on("end",()=>resolve({status:res.statusCode||0,headers:res.headers,body}));
-    });
-    req.setTimeout(20000,()=>req.destroy(new Error("timeout")));
-    req.on("error",reject);
+async function get(path){
+  const response=await fetch(new URL(path,baseUrl),{
+    headers:{"user-agent":"VEXARO-site-audit/1.2"},
+    redirect:"follow",
+    signal:AbortSignal.timeout(20000)
   });
+  return {
+    status:response.status,
+    headers:Object.fromEntries(response.headers.entries()),
+    body:await response.text(),
+    url:response.url
+  };
 }
 
 const failures=[];
@@ -23,7 +23,7 @@ for(const path of paths){
   try{
     const r=await get(path);
     if(r.status<200 || r.status>=400) failures.push(`${path}: HTTP ${r.status}`);
-    else if(r.status>=300) warnings.push(`${path}: HTTP ${r.status} redirect`);
+    if(new URL(r.url).origin!==baseUrl.origin) failures.push(`${path}: redirected outside production origin to ${r.url}`);
     if(path==="/" && !/VEXARO/i.test(r.body)) failures.push("/: VEXARO marker missing");
     if(path==="/" && !/rel=["']canonical["']/i.test(r.body)) failures.push("/: canonical link missing");
     if(path==="/" && !/rel=["']manifest["']/i.test(r.body)) failures.push("/: manifest link missing");
