@@ -316,7 +316,7 @@ async function openAdminApp(){
     const admin=identity?.list?.find(x=>x.identity_type==='admin');
     if(admin){await identity.switchTo(admin.id);return;}
   }catch(_){}
-  const target='https://vexaro-admin.vexaro241.workers.dev/?handoff=1#vexaro_access='+encodeURIComponent(session.access_token)+'&vexaro_refresh='+encodeURIComponent(session.refresh_token);
+  const target=location.origin+'/admin-app.html?handoff=1#vexaro_access='+encodeURIComponent(session.access_token)+'&vexaro_refresh='+encodeURIComponent(session.refresh_token);
   location.replace(target);
 }
 async function signOut(){

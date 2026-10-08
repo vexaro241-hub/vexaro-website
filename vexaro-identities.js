@@ -1,8 +1,8 @@
 (function(){
 'use strict';
 const KEY='vexaro_active_identity';
-const MEMBERS_APP='https://vexaro-members.vexaro241.workers.dev/';
-const ADMIN_APP='https://vexaro-admin.vexaro241.workers.dev/';
+const MEMBERS_APP='/community.html';
+const ADMIN_APP='/admin-app.html';
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 window.VEXARO_IDENTITIES={
  list:[],active:null,sb:null,
