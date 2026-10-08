@@ -204,7 +204,7 @@ async function applySession(s){
   }else{
     profile=data;
     const isAdmin=String(profile.role||'').trim().toLowerCase()==='admin';
-    $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>'+(isAdmin?' <button class="btn" id="openAdminAppBtn">Admin</button>':'');
+    $('authNav').innerHTML='<button class="btn accent" id="logout">SIGN OUT</button>'+(isAdmin?' <button class="btn" id="openAdminAppBtn">Admin</button>':'');
     $('logout').onclick=signOut;
     if(isAdmin)$('openAdminAppBtn').onclick=openAdminApp;
     localStorage.setItem('vexaro_last_active',String(Date.now()));
