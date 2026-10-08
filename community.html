@@ -191,13 +191,13 @@ async function applySession(s){
   if(version!==sessionVersion)return;
   if(error){
     profile=null;
-    $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>';
+    $('authNav').innerHTML='<button class="btn accent" id="logout">SIGN OUT</button>';
     $('logout').onclick=signOut;
     $('sideTitle').textContent='VEXARO MEMBER';$('sideContent').textContent='Your profile is still loading. Please try again.';
     
   }else if(!data){
     profile=null;
-    $('authNav').innerHTML='<button class="btn" id="logout">Sign out</button>';
+    $('authNav').innerHTML='<button class="btn accent" id="logout">SIGN OUT</button>';
     $('logout').onclick=signOut;
     $('sideTitle').textContent='VEXARO MEMBER';$('sideContent').textContent='Your profile is still being created. Please try again in a moment.';
     
