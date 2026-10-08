@@ -42,8 +42,6 @@ export default {
       }
 
       response = new Response(html, asset);
-    }
-
     } else if (type.includes("text/xml") || type.includes("application/xml") || type.includes("text/plain") || type.includes("application/manifest+json") || type.includes("application/json")) {
       const requestUrl = new URL(request.url);
       const body = await asset.text();
