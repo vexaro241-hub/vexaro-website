@@ -7,7 +7,7 @@ const isAdminApp=location.hostname==='vexaro-admin.vexaro241.workers.dev';
 const now=()=>Date.now();
 const clearSession=()=>{
   try{
-    Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)||k==='vexaro-members-auth-v2').forEach(k=>localStorage.removeItem(k));
+    Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)||k==='vexaro-members-auth-v2'||k==='vexaro-admin-auth').forEach(k=>localStorage.removeItem(k));
     localStorage.removeItem('vexaro_last_active');
     localStorage.removeItem('vexaro_session_role');
   }catch(e){}
