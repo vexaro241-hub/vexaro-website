@@ -285,10 +285,15 @@ async function boot(){
     session=null;profile=null;sessionVersion++;await applySession(null);
   }
   authInitializing=false;
-  const requested=new URLSearchParams(location.search).get('view')||'feed';
+  const requested=new URLSearchParams(location.search).get('view')||'home';
   if(new URLSearchParams(location.search).get('user')) showView('profile');
-  else showView(requested);
-  if(homepageAuth){ if(session){ try{ await sb.auth.signOut({scope:'local'}); }catch(_){ } session=null; profile=null; sessionVersion++; await applySession(null); } openAuth(requestedAuth==='signup'?'signup':'signin'); }
+  else if(homepageAuth && session){
+    history.replaceState({},document.title,'/?view=home');
+    showView('home');
+  }else if(homepageAuth){
+    showView('home');
+    openAuth(requestedAuth==='signup'?'signup':'signin');
+  }else showView(requested);
   sb.auth.onAuthStateChange((event,s)=>{
     if(event==='PASSWORD_RECOVERY'){authBusy=false;authInitializing=false;openAuth('recovery');return}
     if(authInitializing || authBusy)return;
