@@ -23,7 +23,7 @@ const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&g
 async function boot(){
  try{
   if(!window.supabase||!window.VEXARO_SUPABASE_URL||!window.VEXARO_SUPABASE_KEY)return;
-  const sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
+  const sb=window.vexaroSupabase;
   const [{data:{session}},{data:plans},{data:memberships}]=await Promise.all([
    sb.auth.getSession(),
    sb.from('membership_plans').select('code,name,price_pence,interval_unit,access_level,active').eq('active',true).order('sort_order'),
