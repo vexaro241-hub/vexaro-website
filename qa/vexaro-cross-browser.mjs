@@ -13,12 +13,13 @@ async function scan(){const b=await chromium.launch(),c=await b.newContext(),url
 async function refreshSignOut(){
   let b,c,p;try{
     b=await chromium.launch();c=await b.newContext();p=await c.newPage();
-    await p.goto(BASE+"/?qa="+QA,{waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
+    await p.goto(BASE+"/",{waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
+    const markerBefore=await p.evaluate(()=>sessionStorage.getItem("vexaro_last_page_url")||"");
     await p.evaluate(()=>{localStorage.setItem("vexaro-members-auth-v2","qa-sentinel");localStorage.setItem("vexaro-admin-auth","qa-sentinel");localStorage.setItem("sb-gyapnhfsbsnxkyfqlsxh-auth-token","qa-sentinel")});
     await p.reload({waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
     await p.waitForTimeout(250);
     const result=await p.evaluate(()=>({navType:performance.getEntriesByType("navigation")[0]?.type||"",legacyNavigationType:performance.navigation?.type??null,previousPage:sessionStorage.getItem("vexaro_last_page_url")||"",currentPage:location.href,remaining:["vexaro-members-auth-v2","vexaro-admin-auth","sb-gyapnhfsbsnxkyfqlsxh-auth-token"].filter(k=>localStorage.getItem(k)!==null)}));
-    return {ok:result.remaining.length===0,...result};
+    return {ok:result.remaining.length===0,markerBefore,...result};
   }catch(e){return {ok:false,error:e.message}}finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
 }
 const suites=[];for(const [bt,label,opts] of [[chromium,"Chromium"],[firefox,"Firefox"],[webkit,"WebKit"],[chromium,"iPhone 15 Pro Max",devices["iPhone 15 Pro Max"]||{viewport:{width:430,height:932},isMobile:true,hasTouch:true}]])suites.push(await timed(smoke(bt,label,opts),240000,label+" suite"));
