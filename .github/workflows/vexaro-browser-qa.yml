@@ -13,27 +13,16 @@ permissions:
 jobs:
   browser-qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 24
-
-      - name: Install QA runner
-        run: npm install
-
-      - name: Install browser
-        run: npx agent-browser install --with-deps
-
-      - name: Run VEXARO browser checks
-        run: npm run qa:browser
-
-      - name: Upload browser evidence
-        if: always()
+      - run: npm install
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: node qa/vexaro-cross-browser.mjs
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: vexaro-browser-qa-${{ github.run_number }}
