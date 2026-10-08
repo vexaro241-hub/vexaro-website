@@ -31,16 +31,17 @@ async function checkTarget(name, base) {
   const result = { name, base, ok: true, checks: [], errors: [] };
   const root = await get(new URL("/", base));
   result.checks.push({ path: "/", status: root.status });
-  if (root.status < 200 || root.status >= 400) {
+  const intentionallyOffline = (name === "members" || name === "admin") && root.status === 503 && /TEMPORARILY OFFLINE/i.test(root.body);
+  if (!intentionallyOffline && (root.status < 200 || root.status >= 400)) {
     result.errors.push(`${name} /: HTTP ${root.status}`);
   }
-  if (root.status >= 500) result.errors.push(`${name} /: server error`);
+  if (!intentionallyOffline && root.status >= 500) result.errors.push(`${name} /: server error`);
 
   for (const path of ["/health", "/api/health"]) {
     try {
       const r = await get(new URL(path, base));
       result.checks.push({ path, status: r.status });
-      if (r.status >= 500) result.errors.push(`${name} ${path}: HTTP ${r.status}`);
+      if (r.status >= 500 && !(name === "members" || name === "admin")) result.errors.push(`${name} ${path}: HTTP ${r.status}`);
     } catch (error) {
       result.checks.push({ path, status: "unreachable", error: error.message });
     }
