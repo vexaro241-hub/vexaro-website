@@ -17,8 +17,8 @@ async function refreshSignOut(){
     await p.evaluate(()=>{localStorage.setItem("vexaro-members-auth-v2","qa-sentinel");localStorage.setItem("vexaro-admin-auth","qa-sentinel");localStorage.setItem("sb-gyapnhfsbsnxkyfqlsxh-auth-token","qa-sentinel")});
     await p.reload({waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
     await p.waitForTimeout(250);
-    const remaining=await p.evaluate(()=>["vexaro-members-auth-v2","vexaro-admin-auth","sb-gyapnhfsbsnxkyfqlsxh-auth-token"].filter(k=>localStorage.getItem(k)!==null));
-    return {ok:remaining.length===0,remaining};
+    const result=await p.evaluate(()=>({navType:performance.getEntriesByType("navigation")[0]?.type||"",legacyNavigationType:performance.navigation?.type??null,previousPage:sessionStorage.getItem("vexaro_last_page_url")||"",currentPage:location.href,remaining:["vexaro-members-auth-v2","vexaro-admin-auth","sb-gyapnhfsbsnxkyfqlsxh-auth-token"].filter(k=>localStorage.getItem(k)!==null)}));
+    return {ok:result.remaining.length===0,...result};
   }catch(e){return {ok:false,error:e.message}}finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
 }
 const suites=[];for(const [bt,label,opts] of [[chromium,"Chromium"],[firefox,"Firefox"],[webkit,"WebKit"],[chromium,"iPhone 15 Pro Max",devices["iPhone 15 Pro Max"]||{viewport:{width:430,height:932},isMobile:true,hasTouch:true}]])suites.push(await timed(smoke(bt,label,opts),240000,label+" suite"));

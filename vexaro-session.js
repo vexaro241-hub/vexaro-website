@@ -20,15 +20,17 @@ const forceSignedOut=()=>{
   if(location.pathname==='/'&&!location.search&&!location.hash) location.reload();
 };
 /* User-requested behaviour: a manual browser refresh must sign members out. */
-let navType='',legacyNavigationType=null;
+let navType='',legacyNavigationType=null,previousPage='';
+const currentPage=location.href;
 try{
   navType=performance.getEntriesByType('navigation')[0]?.type||'';
   legacyNavigationType=typeof performance.navigation?.type==='number'?performance.navigation.type:null;
+  previousPage=sessionStorage.getItem('vexaro_last_page_url')||'';
 }catch(e){}
-const isReload=navType==='reload'||legacyNavigationType===1;
-if(!isAdminApp && isReload){
-  /* Clear the live Supabase client as well as storage; removing only the token
-     from localStorage can leave an already-created client authenticated in memory. */
+const isRefresh=navType==='reload'||legacyNavigationType===1||(navType!=='back_forward'&&previousPage===currentPage);
+if(!isAdminApp && isRefresh){
+  /* Clear the live Supabase client as well as every stored auth key. The same-URL
+     marker is a fallback for browsers that misreport reload navigation. */
   try{
     const client=window.vexaroSupabase;
     if(client&&client.auth&&typeof client.auth.signOut==='function'){
@@ -39,6 +41,7 @@ if(!isAdminApp && isReload){
   clearSession();
   try{sessionStorage.setItem('vexaro_signed_out','1')}catch(e){}
 }
+try{sessionStorage.setItem('vexaro_last_page_url',currentPage)}catch(e){}
 let last=Number(localStorage.getItem('vexaro_last_active')||0);
 if(!isAdminApp){
   if(last&&now()-last>IDLE_LIMIT) clearSession();
