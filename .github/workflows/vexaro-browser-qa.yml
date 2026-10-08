@@ -23,7 +23,7 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: node qa/vexaro-cross-browser.mjs
       - if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vexaro-browser-qa-${{ github.run_number }}
           path: qa-results/
