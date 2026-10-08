@@ -160,13 +160,13 @@ async function authSubmit(){
       msg('Creating account…');
       const {data,error}=await sb.auth.signUp({email,password,options:{data:{username,display_name}}});
       if(error)throw error;
-      if(data.session){await applySession(data.session);history.replaceState({},document.title,'/?view=feed');showView('feed');return}
+      if(data.session){await applySession(data.session);history.replaceState({},document.title,'/?view=home');showView('home');return}
       msg('Account created. Check your email to confirm your account, then sign in.');
     }else{
       const {data,error}=await sb.auth.signInWithPassword({email,password});
       if(error)throw error;
       if(!data.session)throw new Error('Sign-in succeeded but no session was returned. Please try again.');
-      await applySession(data.session);history.replaceState({},document.title,'/?view=feed');showView('feed');
+      await applySession(data.session);history.replaceState({},document.title,'/?view=home');showView('home');
     }
   }catch(e){msg(e?.message||'Something went wrong. Please try again.')}finally{authBusy=false;btn.disabled=false}
 }
