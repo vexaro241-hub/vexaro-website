@@ -175,6 +175,12 @@ let authBusy=false;
 async function applySession(s){
   const version=++sessionVersion;
   session=s||null;
+  /* Load the user's public/creator identity on every session transition, including
+     fresh sign-in. Previously this ran only during initial page boot, so a newly
+     signed-in account could be shown as FREE MEMBER and miss its creator/admin UI. */
+  if(session){
+    try{ await window.VEXARO_IDENTITIES?.init(sb,session.user.id,'creator'); }catch(_){}
+  }
   try{ if(session) window.VEXARO_POSTHOG_IDENTIFY(session.user.id,{app:'members'}); else window.VEXARO_POSTHOG_RESET(); }catch(_){}
   if(!session){
     profile=null;
@@ -279,7 +285,6 @@ async function boot(){
   const res=await sb.auth.getSession();
   if(res.error) throw res.error;
   if(res.data.session){
-    try{ await window.VEXARO_IDENTITIES?.init(sb,res.data.session.user.id,'creator'); }catch(_){}
     await applySession(res.data.session);
   }else{
     session=null;profile=null;sessionVersion++;await applySession(null);
