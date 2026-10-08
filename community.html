@@ -323,6 +323,7 @@ async function signOut(){
   if(!sb)return;
   const {error}=await sb.auth.signOut({scope:'local'});
   if(error){alert(error.message);return}
+  try{window.VEXARO_CLEAR_SESSION?.()}catch(_){}
   localStorage.removeItem('vexaro_last_active');
   localStorage.removeItem('vexaro_session_role');
   try{localStorage.removeItem('vexaro-members-auth-v2')}catch(_){ }

@@ -12,6 +12,7 @@ const clearSession=()=>{
     localStorage.removeItem('vexaro_session_role');
   }catch(e){}
 };
+window.VEXARO_CLEAR_SESSION=clearSession;
 const forceSignedOut=()=>{
   clearSession();
   try{sessionStorage.setItem('vexaro_signed_out','1')}catch(e){}

@@ -24,6 +24,13 @@ for(const file of htmlFiles){
   const rel=file.slice(ROOT.length+1).replaceAll("\\","/");
   const legacyLive=rel==="live/index.html";
   const html=readFileSync(file,"utf8");
+  const clientCreations=(html.match(/(?:window\\.)?supabase\\.createClient\\s*\\(/g)||[]).length;
+  if(rel!=="admin-app.html"&&clientCreations>0) fail(rel+": use the shared Supabase client instead of creating another auth client");
+  if(rel==="admin-app.html"&&clientCreations>1) fail(rel+": Admin Hub must reuse its single auth client");
+  const hasSupabaseUmd=/supabase-js@2\\/dist\\/umd\\/supabase\\.min\\.js/.test(html);
+  const hasSupabaseConfig=/supabase-config\\.js/.test(html);
+  const hasInlineAdminConfig=rel==="admin-app.html"&&/window\\.VEXARO_SUPABASE_URL/.test(html);
+  if(hasSupabaseUmd&&!hasSupabaseConfig&&!hasInlineAdminConfig) fail(rel+": Supabase library is loaded without its shared config");
   let cursor=0;
   while(true){
     const a=html.indexOf("<script",cursor);
