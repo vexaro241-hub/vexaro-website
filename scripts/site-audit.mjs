@@ -1,7 +1,7 @@
 import https from "node:https";
 
 const base = process.env.VEXARO_BASE_URL || "https://vexaro-website.vexaro241.workers.dev";
-const paths = ["/","/health","/community.html","/manifest.webmanifest","/robots.txt","/sitemap.xml"];
+const paths = ["/","/health","/community.html","/manifest.webmanifest","/robots.txt","/sitemap.xml","/clips.html","/loadouts.html","/settings.html","/marketplace.html","/membership.html","/about.html","/controller-settings.html","/graphics-settings.html","/warzone-movement-settings.html","/warzone-fov-settings.html","/warzone-xbox-settings.html"];
 const requiredHeaders = ["content-security-policy","x-content-type-options","referrer-policy","permissions-policy"];
 
 function get(path){
