@@ -11,7 +11,7 @@ async function smoke(bt,label,opts={}){const b=await bt.launch();const c=await b
   let lastError=null;
   for(let attempt=1;attempt<=QA_RETRIES;attempt++){
     try{
-      const r=await p.goto(BASE+path+"?qa="+QA+"&attempt="+attempt,{waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
+      const r=await p.goto(BASE+path+"?qa="+QA+"&attempt="+attempt,{waitUntil:"commit",timeout:QA_TIMEOUT});
       const body=(await p.locator("body").innerText()).trim().length>0;
       return{path,status:r?.status()||0,body,errors:errs};
     }catch(e){
