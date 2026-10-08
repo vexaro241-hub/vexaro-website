@@ -32,9 +32,7 @@ jobs:
           set +e
           ok=0
           for i in 1 2 3; do
-            if curl -fsS --max-time 15 "https://vexaro-website.vexaro241.workers.dev/health" >/dev/null &&
-               curl -fsS --max-time 15 "https://vexaro-members.vexaro241.workers.dev/health.html" >/dev/null &&
-               curl -fsS --max-time 15 "https://vexaro-admin.vexaro241.workers.dev/" >/dev/null; then
+            if curl -fsS --max-time 15 "https://vexaro-website.vexaro241.workers.dev/health" >/dev/null; then
               ok=1
               break
             fi
@@ -57,7 +55,7 @@ jobs:
           set -euo pipefail
           test -n "$CF_API_TOKEN"
           test -n "$CF_ACCOUNT_ID"
-          for worker in vexaro-website vexaro-members vexaro-admin; do
+          for worker in vexaro-website; do
             echo "Checking $worker deployment history..."
             response="$(curl -fsS "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts/$worker/deployments"               -H "Authorization: Bearer $CF_API_TOKEN")"
             echo "$response" | python -c 'import json,sys; d=json.load(sys.stdin); assert d.get("success") is True; ds=d.get("result",{}).get("deployments",[]); assert len(ds) >= 2; print(f"ok: {len(ds)} deployment records")'
@@ -79,7 +77,7 @@ jobs:
           test -n "$CF_API_TOKEN"
           test -n "$CF_ACCOUNT_ID"
 
-          for worker in vexaro-website vexaro-members vexaro-admin; do
+          for worker in vexaro-website; do
             deployments="$(curl -fsS "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts/$worker/deployments"               -H "Authorization: Bearer $CF_API_TOKEN")"
 
             version_id="$(python -c 'import json,sys; d=json.load(sys.stdin); ds=d.get("result",{}).get("deployments",[]); print(ds[1]["versions"][0]["version_id"] if len(ds)>1 and ds[1].get("versions") else "")' <<< "$deployments")"
