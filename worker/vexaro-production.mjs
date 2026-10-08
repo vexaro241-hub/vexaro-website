@@ -7,7 +7,11 @@ export default {
 
     if (type.includes("text/html")) {
       let html = await asset.text();
-      const path = new URL(request.url).pathname;
+      const requestUrl = new URL(request.url);
+      const path = requestUrl.pathname;
+      // Keep the temporary Worker origin out of public absolute URLs when the real domain is attached.
+      // This makes canonical/social/schema links, sitemap, and other generated URLs follow the host serving the request.
+      html = html.replaceAll("https://vexaro-website.vexaro241.workers.dev", requestUrl.origin);
 
       const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim() || "VEXARO";
       const description = html.match(/<meta\s+name=["']description["']\s+content=["']([^"']*)["']/i)?.[1]?.trim() || "";
@@ -38,6 +42,12 @@ export default {
       }
 
       response = new Response(html, asset);
+    }
+
+    } else if (type.includes("text/xml") || type.includes("application/xml") || type.includes("text/plain") || type.includes("application/manifest+json") || type.includes("application/json")) {
+      const requestUrl = new URL(request.url);
+      const body = await asset.text();
+      response = new Response(body.replaceAll("https://vexaro-website.vexaro241.workers.dev", requestUrl.origin), asset);
     }
 
     const headers = new Headers(response.headers);
