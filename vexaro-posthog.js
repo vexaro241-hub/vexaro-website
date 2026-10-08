@@ -22,7 +22,7 @@
     if(automated||qa)return;
     if(window.supabase&&window.VEXARO_SUPABASE_URL&&window.VEXARO_SUPABASE_KEY){
       try{
-        var sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY);
+        var sb=window.vexaroSupabase;
         sb.auth.getSession().then(function(res){
           var s=res&&res.data&&res.data.session;
           if(!s){start();return;}
