@@ -273,7 +273,7 @@ async function boot(){
     $('configNotice').classList.remove('hidden');$('authNav').innerHTML='<a class="btn" href="https://vexaro-website.vexaro241.workers.dev/">Back to VEXARO</a>';
     $('appView').classList.remove('hidden');showView('feed');$('signedOutNotice').innerHTML='Community preview is ready. The account/database connection still needs to be configured.';return
   }
-  sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'vexaro-members-auth'}});
+  sb=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'vexaro-members-auth-v2'}});
   const res=await sb.auth.getSession();
   if(res.error) throw res.error;
   if(res.data.session){
@@ -310,6 +310,7 @@ async function signOut(){
   if(error){alert(error.message);return}
   localStorage.removeItem('vexaro_last_active');
   localStorage.removeItem('vexaro_session_role');
+  try{localStorage.removeItem('vexaro-members-auth-v2')}catch(_){ }
   await applySession(null);
   location.replace('/');
 }
