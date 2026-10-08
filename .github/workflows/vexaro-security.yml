@@ -16,6 +16,7 @@ jobs:
   codeql:
     name: CodeQL
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: github/codeql-action/init@v4
@@ -37,6 +38,7 @@ jobs:
   secret-patterns:
     name: Secret pattern scan
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Scan repository
@@ -44,7 +46,10 @@ jobs:
         run: |
           set -euo pipefail
           patterns='BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|AKIA[0-9A-Z]{16}'
-          if grep -RIE --exclude-dir=.git --exclude-dir=.github --exclude='*.md' --exclude='*.svg' "$patterns" .; then
+          matches="$(grep -RIE --binary-files=without-match --exclude-dir=.git --exclude-dir=.github --exclude='*.md' --exclude='*.svg' "$patterns" . || true)"
+          if [ -n "$matches" ]; then
+            printf '%s\n' "$matches"
             echo "Potential credential material found."
             exit 1
           fi
+          echo "No configured credential patterns found."
