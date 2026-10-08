@@ -1,5 +1,6 @@
 import { chromium, firefox, webkit, devices } from "playwright";
 import { mkdirSync, writeFileSync } from "node:fs";
+// Production gate verification rerun after Worker-first middleware deployment.
 const BASE="https://vexaro-website.vexaro241.workers.dev";
 const pages=["/","/clips.html","/loadouts.html","/settings.html","/community.html","/marketplace.html","/membership.html","/about.html","/app.html","/controller-settings.html","/graphics-settings.html","/warzone-movement-settings.html","/warzone-fov-settings.html","/warzone-xbox-settings.html"];
 mkdirSync("qa-results/cross-browser",{recursive:true});
