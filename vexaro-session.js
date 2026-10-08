@@ -20,9 +20,13 @@ const forceSignedOut=()=>{
   if(location.pathname==='/'&&!location.search&&!location.hash) location.reload();
 };
 /* User-requested behaviour: a manual browser refresh must sign members out. */
-let navType='';
-try{navType=performance.getEntriesByType('navigation')[0]?.type||''}catch(e){}
-if(!isAdminApp && navType==='reload'){
+let navType='',legacyNavigationType=null;
+try{
+  navType=performance.getEntriesByType('navigation')[0]?.type||'';
+  legacyNavigationType=typeof performance.navigation?.type==='number'?performance.navigation.type:null;
+}catch(e){}
+const isReload=navType==='reload'||legacyNavigationType===1;
+if(!isAdminApp && isReload){
   /* Clear the live Supabase client as well as storage; removing only the token
      from localStorage can leave an already-created client authenticated in memory. */
   try{
