@@ -1,4 +1,4 @@
-export default {
+// Production deployment trigger: keep asset bundle managed by Wrangler.\nexport default {
   async fetch(request, env) {
     const asset = await env.ASSETS.fetch(request);
     const type = asset.headers.get("content-type") || "";
