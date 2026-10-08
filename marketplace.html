@@ -60,7 +60,7 @@ async function loadListings(){
 async function loadRequests(){
  const {data,error}=await sb.from('marketplace_requests').select('id,title,description,game,platform,budget_pence,requester_id,created_at,public_profiles!marketplace_requests_requester_id_fkey(username,display_name)').eq('status','open').order('created_at',{ascending:false}).limit(30);
  if(error){$('requests').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}
- $('requests').innerHTML=data?.length?data.map(x=>'<article class="request"><h3>'+esc(x.title)+'</h3><div class="meta">'+esc(x.game)+' · '+esc(x.platform)+'</div><p class="muted">'+esc(x.description)+'</p><div class="meta">@'+esc(x.profiles?.username||'member')+(x.budget_pence!=null?' · budget '+money(x.budget_pence):'')+'</div></article>').join(''):'<div class="empty">No open requests yet.</div>';
+ $('requests').innerHTML=data?.length?data.map(x=>'<article class="request"><h3>'+esc(x.title)+'</h3><div class="meta">'+esc(x.game)+' · '+esc(x.platform)+'</div><p class="muted">'+esc(x.description)+'</p><div class="meta">@'+esc(x.public_profiles?.username||'member')+(x.budget_pence!=null?' · budget '+money(x.budget_pence):'')+'</div></article>').join(''):'<div class="empty">No open requests yet.</div>';
 }
 function needAuth(){if(session)return true;location.href='community.html?signin=1';return false}
 $('newRequest').onclick=()=>{if(needAuth()){$('requestForm').classList.remove('hidden');$('sellerForm').classList.add('hidden')}}
