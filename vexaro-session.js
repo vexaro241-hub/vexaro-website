@@ -18,6 +18,13 @@ const forceSignedOut=()=>{
   try{window.dispatchEvent(new CustomEvent('vexaro:signed-out'))}catch(e){}
   if(location.pathname==='/'&&!location.search&&!location.hash) location.reload();
 };
+/* User-requested behaviour: a manual browser refresh must sign members out. */
+let navType='';
+try{navType=performance.getEntriesByType('navigation')[0]?.type||''}catch(e){}
+if(!isAdminApp && navType==='reload'){
+  clearSession();
+  try{sessionStorage.setItem('vexaro_signed_out','1')}catch(e){}
+}
 let last=Number(localStorage.getItem('vexaro_last_active')||0);
 if(!isAdminApp){
   if(last&&now()-last>IDLE_LIMIT) clearSession();
