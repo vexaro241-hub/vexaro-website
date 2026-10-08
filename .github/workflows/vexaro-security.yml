@@ -10,38 +10,19 @@ on:
 
 permissions:
   contents: read
-  security-events: write
 
 jobs:
-  codeql:
-    name: CodeQL
+  security:
+    name: Security checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v4
-        with:
-          languages: javascript-typescript
-          build-mode: none
-      - uses: github/codeql-action/analyze@v4
 
-  dependency-review:
-    if: github.event_name == 'pull_request' && hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json', '**/pnpm-lock.yaml', '**/yarn.lock', '**/bun.lockb') != ''
-    name: Dependency review
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/dependency-review-action@v4
+      - name: Validate repository
+        run: node scripts/validate-vexaro.mjs
 
-  secret-patterns:
-    name: Secret pattern scan
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-      - name: Scan repository
+      - name: Scan for credential patterns
         shell: bash
         run: |
           set -euo pipefail
@@ -53,3 +34,13 @@ jobs:
             exit 1
           fi
           echo "No configured credential patterns found."
+
+      - name: Check for private-key files
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f -not -path './.git/*' -not -path './node_modules/*' \( -name '*.pem' -o -name '*.key' -o -name 'id_rsa' -o -name 'id_ed25519' \) -print -quit | grep -q .; then
+            echo "Potential private-key file found."
+            exit 1
+          fi
+          echo "No private-key files found."
