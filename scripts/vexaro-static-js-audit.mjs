@@ -31,6 +31,12 @@ for(const file of htmlFiles){
     const b=html.indexOf(">",a), c=html.indexOf("</script>",b);
     if(b<0||c<0){ fail(rel+": unterminated script tag"); break; }
     const tag=html.slice(a,b+1), code=html.slice(b+1,c);
+    if (/\\bsrc\\s*=\\s*["'][^"']*\\s+(?:defer|async|type|crossorigin)(?:\\s|>)/i.test(tag)) {
+      fail(rel+": malformed script src attribute: "+tag.trim());
+    }
+    if (/\\bsrc\\s*=\\s*["'][^"']*(?:\\s+defer|\\s+async|\\s+type\\s*=)/i.test(tag) && !/["']\\s*(?:defer|async|type\\s*=|>)/i.test(tag.slice(tag.toLowerCase().indexOf("src")))) {
+      fail(rel+": script attributes appear to be embedded inside src");
+    }
     const type=(tag.match(/\btype\s*=\s*["']([^"']+)["']/i)?.[1]||"").toLowerCase();
     if(!/\bsrc\s*=/.test(tag) && code.trim() && type==="application/ld+json") warnings++;
     cursor=c+9;
