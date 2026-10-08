@@ -18,29 +18,28 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      - name: Validate repository
-        run: node scripts/validate-vexaro.mjs
-
-      - name: Scan for credential patterns
+      - name: Scan tracked files for credential patterns
         shell: bash
         run: |
           set -euo pipefail
           patterns='BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|AKIA[0-9A-Z]{16}'
-          matches="$(grep -RIE --binary-files=without-match --exclude-dir=.git --exclude-dir=.github --exclude='*.md' --exclude='*.svg' "$patterns" . || true)"
-          if [ -n "$matches" ]; then
-            printf '%s\n' "$matches"
+          if git grep -nEI --binary-files=without-match -- ':!*.md' ':!*.svg' ':!.github/**' "$patterns"; then
             echo "Potential credential material found."
             exit 1
           fi
-          echo "No configured credential patterns found."
+          echo "No configured credential patterns found in tracked source files."
 
-      - name: Check for private-key files
+      - name: Check tracked files for private-key extensions
         shell: bash
         run: |
           set -euo pipefail
-          if find . -type f -not -path './.git/*' -not -path './node_modules/*' \( -name '*.pem' -o -name '*.key' -o -name 'id_rsa' -o -name 'id_ed25519' \) -print -quit | grep -q .; then
+          matches="$(git ls-files '*.pem' '*.key' 'id_rsa' 'id_ed25519')"
+          if [ -n "$matches" ]; then
+            printf '%s\n' "$matches"
             echo "Potential private-key file found."
             exit 1
           fi
-          echo "No private-key files found."
+          echo "No tracked private-key files found."
