@@ -1,0 +1,31 @@
+/* VEXARO unified platform design system — staged redesign */
+:root{
+ --vx-bg:#070708;--vx-panel:#101014;--vx-panel-raised:#17171d;--vx-line:rgba(255,255,255,.11);
+ --vx-red:#e10600;--vx-red-bright:#ff3028;--vx-text:#f7f7f8;--vx-muted:#a4a4ad;
+ --vx-radius:16px;--vx-shadow:0 18px 50px rgba(0,0,0,.28)
+}
+html{scroll-behavior:smooth}
+body{background-color:var(--vx-bg);color:var(--vx-text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.005em}
+a{transition:color .18s ease,border-color .18s ease,background-color .18s ease,transform .18s ease}
+a:hover{color:#fff}
+img{max-width:100%}
+:where(.wrap,.container,.shell,.page,.main,.content){max-width:1240px}
+:where(.nav,header.site-header,.site-nav,.topbar){border-color:var(--vx-line)!important}
+:where(.nav,.site-nav,.topbar){backdrop-filter:blur(18px)}
+:where(.brand,.logo,.wordmark){letter-spacing:.12em}
+:where(h1,h2,h3){text-wrap:balance;letter-spacing:-.025em}
+h1{line-height:1.02}
+:where(.card,.panel,.tile,.feature-main,.feature-side,.post,.build-card,.product-card,.setting-card,.stat-card){
+ border-color:var(--vx-line)!important;border-radius:var(--vx-radius);box-shadow:var(--vx-shadow)
+}
+:where(.card,.panel,.tile,.post,.build-card,.product-card,.setting-card){background:linear-gradient(155deg,rgba(255,255,255,.035),transparent 58%),var(--vx-panel)}
+:where(button,.cta,.btn,.primary,.ghost,.filter,[role=button]){transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease}
+:where(.cta,.btn,.primary,button[type=submit]){border-radius:10px}
+:where(.cta,.btn,.primary):hover,button:hover{transform:translateY(-1px)}
+:where(input,select,textarea){border-color:var(--vx-line);border-radius:10px}
+:where(input,select,textarea):focus-visible,a:focus-visible,button:focus-visible{outline:2px solid var(--vx-red-bright);outline-offset:3px}
+:where(.muted,.subtle,.description,.eyebrow-copy){color:var(--vx-muted)}
+:where(.eyebrow,.kicker,.num,.section-label){letter-spacing:.14em;text-transform:uppercase}
+:where(.footer,footer){border-top:1px solid var(--vx-line)}
+::selection{background:rgba(225,6,0,.42);color:#fff}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
