@@ -645,13 +645,14 @@ async function loadYouTubeConnection(){
 }
 async function connectYouTube(){
   if(!session){openAuth('signin');return}
+  const w=window.open('about:blank','vexaroYouTube','width=520,height=760');
+  if(!w){alert('Please allow pop-ups for VEXARO to connect YouTube.');return}
   try{
     const res=await fetch('https://vexaro-youtube-auth.vexaro241.workers.dev/start',{headers:{authorization:'Bearer '+session.access_token}});
     const d=await res.json();
     if(!res.ok||!d.url)throw new Error(d.error||'Could not start YouTube connection.');
-    const w=window.open(d.url,'vexaroYouTube','width=520,height=760');
-    if(!w){alert('Please allow pop-ups for VEXARO to connect YouTube.');return}
-  }catch(e){alert(e.message||'Could not connect YouTube.')}
+    w.location.href=d.url;
+  }catch(e){try{w.close()}catch(_){}alert(e.message||'Could not connect YouTube.')}
 }
 async function disconnectYouTube(){
   if(!session)return;
