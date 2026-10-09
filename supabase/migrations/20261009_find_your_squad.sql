@@ -14,6 +14,8 @@ create table if not exists public.squad_posts (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+alter table public.squad_posts add column if not exists country text not null default 'Not specified' check (char_length(country) between 1 and 60);
+create index if not exists squad_posts_country_idx on public.squad_posts(country);
 create index if not exists squad_posts_open_created_idx on public.squad_posts(status,created_at desc);
 create index if not exists squad_posts_game_mode_idx on public.squad_posts(game,game_mode,status);
 alter table public.squad_posts enable row level security;
