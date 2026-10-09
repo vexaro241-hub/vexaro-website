@@ -29,3 +29,55 @@ h1{line-height:1.02}
 :where(.footer,footer){border-top:1px solid var(--vx-line)}
 ::selection{background:rgba(225,6,0,.42);color:#fff}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* Second-pass polish: platform navigation, readable content and small-screen usability */
+:where(.wrap,.container,.shell,.page,.main,.content){width:min(1240px,calc(100% - 48px));margin-inline:auto}
+:where(.topbar,header.site-header,.site-header){position:sticky;top:0;z-index:50;background:rgba(7,7,8,.88)!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+:where(.nav,.site-nav){min-width:0}
+:where(.navlinks,.links,.site-nav-links){align-items:center}
+:where(.navlinks a,.links a,.site-nav-links a){white-space:nowrap}
+:where(main section){scroll-margin-top:88px}
+:where(.hero,.page-hero,.page-header){isolation:isolate}
+:where(.hero,.page-hero,.page-header) :where(h1,h2){max-width:100%;text-wrap:balance}
+:where(.section,.content-section){position:relative}
+:where(.section-head,.head,.section-heading){min-width:0}
+:where(.card,.panel,.tile,.feature-main,.feature-side,.post,.build-card,.product-card,.setting-card,.stat-card,.hq-card,.hq-main,.code-card,.clip,.loadout,.social){min-width:0;overflow-wrap:anywhere}
+:where(.card,.panel,.tile,.post,.build-card,.product-card,.setting-card,.stat-card){background-image:linear-gradient(145deg,rgba(255,255,255,.035),transparent 56%)}
+:where(.card,.panel,.tile,.build-card,.product-card,.setting-card,.hq-card,.code-card,.social){transition:border-color .18s ease,transform .18s ease,background-color .18s ease}
+:where(.card,.build-card,.product-card,.setting-card,.hq-card,.code-card,.social):hover{border-color:rgba(225,6,0,.42)!important}
+:where(.card p,.panel p,.tile p,.description,.muted){line-height:1.7}
+:where(button,.btn,.cta,.primary,.ghost,.filter){min-height:40px}
+:where(input,select,textarea){max-width:100%;background-color:#0c0c10;color:var(--vx-text)}
+:where(input,select,textarea)::placeholder{color:#777780}
+:where(table){width:100%;border-collapse:collapse}
+:where(th,td){padding:12px 14px;border-bottom:1px solid var(--vx-line);text-align:left}
+:where(th){color:#ddd;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
+:where(.empty,.empty-state,.loading-state){border:1px dashed var(--vx-line);border-radius:var(--vx-radius);padding:clamp(22px,4vw,42px);background:rgba(255,255,255,.018)}
+:where(.badge,.tag,.pill){max-width:100%;overflow-wrap:anywhere}
+:where(.footer,footer){color:#888}
+@media(hover:hover) and (pointer:fine){
+ :where(.card,.build-card,.product-card,.setting-card,.hq-card,.code-card,.social):hover{transform:translateY(-3px)}
+}
+@media(max-width:800px){
+ :where(.wrap,.container,.shell,.page,.main,.content){width:calc(100% - 28px)}
+ :where(.nav,.site-nav){height:auto;min-height:58px;gap:12px;flex-wrap:wrap;padding-block:12px}
+ :where(.navlinks,.links,.site-nav-links){max-width:100%;justify-content:flex-start;gap:6px;overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;padding:2px 0 7px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+ :where(.navlinks a,.links a,.site-nav-links a){flex:0 0 auto}
+ :where(.hero,.page-hero,.page-header){min-height:unset;padding-top:clamp(64px,12vw,100px);padding-bottom:clamp(36px,8vw,64px)}
+ :where(.section,.content-section){padding-block:clamp(38px,8vw,70px)}
+ :where(.section-head,.head,.section-heading){display:block}
+ :where(.section-head p,.head p,.section-heading p){margin-top:14px}
+ :where(.grid,.code-grid,.loadouts,.socials){grid-template-columns:repeat(2,minmax(0,1fr))}
+ :where(.featured,.hq,.live){grid-template-columns:minmax(0,1fr)}
+ :where(.footer,footer){flex-wrap:wrap}
+ :where(table){display:block;overflow-x:auto;white-space:nowrap}
+}
+@media(max-width:520px){
+ :where(.grid,.code-grid,.loadouts,.socials,.hq-grid){grid-template-columns:minmax(0,1fr)}
+ :where(.wrap,.container,.shell,.page,.main,.content){width:calc(100% - 24px)}
+ :where(.card,.panel,.tile,.feature-main,.feature-side,.post,.build-card,.product-card,.setting-card,.hq-card,.hq-main,.code-card,.loadout,.social){padding:20px}
+ :where(.actions,.poster-actions){gap:8px}
+ :where(.actions .btn,.poster-actions .btn){flex:1 1 145px}
+ :where(.hero p){font-size:15px}
+ :where(.navstatus){flex-wrap:wrap}
+}
