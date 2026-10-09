@@ -299,7 +299,7 @@ function showView(view){
   if(view==='feed')loadFeed(); if(view==='loadouts')loadLoadouts(); if(view==='settings')loadSettings(); if(view==='profile')renderProfile(); if(view==='members')loadMembers();
 }
 const requestedAuth=new URLSearchParams(window.location.search).get('auth');
-const homepageAuth=new URLSearchParams(window.location.search).get('signin')==='1'||requestedAuth==='signin'||requestedAuth==='signup'||requestedAuth==='recovery';
+const homepageAuth=new URLSearchParams(window.location.search).get('signin')==='1'||requestedAuth==='signin'||requestedAuth==='signup';
 async function boot(){
   if(!readyConfig()){
     $('configNotice').textContent='Community backend not connected yet. Add your Supabase URL and publishable key to supabase-config.js, then deploy.';
@@ -316,7 +316,8 @@ async function boot(){
   }
   authInitializing=false;
   const requested=new URLSearchParams(location.search).get('view')||'home';
-  if(new URLSearchParams(location.search).get('user')) showView('profile');
+  if(requestedAuth==='recovery'){showView('home');openAuth('recovery');}
+  else if(new URLSearchParams(location.search).get('user')) showView('profile');
   else if(homepageAuth && session){
     history.replaceState({},document.title,'/community?view=home');
     showView('home');
