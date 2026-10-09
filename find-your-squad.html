@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#070707"><meta name="robots" content="noindex,follow">
+<title>Find Your Squad — VEXARO</title>
+<meta name="description" content="Find gaming teammates across supported games with VEXARO Find Your Squad.">
+<link rel="stylesheet" href="/vexaro-platform.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="/supabase-config.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#070708;--panel:#111114;--line:#2a2a30;--red:#e10600;--muted:#a2a2aa}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% 0,rgba(225,6,0,.15),transparent 38%),var(--bg);color:#f7f7f8;font:16px/1.5 system-ui,-apple-system,sans-serif}a{color:inherit;text-decoration:none}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}.bar{border-bottom:1px solid var(--line);background:#09090bee;position:sticky;top:0;z-index:4;backdrop-filter:blur(16px)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-weight:1000;letter-spacing:.14em;font-style:italic}.brand b{color:var(--red)}.navlinks{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:#ccc}.hero{padding:64px 0 30px}.eyebrow{color:#ff4138;font-size:11px;letter-spacing:.2em;font-weight:900;text-transform:uppercase}.hero h1{font-size:clamp(42px,8vw,82px);letter-spacing:-.06em;line-height:.95;margin:14px 0}.hero p{color:#b3b3bb;max-width:680px}.panel{border:1px solid var(--line);background:linear-gradient(145deg,#151518,#0b0b0d);border-radius:16px;padding:22px}.toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0}.field{display:flex;flex-direction:column;gap:7px;min-width:0}.field label{font-size:11px;color:#bbb;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.field input,.field select,.field textarea{width:100%;min-width:0;background:#09090b;color:#fff;border:1px solid #38383f;border-radius:9px;padding:12px;font:inherit}.field textarea{min-height:90px;resize:vertical}.btn{border:1px solid #555;background:#171719;color:#fff;border-radius:9px;padding:12px 16px;font-weight:900;cursor:pointer}.btn.primary{background:linear-gradient(135deg,#e10600,#9c0000);border-color:#e10600}.btn:disabled{opacity:.5;cursor:not-allowed}.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:30px 0 14px}.sectionhead h2{margin:0;font-size:25px}.muted{color:var(--muted);font-size:13px}.posts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.post{border:1px solid var(--line);border-radius:14px;padding:18px;background:#101012;min-width:0}.posttop{display:flex;justify-content:space-between;gap:10px;align-items:start}.post h3{margin:0 0 7px;font-size:19px}.pill{display:inline-flex;border:1px solid #4b2929;background:#2b1010;color:#ffaaa6;border-radius:100px;padding:4px 8px;font-size:10px;font-weight:900;text-transform:uppercase}.chips{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.chip{font-size:11px;border:1px solid #34343a;border-radius:7px;padding:5px 8px;color:#ddd}.post p{color:#c5c5cb;font-size:14px;overflow-wrap:anywhere}.postfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;padding-top:12px;border-top:1px solid #29292e}.status{color:#ff7770;font-size:11px;font-weight:900}.notice{border:1px solid #4b2929;background:#210c0c;color:#ffd0ce;padding:12px;border-radius:10px;font-size:13px;margin:12px 0}.empty{border:1px dashed #3a3a40;border-radius:14px;padding:30px;text-align:center;color:#aaa}.hidden{display:none!important}.actions{display:flex;gap:8px;flex-wrap:wrap}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.full{grid-column:1/-1}footer{padding:40px 0;color:#888;font-size:12px}@media(max-width:760px){.toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.posts{grid-template-columns:1fr}.nav{align-items:flex-start;padding:14px 0;flex-direction:column}.navlinks{gap:12px}.hero{padding-top:42px}.panel{padding:15px}}@media(max-width:430px){.toolbar,.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.sectionhead{align-items:start;flex-direction:column}.btn{width:100%}}
+</style>
+</head>
+<body>
+<header class="bar"><div class="wrap nav"><a class="brand" href="/">VEXARO <b>/ SQUAD FINDER</b></a><nav class="navlinks" aria-label="Main navigation"><a href="/">HOME</a><a href="/community.html">COMMUNITY</a><a href="/loadouts.html">LOADOUTS</a><a href="/clips.html">CLIPS</a><a href="/membership.html">PRO</a></nav></div></header>
+<main class="wrap">
+<section class="hero"><div class="eyebrow">VEXARO COMMUNITY TOOL</div><h1>FIND YOUR<br><span style="color:#e10600">SQUAD.</span></h1><p>Looking for teammates? Post a session, choose your game and mode, and find players who want to play the same way. VEXARO stays Call of Duty-first everywhere else — this is our dedicated multi-game space.</p><div class="actions"><a class="btn primary" href="#create">＋ Create a squad post</a><a class="btn" href="#sessions">Browse sessions</a></div></section>
+<section class="panel" aria-label="Find sessions"><div class="sectionhead" style="margin-top:0"><div><div class="eyebrow">SQUAD BOARD</div><h2>Find players</h2></div><span class="muted" id="count">Loading sessions…</span></div>
+<div class="toolbar"><div class="field"><label for="filterGame">Game</label><select id="filterGame"><option value="">All games</option><option>Call of Duty: Warzone</option><option>Call of Duty: Multiplayer</option><option>Call of Duty: Black Ops</option><option>Fortnite</option><option>Apex Legends</option><option>Rocket League</option><option>EA SPORTS FC</option><option>Minecraft</option><option>Other</option></select></div><div class="field"><label for="filterMode">Mode</label><select id="filterMode"><option value="">All modes</option><option>Ranked</option><option>Casual</option><option>Resurgence</option><option>Battle Royale</option><option>Multiplayer</option><option>Co-op</option><option>Creative</option><option>Other</option></select></div><div class="field"><label for="filterPlatform">Platform</label><select id="filterPlatform"><option value="">All platforms</option><option>Xbox</option><option>PlayStation</option><option>PC</option><option>Crossplay</option><option>Mobile</option></select></div><div class="field"><label for="filterWhen">When</label><select id="filterWhen"><option value="">Any time</option><option value="Playing now">Playing now</option><option value="Later">Planning ahead</option></select></div></div>
+<div id="loadState" class="notice">Connecting to the VEXARO squad board…</div><div id="posts" class="posts"></div><div id="empty" class="empty hidden">No squad posts match those filters yet. Create the first one.</div>
+</section>
+<section id="create" class="panel" style="margin-top:18px"><div class="sectionhead" style="margin-top:0"><div><div class="eyebrow">MAKE THE CALL</div><h2>Create a squad post</h2></div></div><p class="muted">Keep it friendly. Never post passwords, private account details or personal contact information.</p>
+<div id="authNotice" class="notice">Sign in to VEXARO to create a squad post.</div>
+<form id="createForm" class="formgrid">
+<div class="field"><label for="game">Game</label><select id="game" required><option value="">Choose a game</option><option>Call of Duty: Warzone</option><option>Call of Duty: Multiplayer</option><option>Call of Duty: Black Ops</option><option>Fortnite</option><option>Apex Legends</option><option>Rocket League</option><option>EA SPORTS FC</option><option>Minecraft</option><option>Other</option></select></div>
+<div class="field"><label for="mode">Game mode</label><select id="mode" required><option value="">Choose a mode</option><option>Ranked</option><option>Casual</option><option>Resurgence</option><option>Battle Royale</option><option>Multiplayer</option><option>Co-op</option><option>Creative</option><option>Other</option></select></div>
+<div class="field"><label for="platform">Platform</label><select id="platform" required><option value="">Choose platform</option><option>Xbox</option><option>PlayStation</option><option>PC</option><option>Crossplay</option><option>Mobile</option></select></div>
+<div class="field"><label for="when">When are you playing?</label><select id="when" required><option>Playing now</option><option>Later</option></select></div>
+<div class="field"><label for="slots">Players needed</label><select id="slots" required><option value="1">1 player</option><option value="2" selected>2 players</option><option value="3">3 players</option><option value="4">4 players</option><option value="5">5 players</option></select></div>
+<div class="field"><label for="mic">Microphone</label><select id="mic" required><option>Preferred</option><option>Required</option><option>Not required</option></select></div>
+<div class="field full"><label for="description">Message / requirements</label><textarea id="description" maxlength="500" placeholder="Tell players what you're looking for, your play style and any requirements…" required></textarea></div>
+<div class="full actions"><button class="btn primary" id="submitBtn" type="submit">Publish squad post</button><span class="muted" id="formStatus" aria-live="polite"></span></div>
+</form></section>
+<footer>VEXARO · Play together, keep it respectful. <a href="/community.html">Community rules and reporting</a>.</footer>
+</main>
+<script>
+(function(){
+const $=id=>document.getElementById(id);let client=window.vexaroSupabase||null;let user=null;let allPosts=[];let ready=false;
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function setStatus(msg,error=false){$('loadState').textContent=msg;$('loadState').classList.toggle('hidden',!msg);$('loadState').classList.toggle('notice',!!msg);if(error)$('loadState').style.borderColor='#a33';}
+function draw(){
+ const game=$('filterGame').value,mode=$('filterMode').value,platform=$('filterPlatform').value,when=$('filterWhen').value;
+ const filtered=allPosts.filter(p=>(!game||p.game===game)&&(!mode||p.game_mode===mode)&&(!platform||p.platform===platform)&&(!when||(when==='Later'?p.play_when!=='Playing now':p.play_when==='Playing now')));
+ $('count').textContent=filtered.length+' session'+(filtered.length===1?'':'s');
+ $('posts').innerHTML=filtered.map(p=>'<article class="post"><div class="posttop"><div><h3>'+escapeHtml(p.game)+'</h3><div class="muted">'+escapeHtml(p.game_mode)+' · '+escapeHtml(p.platform)+'</div></div><span class="pill">'+escapeHtml(p.play_when)+'</span></div><div class="chips"><span class="chip">'+escapeHtml(p.players_needed)+' player'+(p.players_needed===1?'':'s')+' needed</span><span class="chip">Mic: '+escapeHtml(p.mic_preference)+'</span></div><p>'+escapeHtml(p.description)+'</p><div class="postfoot"><span class="muted">Posted '+escapeHtml(new Date(p.created_at).toLocaleDateString())+'</span><span class="status">OPEN</span></div></article>').join('');
+ $('empty').classList.toggle('hidden',filtered.length>0);
+}
+async function refresh(){
+ if(!client){setStatus('The squad board is not connected to Supabase yet. The page design is ready, but its database setup must be applied before posts can load.',true);$('count').textContent='Setup required';return;}
+ try{const {data,error}=await client.from('squad_posts').select('id,user_id,game,game_mode,platform,play_when,players_needed,mic_preference,description,created_at,status').eq('status','open').order('created_at',{ascending:false}).limit(100);
+ if(error)throw error;allPosts=data||[];ready=true;setStatus('');draw();}
+ catch(e){setStatus('Squad board database setup is still required, or the connection failed. Posts will appear here once the VEXARO squad_posts table and access policies are enabled.',true);$('count').textContent='Setup required';console.error('VEXARO squad board:',e.message||e);}
+}
+async function init(){
+ if(client){try{const {data}=await client.auth.getSession();user=data?.session?.user||null;client.auth.onAuthStateChange((_event,session)=>{user=session?.user||null;updateAuth();});}catch(_){}}
+ updateAuth();await refresh();
+}
+function updateAuth(){$('authNotice').textContent=user?'Signed in — you can publish a squad post.':'Sign in to VEXARO to create a squad post.';$('createForm').querySelectorAll('input,select,textarea,button').forEach(el=>{el.disabled=!user;});}
+['filterGame','filterMode','filterPlatform','filterWhen'].forEach(id=>$(id).addEventListener('change',draw));
+$('createForm').addEventListener('submit',async e=>{
+ e.preventDefault();if(!client||!user){$('formStatus').textContent='Please sign in first.';return;}
+ const payload={user_id:user.id,game:$('game').value,game_mode:$('mode').value,platform:$('platform').value,play_when:$('when').value,players_needed:Number($('slots').value),mic_preference:$('mic').value,description:$('description').value.trim(),status:'open'};
+ if(!payload.description){$('formStatus').textContent='Add a short message first.';return;}
+ $('submitBtn').disabled=true;$('formStatus').textContent='Publishing…';
+ try{const {error}=await client.from('squad_posts').insert(payload);if(error)throw error;$('createForm').reset();$('formStatus').textContent='Squad post published.';await refresh();}
+ catch(err){$('formStatus').textContent='Could not publish yet. Check that the squad database migration has been applied.';console.error(err.message||err);}
+ finally{$('submitBtn').disabled=false;updateAuth();}
+});
+init();
+})();
+</script>
+</body></html>
