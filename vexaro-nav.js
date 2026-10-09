@@ -1,13 +1,7 @@
 (function(){try{if(!document.querySelector('script[data-vexaro-posthog]')){var s=document.createElement('script');s.src='/vexaro-posthog.js';s.async=true;s.dataset.vexaroPosthog='1';document.head.appendChild(s)}}catch(_){}})();
 (function(){
 'use strict';
-/* VEXARO site-wide rule: browser refresh returns to Home.
-   Normal navigation and back/forward history are unchanged. */
-const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
-if(nav&&nav.type==='reload'&&(location.pathname!=='/'||location.search||location.hash)){
- location.replace('/');
- return;
-}
+/* Refresh stays on the page the visitor is using. */
 const isMemberApp=/vexaro-members\.vexaro241\.workers\.dev$/i.test(location.hostname);
 const homeHref=isMemberApp?'community.html?view=home':'/';
 const links=[
