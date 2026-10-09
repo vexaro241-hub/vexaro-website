@@ -227,7 +227,10 @@ async function applySession(s){
     $('postComposer').classList.add('hidden');$('signedOutNotice').classList.remove('hidden');
     $('sideTitle').textContent='COMMUNITY.';$('sideContent').textContent='Create an account to post, build a profile and share your loadouts/settings.';
     
-    $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
+    /* Keep an explicitly requested sign-in/sign-up screen open during pageshow/session refresh. */
+    if(!(homepageAuth && !session)){
+      $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
+    }
     showView(currentView||'home');
     return;
   }
