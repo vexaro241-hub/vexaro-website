@@ -41,5 +41,5 @@ create trigger friend_requests_guard_update before update on public.friend_reque
 for each row execute function public.guard_friend_request_update();
 create index if not exists friend_requests_receiver_status_idx on public.friend_requests(receiver_id, status, created_at desc);
 create index if not exists friend_requests_sender_status_idx on public.friend_requests(sender_id, status, created_at desc);
-revoke all on table public.friend_requests from anon, public;
+revoke all on table public.friend_requests from anon, authenticated, public;
 grant select, insert, update, delete on table public.friend_requests to authenticated;
