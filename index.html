@@ -389,6 +389,51 @@ repeating-linear-gradient(120deg,transparent 0 78px,rgba(255,255,255,.025) 79px 
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
+
+<style id="vexaro-mobile-redesign">
+/* Mobile-first hero cleanup and custom VEXARO artwork */
+.poster{min-height:clamp(650px,88svh,900px)!important;align-items:center!important;padding:118px 0 76px!important;background:#050506!important}
+.poster:before{background:
+linear-gradient(90deg,rgba(3,3,4,.92) 0%,rgba(3,3,4,.78) 52%,rgba(3,3,4,.38) 100%),
+linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.08) 55%,#070708 100%),
+url("/vexaro-cinematic-bg.svg?v=1") 62% center/cover no-repeat!important;filter:none!important;transform:none!important;opacity:1!important}
+.poster:after{background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 55%,rgba(0,0,0,.5))!important}
+.poster-content{max-width:880px!important;padding-top:35px!important;padding-bottom:35px!important}
+.poster-brand{display:block!important;max-width:100%;font-size:clamp(66px,12vw,138px)!important;line-height:.88!important;letter-spacing:-.075em!important;white-space:normal!important;text-wrap:balance;text-shadow:0 3px 0 #420609,0 12px 38px rgba(0,0,0,.8)!important}
+.poster-sub{display:inline-flex!important;max-width:100%;font-size:clamp(9px,1.2vw,12px)!important;letter-spacing:.17em!important;line-height:1.7!important;white-space:normal!important}
+.poster-copy{max-width:650px!important;font-size:clamp(15px,2vw,19px)!important;line-height:1.65!important;color:#dedee2!important}
+.poster-actions,.poster .actions{display:flex!important;flex-direction:row;gap:12px!important;flex-wrap:wrap!important}
+.poster-actions .btn,.poster .actions .btn{min-height:52px!important}
+.poster-stamp{opacity:.75!important}
+.poster-bar{background:rgba(4,4,5,.92)!important;border-top:1px solid rgba(255,255,255,.1)!important}
+.poster-link{color:#eee!important}
+.poster-link b{color:#e10600!important}
+@media(max-width:650px){
+ .wrap{width:calc(100% - 32px)!important}
+ .nav{height:68px!important}
+ .brand .vxmark{width:38px!important;height:34px!important}
+ .brand span{font-size:17px!important;letter-spacing:.12em!important}
+ .poster{min-height:0!important;padding:100px 0 34px!important;align-items:flex-start!important}
+ .poster:before{background:
+ linear-gradient(90deg,rgba(3,3,4,.9),rgba(3,3,4,.62)),
+ linear-gradient(180deg,rgba(0,0,0,.08) 0%,rgba(0,0,0,.1) 48%,#070708 100%),
+ url("/vexaro-cinematic-bg.svg?v=1") 60% center/cover no-repeat!important}
+ .poster-content{padding:42px 0 32px!important}
+ .poster-brand{font-size:clamp(54px,16vw,92px)!important;line-height:.92!important;margin:10px 0 22px!important}
+ .poster-sub{font-size:9px!important;letter-spacing:.12em!important;max-width:100%!important}
+ .poster-copy{font-size:15px!important;line-height:1.65!important;margin:18px 0 22px!important;max-width:100%!important}
+ .poster-actions,.poster .actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+ .poster-actions .btn,.poster .actions .btn{width:100%!important;min-height:52px!important}
+ .poster-stamp{display:none!important}
+ .poster-bar{position:relative!important;bottom:auto!important;margin-top:18px!important}
+ .poster-bar .inner{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
+ .poster-link{padding:11px 4px!important;font-size:8px!important;white-space:normal!important}
+ .poster-link b{font-size:8px!important}
+ .section{padding:66px 0!important}
+ .section-head{align-items:flex-start!important;flex-direction:column!important}
+}
+</style>
+
 </head>
 <body>
 <header class="topbar"><div class="wrap nav"><a class="brand" href="#top" aria-label="VEXARO home"><svg class="vxmark" viewBox="0 0 100 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="vxg2" x1="8" y1="6" x2="92" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="#ff3028"/><stop offset=".55" stop-color="#e10600"/><stop offset="1" stop-color="#780000"/></linearGradient></defs><path d="M8 10 24 66 50 35 76 66 92 10" stroke="url(#vxg2)" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter"/><path d="M25 10 50 41 75 10" stroke="#fff" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter"/><path d="M37 50 50 66 63 50" stroke="#e10600" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"/></svg><span>VEXARO</span></a><nav class="links"><a href="#top">Home</a><a href="#hq">HQ</a><a href="clips.html">Clips</a><a href="loadouts.html">Loadouts</a><a href="settings.html">Settings</a><a href="live/">Live</a><a href="community.html">Community</a><a href="marketplace.html">Marketplace</a><a href="membership.html">PRO</a></nav><div class="navstatus"><button class="btn ghost" id="siteSignIn" type="button">SIGN IN</button><button class="btn ghost" id="siteSignOut" type="button" style="display:none">SIGN OUT</button><a class="admin-chip" id="adminChip" href="admin-app.html" style="display:none">ADMIN HUB</a></div><button class="hamb" id="hamb" aria-label="Open menu">☰</button></div></header>
