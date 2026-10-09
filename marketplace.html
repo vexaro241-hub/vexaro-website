@@ -44,23 +44,35 @@ a:visited{color:inherit;text-decoration:none}
 const $=id=>document.getElementById(id);let sb=null,session=null;
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function money(p){return '£'+(Number(p||0)/100).toFixed(2)}
+function withTimeout(promise,label,ms=8000){return Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out')),ms))])}
+function showLoadError(id,label,error){const el=$(id);if(!el)return;const message=String(error?.message||'');el.innerHTML='<div class="empty">'+esc(message.toLowerCase().includes('timed out')?'Could not connect in time. Please refresh and try again.':label+' could not be loaded. Please refresh and try again.')+'</div>'}
 async function boot(){
- if(!window.VEXARO_SUPABASE_URL||!window.VEXARO_SUPABASE_KEY){$('listings').innerHTML='<div class="empty">Marketplace backend is not connected.</div>';return}
- sb=window.vexaroSupabase;
- session=(await sb.auth.getSession()).data.session||null;
- $('accountBtn').textContent=session?'VEXARO ACCOUNT':'JOIN VEXARO';
- $('accountBtn').onclick=()=>location.href=session?'community.html':'community.html?signin=1';
- await loadListings();await loadRequests();
+ try{
+  if(!window.VEXARO_SUPABASE_URL||!window.VEXARO_SUPABASE_KEY||!window.supabase?.createClient){$('listings').innerHTML='<div class="empty">Marketplace backend is not connected.</div>';$('requests').innerHTML='<div class="empty">Marketplace backend is not connected.</div>';return}
+  sb=window.vexaroSupabase||(window.vexaroSupabase=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY));
+  const auth=await withTimeout(sb.auth.getSession(),'Account session check');
+  session=auth?.data?.session||null;
+  $('accountBtn').textContent=session?'VEXARO ACCOUNT':'JOIN VEXARO';
+  $('accountBtn').onclick=()=>location.href=session?'community.html':'community.html?signin=1';
+  await Promise.all([loadListings(),loadRequests()]);
+ }catch(error){
+  showLoadError('listings','Marketplace listings',error);
+  showLoadError('requests','Marketplace requests',error);
+ }
 }
 async function loadListings(){
- const {data,error}=await sb.from('marketplace_listings').select('id,title,description,game,platform,category,price_pence,seller_id,marketplace_sellers!marketplace_listings_seller_id_fkey(seller_name)').eq('status','approved').order('created_at',{ascending:false}).limit(30);
- if(error){$('listings').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}
- $('listings').innerHTML=data?.length?data.map(x=>'<article class="listing"><h3>'+esc(x.title)+'</h3><div class="meta">'+esc(x.game)+' · '+esc(x.platform)+' · '+esc(x.category)+'</div><p class="muted">'+esc(x.description)+'</p><span class="badge">Seller: '+esc(x.marketplace_sellers?.seller_name||'VEXARO Seller')+'</span><div class="price">'+money(x.price_pence)+'</div><div class="notice" style="margin-top:12px">Payments are currently offline. This listing is a marketplace preview until checkout is enabled.</div></article>').join(''):'<div class="empty">No approved listings yet.</div>';
+ try{
+  const result=await withTimeout(sb.from('marketplace_listings').select('id,title,description,game,platform,category,price_pence,seller_id,marketplace_sellers!marketplace_listings_seller_id_fkey(seller_name)').eq('status','approved').order('created_at',{ascending:false}).limit(30),'Marketplace listings');
+  const {data,error}=result;if(error)throw error;
+  $('listings').innerHTML=data?.length?data.map(x=>'<article class="listing"><h3>'+esc(x.title)+'</h3><div class="meta">'+esc(x.game)+' · '+esc(x.platform)+' · '+esc(x.category)+'</div><p class="muted">'+esc(x.description)+'</p><span class="badge">Seller: '+esc(x.marketplace_sellers?.seller_name||'VEXARO Seller')+'</span><div class="price">'+money(x.price_pence)+'</div><div class="notice" style="margin-top:12px">Payments are currently offline. This listing is a marketplace preview until checkout is enabled.</div></article>').join(''):'<div class="empty">No approved listings yet.</div>';
+ }catch(error){showLoadError('listings','Marketplace listings',error)}
 }
 async function loadRequests(){
- const {data,error}=await sb.from('marketplace_requests').select('id,title,description,game,platform,budget_pence,requester_id,created_at,public_profiles!marketplace_requests_requester_id_fkey(username,display_name)').eq('status','open').order('created_at',{ascending:false}).limit(30);
- if(error){$('requests').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}
- $('requests').innerHTML=data?.length?data.map(x=>'<article class="request"><h3>'+esc(x.title)+'</h3><div class="meta">'+esc(x.game)+' · '+esc(x.platform)+'</div><p class="muted">'+esc(x.description)+'</p><div class="meta">@'+esc(x.public_profiles?.username||'member')+(x.budget_pence!=null?' · budget '+money(x.budget_pence):'')+'</div></article>').join(''):'<div class="empty">No open requests yet.</div>';
+ try{
+  const result=await withTimeout(sb.from('marketplace_requests').select('id,title,description,game,platform,budget_pence,requester_id,created_at,public_profiles!marketplace_requests_requester_id_fkey(username,display_name)').eq('status','open').order('created_at',{ascending:false}).limit(30),'Marketplace requests');
+  const {data,error}=result;if(error)throw error;
+  $('requests').innerHTML=data?.length?data.map(x=>'<article class="request"><h3>'+esc(x.title)+'</h3><div class="meta">'+esc(x.game)+' · '+esc(x.platform)+'</div><p class="muted">'+esc(x.description)+'</p><div class="meta">@'+esc(x.public_profiles?.username||'member')+(x.budget_pence!=null?' · budget '+money(x.budget_pence):'')+'</div></article>').join(''):'<div class="empty">No open requests yet.</div>';
+ }catch(error){showLoadError('requests','Marketplace requests',error)}
 }
 function needAuth(){if(session)return true;location.href='community.html?signin=1';return false}
 $('newRequest').onclick=()=>{if(needAuth()){$('requestForm').classList.remove('hidden');$('sellerForm').classList.add('hidden')}}
@@ -70,13 +82,11 @@ $('cancelSeller').onclick=()=>$('sellerForm').classList.add('hidden');
 $('saveRequest').onclick=async()=>{
  if(!needAuth())return;const title=$('rTitle').value.trim(),description=$('rDescription').value.trim();if(!title||!description){alert('Add a title and description.');return}
  let b=$('rBudget').value.trim();b=b===''?null:Math.round(Number(b)*100);if(b!==null&&(!Number.isFinite(b)||b<0||b>1000000)){alert('Enter a valid budget.');return}
- const {error}=await sb.from('marketplace_requests').insert({requester_id:session.user.id,title,description,game:$('rGame').value.trim()||'Other',platform:$('rPlatform').value,budget_pence:b});
- if(error)alert(error.message);else{$('requestForm').classList.add('hidden');$('rTitle').value='';$('rDescription').value='';loadRequests()}
+ try{const {error}=await withTimeout(sb.from('marketplace_requests').insert({requester_id:session.user.id,title,description,game:$('rGame').value.trim()||'Other',platform:$('rPlatform').value,budget_pence:b}),'Request submission');if(error)throw error;$('requestForm').classList.add('hidden');$('rTitle').value='';$('rDescription').value='';await loadRequests()}catch(error){alert('Could not submit the request. Please try again.')}
 }
 $('saveSeller').onclick=async()=>{
  if(!needAuth())return;const seller_name=$('sellerName').value.trim(),bio=$('sellerBio').value.trim();if(!seller_name){alert('Add a seller name.');return}
- const {error}=await sb.from('marketplace_sellers').insert({user_id:session.user.id,seller_name,bio,status:'pending'});
- if(error)alert(error.message);else{$('sellerForm').classList.add('hidden');alert('Application submitted. An admin must approve it before you can list anything.')}
+ try{const {error}=await withTimeout(sb.from('marketplace_sellers').insert({user_id:session.user.id,seller_name,bio,status:'pending'}),'Seller application');if(error)throw error;$('sellerForm').classList.add('hidden');alert('Application submitted. An admin must approve it before you can list anything.')}catch(error){alert('Could not submit the seller application. Please try again.')}
 }
 boot();
 </script>
