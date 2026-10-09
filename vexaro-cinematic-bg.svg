@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1200" role="img" aria-label="VEXARO crimson industrial gaming atmosphere">
+<defs>
+ <linearGradient id="base" x2="1" y2="1"><stop stop-color="#050506"/><stop offset=".48" stop-color="#111014"/><stop offset=".78" stop-color="#260707"/><stop offset="1" stop-color="#030304"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#b5090d" stop-opacity=".65"/><stop offset="1" stop-color="#4d0004" stop-opacity="0"/></radialGradient>
+ <linearGradient id="metal" x2=".8" y2="1"><stop stop-color="#d5d5d8"/><stop offset=".25" stop-color="#46464c"/><stop offset=".5" stop-color="#09090b"/><stop offset=".72" stop-color="#88888e"/><stop offset="1" stop-color="#202024"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="42"/></filter>
+ <pattern id="grain" width="90" height="90" patternUnits="userSpaceOnUse"><path d="M0 12H90M0 57H90M20 0V90M70 0V90" stroke="#fff" stroke-opacity=".035" stroke-width="1"/><path d="M0 0L90 90M90 0L0 90" stroke="#fff" stroke-opacity=".025"/></pattern>
+</defs>
+<rect width="1800" height="1200" fill="url(#base)"/>
+<ellipse cx="1330" cy="410" rx="520" ry="420" fill="url(#glow)" filter="url(#blur)"/>
+<ellipse cx="1540" cy="900" rx="360" ry="300" fill="#a10008" opacity=".16" filter="url(#blur)"/>
+<g fill="none" stroke="#bd090f" stroke-opacity=".42">
+ <path d="M930 0L1510 1200" stroke-width="6"/><path d="M1140 0L1720 1200" stroke-width="2"/>
+ <path d="M1800 180L950 980" stroke-width="5"/><path d="M1800 280L1110 930" stroke-width="2"/>
+ <path d="M0 980L580 400" stroke-width="3"/><path d="M0 1080L680 400" stroke-width="1"/>
+</g>
+<g opacity=".58" fill="url(#metal)" stroke="#b80d13" stroke-opacity=".75" stroke-width="5">
+ <path d="M980 170L1150 420L1090 405L1240 620L1115 566L1210 770L1000 620L890 790L905 590L760 650L870 480L810 495Z"/>
+ <path d="M1360 360L1510 500L1455 490L1570 620L1480 585L1540 750L1380 650L1260 790L1290 610L1190 650L1280 515L1230 530Z" opacity=".65"/>
+ <path d="M430 610L550 740L490 730L630 890L520 850L570 1020L420 910L310 1040L340 870L245 905L330 770L290 785Z" opacity=".4"/>
+</g>
+<g opacity=".9" fill="none" stroke="url(#metal)" stroke-width="24" stroke-linejoin="miter">
+ <path d="M1020 430L1190 700L1340 470L1490 700L1670 410"/>
+ <path d="M930 560L1070 800L1200 610L1350 850L1520 610L1690 820"/>
+</g>
+<g fill="none" stroke="#ef151b" stroke-width="7" opacity=".8"><path d="M115 170V1025"/><path d="M140 170V1025" stroke-opacity=".2"/><path d="M1280 1030H1740"/><path d="M1330 1050H1740" stroke-opacity=".35"/></g>
+<rect width="1800" height="1200" fill="url(#grain)"/>
+<rect width="1800" height="1200" fill="url(#base)" opacity=".12"/>
+</svg>
