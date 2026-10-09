@@ -634,8 +634,8 @@ body{background:#08090b}body:before{opacity:.36}.wrap{width:min(1260px,calc(100%
   <div class="vx-hero-top"><span><i></i> INDEPENDENT GAMING PLATFORM</span><span>BUILT FROM THE GRIND / EST. 2026</span></div>
   <div class="vx-hero-inner wrap">
     <div class="vx-hero-copy"><div class="vx-overline">WARZONE / PLAYER HQ</div>
-      <h1 id="vx-hero-title">THE PLAYER<br><em>HUB.</em></h1>
-      <p>Warzone loadouts, controller and graphics settings, gameplay clips and a community that grows with you. Start with what you need, then make VEXARO your own.</p>
+      <h1 id="vx-hero-title">YOUR GAME.<br><em>YOUR PEOPLE.</em></h1>
+      <p>The home base for your game. Find Warzone builds, dial in your settings, watch the latest gameplay and connect with players building something of their own.</p>
       <div class="vx-hero-actions"><a class="vx-btn vx-btn-red" href="#explore">BROWSE THE HUB <span>↗</span></a><a class="vx-text-link" href="community.html">VIEW COMMUNITY <span>→</span></a></div>
     </div>
     <div class="vx-hero-side" aria-label="VEXARO identity"><div class="vx-side-rule"></div><span>BUILT FOR PLAYERS</span><strong>VXR<span>.</span></strong><small>START WITH WARZONE</small></div>
@@ -700,6 +700,93 @@ body{background:#08090b}body:before{opacity:.36}.wrap{width:min(1260px,calc(100%
  .vx-path h3{font-size:27px!important}
  .vx-path-feature,.vx-path-clips,.vx-path-people{min-height:225px!important}
 }
+</style>
+
+
+<style id="vx-homepage-art-direction-v8">
+/* Art direction reset: make the homepage feel like a gaming publication/platform, not a generic dark landing page. */
+:root{--vx-red:#e10600}
+body{background:#070708!important}
+.vx-hero{min-height:min(900px,100svh)!important;min-height:clamp(690px,94svh,940px)!important;padding:142px 0 86px!important;background:#070708!important}
+.vx-hero-image{inset:0!important;opacity:.94!important;background-position:62% center!important;transform:scale(1.025)}
+.vx-hero:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#050505 0%,rgba(5,5,5,.94) 22%,rgba(5,5,5,.66) 48%,rgba(5,5,5,.12) 100%),linear-gradient(0deg,#070708 0%,transparent 23%,rgba(0,0,0,.16) 100%);z-index:0}
+.vx-hero-grain{opacity:.12!important}
+.vx-hero-top,.vx-hero-bottom{z-index:2!important}
+.vx-hero-inner{z-index:2!important;grid-template-columns:minmax(0,1fr) minmax(150px,.38fr)!important;align-items:end!important;gap:36px!important}
+.vx-hero-copy{max-width:900px!important}
+.vx-hero .vx-overline{display:inline-flex!important;align-items:center;gap:10px;padding:9px 12px!important;border:1px solid rgba(225,6,0,.55)!important;background:rgba(225,6,0,.10)!important;color:#ff4b45!important;font-size:11px!important;letter-spacing:.2em!important}
+.vx-hero h1{font-size:clamp(58px,8.6vw,124px)!important;line-height:.84!important;letter-spacing:-.078em!important;margin:25px 0 25px!important;max-width:1000px!important;text-wrap:balance!important;text-shadow:0 8px 55px rgba(0,0,0,.5)!important}
+.vx-hero h1 em{color:#e10600!important;-webkit-text-stroke:0!important;font-style:normal!important;text-shadow:4px 4px 0 rgba(225,6,0,.18)!important}
+.vx-hero-copy>p{max-width:570px!important;font-size:clamp(15px,1.35vw,18px)!important;line-height:1.75!important;color:#d0d0d4!important}
+.vx-hero-actions{margin-top:30px!important;gap:18px!important}
+.vx-btn-red{border-radius:3px!important;background:#e10600!important;box-shadow:6px 6px 0 rgba(225,6,0,.20)!important;letter-spacing:.12em!important}
+.vx-btn-red:hover{background:#ff211a!important;box-shadow:8px 8px 0 rgba(225,6,0,.22)!important}
+.vx-text-link{border-bottom:1px solid rgba(255,255,255,.3)!important;padding-bottom:9px!important}
+.vx-hero-side{align-self:end!important;border-left:2px solid #e10600!important;padding:0 0 0 20px!important;margin-bottom:22px!important;opacity:.94}
+.vx-hero-side strong{font-size:clamp(58px,7vw,94px)!important;line-height:.9!important;letter-spacing:-.09em!important}
+.vx-hero-side strong span{color:#e10600!important}
+.vx-platform-strip{background:#0b0b0d!important;border-top:1px solid rgba(255,255,255,.1)!important;border-bottom:1px solid rgba(255,255,255,.1)!important}
+.vx-platform-inner{gap:22px!important}
+.vx-platform-game{background:#121216!important;border:1px solid rgba(255,255,255,.13)!important;border-left:3px solid #e10600!important;border-radius:2px!important}
+.vx-platform-game-icon{background:#e10600!important;border-radius:2px!important}
+.vx-platform-shortcuts a{border-radius:0!important;border-bottom:1px solid rgba(255,255,255,.13)!important}
+.vx-section{padding-block:clamp(70px,9vw,126px)!important}
+.vx-section-intro{align-items:end!important;margin-bottom:36px!important}
+.vx-section-intro h2{font-size:clamp(42px,6vw,78px)!important;line-height:.9!important;letter-spacing:-.07em!important}
+.vx-section-intro h2 span{color:#e10600!important}
+.vx-label{color:#ff413a!important;letter-spacing:.2em!important}
+.vx-paths{grid-template-columns:1.18fr 1fr 1fr!important;gap:12px!important}
+.vx-path{min-height:390px!important;border-radius:2px!important;border:1px solid rgba(255,255,255,.13)!important;padding:clamp(20px,2.6vw,34px)!important}
+.vx-path-feature{min-height:430px!important;background-image:radial-gradient(ellipse at 80% 20%,rgba(225,6,0,.24),transparent 42%),linear-gradient(145deg,rgba(255,255,255,.04),transparent 55%),linear-gradient(145deg,#19191d,#080809)!important}
+.vx-path-clips{background-image:linear-gradient(180deg,rgba(6,7,9,.25),rgba(6,7,9,.95)),url('/hero.webp?v=20261009-3')!important;background-size:cover!important;background-position:72% center!important}
+.vx-path-people{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 1px,transparent 1px 20px),radial-gradient(circle at 90% 15%,rgba(225,6,0,.2),transparent 34%),linear-gradient(155deg,#141418,#080809)!important}
+.vx-path-top{color:#b5b5bc!important;letter-spacing:.12em!important}
+.vx-path-symbol{color:#ff3831!important}
+.vx-path h3{font-size:clamp(28px,3.1vw,43px)!important;letter-spacing:-.065em!important;line-height:.91!important}
+.vx-path h3 em{color:#e10600!important;font-style:normal!important}
+.vx-path p{color:#b8b8c0!important;line-height:1.7!important}
+.vx-path-link{color:#fff!important;letter-spacing:.11em!important}
+.vx-path-link b{color:#ff3831!important}
+.vx-feature{border-block:1px solid rgba(255,255,255,.09)!important;background:#0b0b0d!important}
+.vx-feature-art{opacity:.68!important;background-position:68% center!important}
+.vx-feature:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#080809 0%,rgba(8,8,9,.84) 40%,rgba(8,8,9,.24) 100%);pointer-events:none}
+.vx-feature-inner{position:relative;z-index:2}
+.vx-feature h2,.vx-community h2{font-size:clamp(48px,7.4vw,100px)!important;line-height:.86!important;letter-spacing:-.075em!important}
+.vx-feature h2 em,.vx-community h2 em{color:#e10600!important;font-style:normal!important}
+.vx-social-row a{border-radius:0!important;border-top:1px solid rgba(255,255,255,.23)!important}
+.vx-arsenal{background:#080809!important}
+.vx-community{background:#0e0e11!important;border-block:1px solid rgba(255,255,255,.08)!important}
+.vx-pro{border:1px solid rgba(225,6,0,.24)!important;border-radius:2px!important;background:radial-gradient(ellipse at 100% 0%,rgba(225,6,0,.14),transparent 44%),#0d0d0f!important}
+@media(max-width:900px){
+ .vx-hero{min-height:760px!important;padding-top:110px!important}
+ .vx-hero-inner{grid-template-columns:1fr!important}
+ .vx-hero-side{display:none!important}
+ .vx-hero h1{font-size:clamp(56px,10.5vw,88px)!important}
+ .vx-paths{grid-template-columns:1fr 1fr!important}
+ .vx-path-feature{grid-column:1/-1!important;min-height:340px!important}
+ .vx-path{min-height:320px!important}
+}
+@media(max-width:560px){
+ .vx-hero{min-height:720px!important;padding:102px 0 66px!important}
+ .vx-hero:after{background:linear-gradient(90deg,rgba(5,5,5,.9),rgba(5,5,5,.53)),linear-gradient(0deg,#070708 0%,transparent 46%,rgba(0,0,0,.14))!important}
+ .vx-hero-top{font-size:8px!important;letter-spacing:.1em!important}
+ .vx-hero-top span:last-child{display:none!important}
+ .vx-hero h1{font-size:clamp(48px,12.5vw,70px)!important;line-height:.91!important;letter-spacing:-.07em!important}
+ .vx-hero-copy>p{font-size:15px!important}
+ .vx-hero-actions{align-items:stretch!important;flex-direction:column!important;max-width:310px!important}
+ .vx-hero-actions .vx-btn{min-height:50px!important}
+ .vx-platform-inner{padding-block:18px!important}
+ .vx-platform-shortcuts{display:grid!important;grid-template-columns:1fr 1fr!important}
+ .vx-section{padding-block:66px!important}
+ .vx-section-intro{display:block!important}
+ .vx-section-intro h2{font-size:clamp(40px,11vw,56px)!important}
+ .vx-section-intro>p{margin-top:18px!important}
+ .vx-paths{grid-template-columns:1fr!important}
+ .vx-path-feature{grid-column:auto!important;min-height:330px!important}
+ .vx-path,.vx-path-feature,.vx-path-clips,.vx-path-people{min-height:300px!important}
+ .vx-feature h2,.vx-community h2{font-size:clamp(43px,12vw,64px)!important}
+}
+@media(prefers-reduced-motion:reduce){.vx-hero-image{transform:none!important}}
 </style>
 
 </body></html>
