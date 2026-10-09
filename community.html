@@ -227,10 +227,13 @@ async function applySession(s){
     $('postComposer').classList.add('hidden');$('signedOutNotice').classList.remove('hidden');
     $('sideTitle').textContent='COMMUNITY.';$('sideContent').textContent='Create an account to post, build a profile and share your loadouts/settings.';
     
-    /* Keep an explicitly requested sign-in/sign-up screen open during pageshow/session refresh. */
-    if(!(homepageAuth && !session)){
-      $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
+    /* A sign-in/sign-up URL is an explicit view request. Session refreshes on
+       pageshow must not call showView(), because showView() hides authView. */
+    if(homepageAuth && !session){
+      openAuth(requestedAuth==='signup'?'signup':'signin');
+      return;
     }
+    $('authView').classList.add('hidden');$('appView').classList.remove('hidden');
     showView(currentView||'home');
     return;
   }
