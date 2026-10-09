@@ -208,7 +208,7 @@ function showAdminSection(section){
   if(target==='overview')window.scrollTo({top:0,left:0,behavior:'smooth'});else $(target).scrollIntoView({behavior:'smooth',block:'start'});
   if(target==='profile')loadAdminProfile().catch(e=>note(e?.message||'Profile could not be loaded.'));
 }
-document.getElementById('adminHeaderHome')?.addEventListener('click',()=>showAdminSection('overview'));
+document.getElementById('adminHeaderHome')?.addEventListener('click',()=>{location.href='/';});
 document.getElementById('openMemberAppBtn')?.addEventListener('click',()=>openMemberApp());
 document.getElementById('adminHomeBtn')?.addEventListener('click',()=>showAdminSection('overview'));
 document.querySelectorAll('.toolbar [data-section]').forEach(b=>b.addEventListener('click',()=>showAdminSection(b.dataset.section)));
