@@ -170,8 +170,9 @@ async function grantLifetimePro(){
     if(!data?.ok)throw new Error('The database did not confirm the grant.');
     $('grantProReason').value='';
     note(data.already_active?'@'+data.username+' already has active lifetime PRO.':'Lifetime PRO granted to @'+data.username+'.');
-    await Promise.all([loadOverview(),loadAudit()]);
-  }catch(e){note(e?.message||'Lifetime PRO grant failed. No success was confirmed.')}
+    try{await Promise.all([loadOverview(),loadAudit()])}
+    catch(e){note((data.already_active?'Lifetime PRO is already active for @':'Lifetime PRO was granted to @')+data.username+', but the dashboard refresh failed: '+(e?.message||'unknown error'))}
+  }catch(e){note(e?.message||'Lifetime PRO grant failed. No grant was confirmed.')}
   finally{button.disabled=false}
 }
 async function addExpense(){const category=$('expenseCategory').value.trim(),vendor=$('expenseVendor').value.trim(),amount=Number($('expenseAmount').value);if(!category||!Number.isFinite(amount)||amount<=0){note('Enter a category and a positive amount.');return}await run(async()=>{const r=await sb.from('business_expenses').insert({category,vendor,amount_pence:Math.round(amount*100),created_by:uid});if(r.error)throw r.error;const a=await sb.from('admin_audit_log').insert({admin_id:uid,action:'expense_added',target_type:'business_expense',details:{category,vendor,amount_pence:Math.round(amount*100)}});if(a.error)throw a.error;$('expenseCategory').value='';$('expenseVendor').value='';$('expenseAmount').value='';await loadOverview()})}
