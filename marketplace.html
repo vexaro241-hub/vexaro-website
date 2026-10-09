@@ -55,7 +55,7 @@ async function boot(){
   $('accountBtn').textContent=session?'VEXARO ACCOUNT':'JOIN VEXARO';
   $('newRequest').textContent=session?'POST REQUEST':'SIGN IN TO POST REQUEST';
   $('sellerApply').textContent=session?'BECOME A SELLER':'SIGN IN TO BECOME A SELLER';
-  $('accountBtn').onclick=()=>location.href=session?'/community':'/community?auth=signin';
+  $('accountBtn').onclick=()=>location.href=session?'/community.html':'/community.html?auth=signin';
   await Promise.all([loadListings(),loadRequests()]);
  }catch(error){
   showLoadError('listings','Marketplace listings',error);
@@ -76,7 +76,7 @@ async function loadRequests(){
   $('requests').innerHTML=data?.length?data.map(x=>'<article class="request"><h3>'+esc(x.title)+'</h3><div class="meta">'+esc(x.game)+' · '+esc(x.platform)+'</div><p class="muted">'+esc(x.description)+'</p><div class="meta">@'+esc(x.public_profiles?.username||'member')+(x.budget_pence!=null?' · budget '+money(x.budget_pence):'')+'</div></article>').join(''):'<div class="empty">No open requests yet.</div>';
  }catch(error){showLoadError('requests','Marketplace requests',error)}
 }
-function needAuth(){if(session)return true;location.href='/community?auth=signin';return false}
+function needAuth(){if(session)return true;location.href='/community.html?auth=signin';return false}
 $('newRequest').onclick=()=>{if(needAuth()){$('requestForm').classList.remove('hidden');$('sellerForm').classList.add('hidden')}}
 $('cancelRequest').onclick=()=>$('requestForm').classList.add('hidden');
 $('sellerApply').onclick=()=>{if(needAuth()){$('sellerForm').classList.remove('hidden');$('requestForm').classList.add('hidden')}}
