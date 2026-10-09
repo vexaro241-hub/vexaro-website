@@ -263,7 +263,7 @@ async function applySession(s){
     const publicName=creatorMode?(activeIdentity.display_name||'VEXARO'):(profile.display_name||'VEXARO MEMBER');
     const publicUsername=creatorMode?(activeIdentity.username||'VEXARO'):(profile.username||'member');
     $('sideTitle').textContent=publicName;
-    $('sideContent').innerHTML='<span>@'+esc(publicUsername)+'</span><br><br><span class="badge">'+(isAdmin?'ADMIN':(creatorMode?'MEMBER':'FREE MEMBER'))+'</span>';
+    $('sideContent').innerHTML='<span>@'+esc(publicUsername)+'</span><br><br><span class="badge">'+(creatorMode?'MEMBER':'FREE MEMBER')+'</span>';
     $('postComposer').classList.remove('hidden');
     $('signedOutNotice').classList.add('hidden');
   }
