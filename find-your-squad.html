@@ -20,7 +20,7 @@
 <div id="loadState" class="notice">Connecting to the VEXARO squad board…</div><div id="posts" class="posts"></div><div id="empty" class="empty hidden">No squad posts match those filters yet. Create the first one.</div>
 </section>
 <section id="create" class="panel" style="margin-top:18px"><div class="sectionhead" style="margin-top:0"><div><div class="eyebrow">MAKE THE CALL</div><h2>Create a squad post</h2></div></div><p class="muted">Keep it friendly. Never post passwords, private account details or personal contact information.</p>
-<div id="authNotice" class="notice">Sign in to VEXARO to create a squad post.</div>
+<div id="authNotice" class="notice">Sign in to VEXARO to create a squad post. <a href="/?auth=signin" style="text-decoration:underline;font-weight:900">Sign in here ↗</a></div>
 <form id="createForm" class="formgrid">
 <div class="field"><label for="game">Game</label><select id="game" required><option value="">Choose a game</option><option>Call of Duty: Warzone</option><option>Call of Duty: Multiplayer</option><option>Call of Duty: Black Ops</option><option>Fortnite</option><option>Apex Legends</option><option>Rocket League</option><option>EA SPORTS FC</option><option>Minecraft</option><option>Other</option></select></div>
 <div class="field"><label for="mode">Game mode</label><select id="mode" required><option value="">Choose a mode</option><option>Ranked</option><option>Casual</option><option>Resurgence</option><option>Battle Royale</option><option>Multiplayer</option><option>Co-op</option><option>Creative</option><option>Other</option></select></div>
@@ -55,7 +55,7 @@ async function init(){
  if(client){try{const {data}=await client.auth.getSession();user=data?.session?.user||null;client.auth.onAuthStateChange((_event,session)=>{user=session?.user||null;updateAuth();});}catch(_){}}
  updateAuth();await refresh();
 }
-function updateAuth(){$('authNotice').textContent=user?'Signed in — you can publish a squad post.':'Sign in to VEXARO to create a squad post.';$('createForm').querySelectorAll('input,select,textarea,button').forEach(el=>{el.disabled=!user;});}
+function updateAuth(){$('authNotice').innerHTML=user?'Signed in — you can publish a squad post.':'Sign in to VEXARO to create a squad post. <a href="/?auth=signin" style="text-decoration:underline;font-weight:900">Sign in here ↗</a>';$('createForm').querySelectorAll('input,select,textarea,button').forEach(el=>{el.disabled=!user;});}
 ['filterGame','filterMode','filterPlatform','filterWhen'].forEach(id=>$(id).addEventListener('change',draw));
 $('createForm').addEventListener('submit',async e=>{
  e.preventDefault();if(!client||!user){$('formStatus').textContent='Please sign in first.';return;}
