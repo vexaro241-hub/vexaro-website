@@ -46,10 +46,19 @@ function draw(){
  $('empty').classList.toggle('hidden',filtered.length>0);
 }
 async function refresh(){
- if(!client){setStatus('The squad board is not connected to Supabase yet. The page design is ready, but its database setup must be applied before posts can load.',true);$('count').textContent='Setup required';return;}
- try{const {data,error}=await client.from('squad_posts').select('id,user_id,game,game_mode,platform,play_when,players_needed,mic_preference,description,created_at,status').eq('status','open').order('created_at',{ascending:false}).limit(100);
- if(error)throw error;allPosts=data||[];ready=true;setStatus('');draw();}
- catch(e){setStatus('Squad board database setup is still required, or the connection failed. Posts will appear here once the VEXARO squad_posts table and access policies are enabled.',true);$('count').textContent='Setup required';console.error('VEXARO squad board:',e.message||e);}
+ if(!client){setStatus('The squad board could not connect to Supabase. Check your connection and reload this page.',true);$('count').textContent='Connection unavailable';return;}
+ setStatus('Connecting to the VEXARO squad board…');
+ try{
+  const request=client.from('squad_posts').select('id,user_id,game,game_mode,platform,play_when,players_needed,mic_preference,description,created_at,status').eq('status','open').order('created_at',{ascending:false}).limit(100);
+  const {data,error}=await Promise.race([request,new Promise((_,reject)=>setTimeout(()=>reject(new Error('Squad board request timed out')),10000))]);
+  if(error)throw error;
+  allPosts=data||[];ready=true;setStatus('');draw();
+  if(!allPosts.length)$('loadState').textContent='No open squad sessions yet — you can be the first to post one.';
+ }catch(e){
+  setStatus('Squad sessions could not load. Check your connection and try again.',true);$('count').textContent='Could not load';
+  if(!$('retrySquad')){const b=document.createElement('button');b.id='retrySquad';b.className='btn';b.type='button';b.textContent='Retry connection';b.style.marginTop='10px';b.onclick=()=>{b.remove();refresh();};$('loadState').appendChild(document.createTextNode(' '));$('loadState').appendChild(b);}
+  console.error('VEXARO squad board:',e.message||e);
+ }
 }
 async function init(){
  if(client){try{const {data}=await client.auth.getSession();user=data?.session?.user||null;client.auth.onAuthStateChange((_event,session)=>{user=session?.user||null;updateAuth();});}catch(_){}}
