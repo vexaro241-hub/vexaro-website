@@ -30,3 +30,6 @@ with check ((select auth.uid()) = user_id);
 drop policy if exists "Members delete their own squad posts" on public.squad_posts;
 create policy "Members delete their own squad posts" on public.squad_posts
 for delete to authenticated using ((select auth.uid()) = user_id);
+
+grant select on public.squad_posts to anon, authenticated;
+grant insert, update, delete on public.squad_posts to authenticated;
