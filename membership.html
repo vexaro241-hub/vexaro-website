@@ -37,11 +37,12 @@ async function boot(){
     ]);
     const account=document.getElementById("account");
     if(session){
-      const {data:memberships}=await sb.from("memberships").select("plan_code,status,starts_at,ends_at,is_trial").eq("user_id",session.user.id).order("ends_at",{ascending:false}).limit(1);
+      const {data:memberships}=await sb.from("memberships").select("plan_code,status,starts_at,ends_at,is_trial,provider").eq("user_id",session.user.id).order("ends_at",{ascending:false}).limit(1);
       if(memberships?.[0]){
         const m=memberships[0],p=(plans||[]).find(x=>x.code===m.plan_code);
+        const lifetime=m.provider==="admin_lifetime_grant";
         const end=m.ends_at?new Date(m.ends_at).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}):"your account";
-        account.innerHTML="<strong>"+esc(p?.name||m.plan_code)+"</strong><span class=\"badge\">"+(m.is_trial?"1 MONTH FREE TRIAL":esc((m.status||"").toUpperCase()))+"</span><p style=\"margin:8px 0 0\">Access runs until "+esc(end)+". "+(p?.access_level==="full"?"Full PRO access is enabled.":"Full PRO access is enabled for your membership.")+"</p>";
+        account.innerHTML="<strong>"+(lifetime?"VEXARO PRO — LIFETIME":esc(p?.name||m.plan_code))+"</strong><span class=\"badge\">"+(lifetime?"LIFETIME GRANT":m.is_trial?"1 MONTH FREE TRIAL":esc((m.status||"").toUpperCase()))+"</span><p style=\"margin:8px 0 0\">"+(lifetime?"Lifetime access has been granted by the VEXARO team.":"Access runs until "+esc(end)+".")+" "+(p?.access_level==="full"?"Full PRO access is enabled.":"Full PRO access is enabled for your membership.")+"</p>";
         account.classList.remove("hidden");
       }
       const statusResponse=await fetch(window.VEXARO_SUPABASE_URL+"/functions/v1/stripe-checkout?status=1",{
