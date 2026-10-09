@@ -579,4 +579,24 @@ function renderProfile(){const publicUser=new URLSearchParams(location.search).g
 async function loadMemberStats(){if(!session)return;const [posts,loadouts,settings]=await Promise.all([sb.from('posts').select('id',{count:'exact',head:true}).eq('user_id',session.user.id),sb.from('loadouts').select('id',{count:'exact',head:true}).eq('user_id',session.user.id),sb.from('settings_posts').select('id',{count:'exact',head:true}).eq('user_id',session.user.id)]);const el=$('memberStats');if(el)el.innerHTML=`<b>YOUR VEXARO ACTIVITY</b><br><br>${posts.count||0} posts · ${loadouts.count||0} loadouts · ${settings.count||0} settings shares<br><br><button class="btn mini accent" type="button" onclick="openPublicProfile(session.user.id)">VIEW PUBLIC PROFILE</button>`}
 async function saveProfile(){const display_name=$('editDisplay').value.trim()||'VEXARO Member',bio=$('editBio').value.trim(),avatar_url=$('editAvatar').value.trim();const {data,error}=await sb.from('profiles').update({display_name,bio,avatar_url}).eq('id',session.user.id).select('id,username,display_name,bio,avatar_url,created_at,role').single();if(error)alert(error.message);else{profile=data;renderProfile()}}
 $('postMedia')?.addEventListener('change',e=>{const files=[...e.target.files||[]];$('postMediaStatus').textContent=files.length?files.length+' file'+(files.length===1?'':'s')+' ready to upload.':''});$('openAuth')?.addEventListener('click',()=>openAuth());$('signInInline')?.addEventListener('click',()=>location.href='/?auth=signin');$('authSubmit').onclick=authSubmit;['email','password','username','displayName','newPassword','confirmPassword'].forEach(id=>$(id)?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();authSubmit()}}));$('memberHomeBtn')?.addEventListener('click',e=>{e.preventDefault();showView('home')});$('postSubmit').onclick=postSubmit; $('signInInline')?.addEventListener('click',()=>{if(session){$('signedOutNotice').classList.add('hidden');$('postComposer').classList.remove('hidden');$('postBody')?.focus()}else openAuth('signin')}); $('feedSearch')?.addEventListener('input',renderFeed); $('feedSort')?.addEventListener('change',renderFeed); $('memberSearch')?.addEventListener('input',renderMembers);$('newLoadout').onclick=()=>{if(!session){openAuth();return}$('loadoutForm').classList.remove('hidden')};$('cancelLoadout').onclick=()=>$('loadoutForm').classList.add('hidden');$('saveLoadout').onclick=saveLoadout;$('newSetting').onclick=()=>{if(!session){openAuth();return}$('settingForm').classList.remove('hidden')};$('cancelSetting').onclick=()=>$('settingForm').classList.add('hidden');$('saveSetting').onclick=saveSetting;document.querySelectorAll('.tab[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));boot();
-</script></body></html>
+</script><style id="vx-community-web-navigation-final">
+/* Final override: the community is a responsive website, not a fixed-bottom mobile app shell. */
+@media(max-width:800px){
+ .top .nav{height:auto!important;min-height:72px!important;max-height:none!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;overflow:visible!important;padding:12px 0!important}
+ .brand{display:inline-block!important;max-width:none!important;overflow:visible!important}
+ .navlinks{position:static!important;inset:auto!important;order:initial!important;display:flex!important;flex:1 1 100%!important;grid-template-columns:none!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:8px 0!important;gap:7px 14px!important;overflow-x:auto!important;overflow-y:hidden!important;background:transparent!important;border:0!important;border-top:1px solid #25262c!important;box-shadow:none!important;backdrop-filter:none!important}
+ .navlinks .tab{height:auto!important;min-height:36px!important;flex:0 0 auto!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:9px 5px!important;font-size:9px!important;white-space:nowrap!important}
+ .navlinks .tab.active:after{left:5px!important;right:5px!important;bottom:0!important}
+ .nav>div:last-child{display:flex!important;max-width:none!important;margin-left:auto!important;gap:6px!important}
+ .app-tools .btn{font-size:9px!important;width:auto!important;min-width:0!important;padding:8px 10px!important}
+ #identitySwitcher{display:block!important;max-width:none!important}
+ #authNav{display:flex!important;width:auto!important;flex:0 1 auto!important;gap:6px!important;padding:0!important}
+ #authNav .btn{width:auto!important;min-height:36px!important;height:auto!important;padding:8px 10px!important;font-size:9px!important}
+ #authNav>span{display:inline!important}
+ body{padding-bottom:20px!important}
+}
+@media(min-width:801px){
+ .top .nav{height:auto!important;min-height:72px!important}
+ .navlinks{position:static!important;display:flex!important;width:auto!important;height:auto!important;background:transparent!important;border:0!important;box-shadow:none!important}
+}
+</style></body></html>
