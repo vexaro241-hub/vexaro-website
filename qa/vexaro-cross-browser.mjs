@@ -92,10 +92,42 @@ async function adminHeroLayout(){
     return {ok:!!hero&&hero.height<=100,...(hero||{})};
   }catch(e){return {ok:false,error:e.message}}finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
 }
+async function communityMobileNavLayout(){
+  let b,c,p;
+  try{
+    b=await chromium.launch();
+    c=await b.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+    p=await c.newPage();
+    const errors=[];
+    p.on("pageerror",e=>errors.push(e.message));
+    p.on("console",m=>{if(m.type()==="error")errors.push(m.text())});
+    await p.goto(BASE+"/community.html?view=members&qa="+QA,{waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
+    await p.locator(".top .navlinks").waitFor({state:"visible",timeout:10000});
+    await p.waitForTimeout(250);
+    const layout=await p.evaluate(()=>{
+      const nav=document.querySelector(".top .navlinks");
+      const links=[...document.querySelectorAll(".top .navlinks .tab")].map(el=>{
+        const r=el.getBoundingClientRect();
+        return {label:(el.innerText||el.getAttribute("aria-label")||"").trim(),visible:r.width>0&&r.height>0&&r.left>=-1&&r.right<=innerWidth+1&&r.top>=-1&&r.bottom<=innerHeight+1};
+      });
+      return {viewportWidth:innerWidth,pageWidth:document.documentElement.scrollWidth,navWidth:nav?.clientWidth||0,navScrollWidth:nav?.scrollWidth||0,links};
+    });
+    const members=await p.locator('.top .navlinks [data-view="members"]').isVisible();
+    await p.locator('.top .navlinks [data-view="members"]').click();
+    await p.waitForFunction(()=>!document.querySelector("#membersView")?.classList.contains("hidden"),null,{timeout:5000});
+    const membersSwitch=await p.evaluate(()=>!document.querySelector("#membersView")?.classList.contains("hidden"));
+    await p.locator('.top .navlinks [data-view="friends"]').click();
+    await p.waitForFunction(()=>!document.querySelector("#friendsView")?.classList.contains("hidden"),null,{timeout:5000});
+    const friendsSwitch=await p.evaluate(()=>!document.querySelector("#friendsView")?.classList.contains("hidden"));
+    const ok=layout.pageWidth<=layout.viewportWidth&&layout.navScrollWidth<=layout.navWidth+1&&layout.links.length>=8&&layout.links.every(x=>x.visible)&&members&&membersSwitch&&friendsSwitch&&errors.length===0;
+    return {ok,layout,membersSwitch,friendsSwitch,errors};
+  }catch(e){return {ok:false,error:e.message}}
+  finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
+}
 const suites=[];for(const [bt,label,opts] of [[chromium,"Chromium"],[firefox,"Firefox"],[webkit,"WebKit"],[chromium,"iPhone 15 Pro Max",devices["iPhone 15 Pro Max"]||{viewport:{width:430,height:932},isMobile:true,hasTouch:true}]])suites.push(await timed(smoke(bt,label,opts),240000,label+" suite"));
-const refreshChecks=[];for(const path of ["/","/community?view=feed"])refreshChecks.push(await refreshSignOut(path));
+const communityMobileNav=await communityMobileNavLayout();\nconst refreshChecks=[];for(const path of ["/","/community?view=feed"])refreshChecks.push(await refreshSignOut(path));
 const refresh={ok:refreshChecks.every(x=>x.ok),checks:refreshChecks};
 const adminHero=await adminHeroLayout();
 const communityData=await communityDataSmoke();
 const authRouting=await authRoutingSmoke();
-const assets=await scan(),meta=await metadata(),report={generatedAt:new Date().toISOString(),suites,refreshSignOut:refresh,adminHeroLayout:adminHero,communityDataSmoke:communityData,authRoutingSmoke:authRouting,assets,metadata:meta};writeFileSync("qa-results/cross-browser/report.json",JSON.stringify(report,null,2));console.log(JSON.stringify({suites:suites.map(s=>({label:s.label,passed:s.out.filter(x=>x.status>=200&&x.status<400&&x.body&&!x.errors.length).length,total:s.out.length})),refreshSignOut:refresh,adminHeroLayout:adminHero,communityDataSmoke:communityData,authRoutingSmoke:authRouting,assets,metadata:meta},null,2));if(suites.some(s=>s.out.some(x=>!(x.status>=200&&x.status<400&&x.body&&!x.errors.length)))||!refresh.ok||!adminHero.ok||!communityData.ok||!authRouting.ok||assets.bad.length||meta.bad.length)process.exit(1);
+const assets=await scan(),meta=await metadata(),report={generatedAt:new Date().toISOString(),suites,refreshSignOut:refresh,adminHeroLayout:adminHero,communityDataSmoke:communityData,communityMobileNavLayout:communityMobileNav,authRoutingSmoke:authRouting,assets,metadata:meta};writeFileSync("qa-results/cross-browser/report.json",JSON.stringify(report,null,2));console.log(JSON.stringify({suites:suites.map(s=>({label:s.label,passed:s.out.filter(x=>x.status>=200&&x.status<400&&x.body&&!x.errors.length).length,total:s.out.length})),refreshSignOut:refresh,adminHeroLayout:adminHero,communityDataSmoke:communityData,communityMobileNavLayout:communityMobileNav,authRoutingSmoke:authRouting,assets,metadata:meta},null,2));if(!communityMobileNav.ok||suites.some(s=>s.out.some(x=>!(x.status>=200&&x.status<400&&x.body&&!x.errors.length)))||!refresh.ok||!adminHero.ok||!communityData.ok||!authRouting.ok||assets.bad.length||meta.bad.length)process.exit(1);
