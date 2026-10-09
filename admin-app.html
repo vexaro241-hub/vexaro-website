@@ -78,7 +78,7 @@ body{overscroll-behavior-x:none}
  .hero p{font-size:10px!important;line-height:1.35!important}
  .stats{margin:7px 0 10px!important}
 }
-</style></head>
+</style><link rel="stylesheet" href="/vexaro-platform.css?v=20261009-1"></head>
 <body><header class="top"><div class="wrap nav"><a class="brand" href="https://vexaroofficial.com/">VEXARO <span>ADMIN HUB</span></a><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="badge">ADMIN ONLY</span><button class="btn" type="button" id="adminHeaderHome">HOME</button><div id="identitySwitcher"></div><button class="btn" type="button" id="openMemberAppBtn">MEMBER HUB</button><button class="btn" type="button" id="adminSignOutBtn">SIGN OUT</button></div></div></header>
 <main class="wrap"><div id="loading" class="panel"><div class="kicker">VEXARO / ADMIN ACCESS</div><h2>ADMIN SIGN IN.</h2><div class="muted">Sign in here if this Admin app does not already have a VEXARO session.</div><div class="actions" style="display:grid;gap:8px;margin-top:14px"><input id="adminEmail" type="email" autocomplete="username" placeholder="Email" style="background:#08080a;color:#fff;border:1px solid var(--line);padding:11px;border-radius:8px"><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password" style="background:#08080a;color:#fff;border:1px solid var(--line);padding:11px;border-radius:8px"><button class="btn accent" id="adminSignIn">SIGN IN AS ADMIN</button><a class="btn" href="/community.html">OPEN MEMBERS</a></div><div id="adminSignInMsg" class="notice hidden" style="margin-top:12px"></div></div><div id="app" class="hidden">
 <section class="hero"><div class="kicker">CONTROL CENTRE</div><h1>RUN <span style="color:#e10600">VEXARO.</span></h1><p>One place for moderation, marketplace approvals and the future VEXARO PRO controls. Database permissions remain the real security boundary.</p></section>
@@ -123,6 +123,7 @@ const note=(m)=>{if(!m){$('msg').classList.add('hidden');return}$('msg').textCon
 function showAdminSignIn(){
   const l=$('loading');
   if(!l)return;
+  $('adminSignOutBtn')?.classList.add('hidden');
   if(!sb && window.supabase?.createClient){
     sb=getAdminClient();
   }
@@ -145,7 +146,7 @@ function showAdminSignIn(){
       if(p.error)throw p.error;
       if(String(p.data?.role||'').toLowerCase()!=='admin')throw new Error('This account does not have administrator access.');
       $('loading').classList.add('hidden');
-      $('app').classList.remove('hidden');
+      $('app').classList.remove('hidden');$('adminSignOutBtn')?.classList.remove('hidden');
       try{await reloadAll()}catch(e){note(e?.message||'Some admin data could not be loaded yet.');}
     }catch(e){try{await sb?.auth.signOut()}catch(_){}m.textContent=e?.message||'Sign in failed.';m.classList.remove('hidden');b.disabled=false;b.textContent='SIGN IN AS ADMIN'}
   };
@@ -207,7 +208,7 @@ function showAdminSection(section){
   if(target==='overview')window.scrollTo({top:0,left:0,behavior:'smooth'});else $(target).scrollIntoView({behavior:'smooth',block:'start'});
   if(target==='profile')loadAdminProfile().catch(e=>note(e?.message||'Profile could not be loaded.'));
 }
-document.getElementById('adminHeaderHome')?.addEventListener('click',()=>showAdminSection('overview'));
+document.getElementById('adminHeaderHome')?.addEventListener('click',()=>{location.href='/';});
 document.getElementById('openMemberAppBtn')?.addEventListener('click',()=>openMemberApp());
 document.getElementById('adminHomeBtn')?.addEventListener('click',()=>showAdminSection('overview'));
 document.querySelectorAll('.toolbar [data-section]').forEach(b=>b.addEventListener('click',()=>showAdminSection(b.dataset.section)));
@@ -233,7 +234,7 @@ if(result?.error){showAdminSignIn();return;}
 const session=result?.data?.session;
 if(!session?.user){showAdminSignIn();return;}
 uid=session.user.id;
-try{await window.VEXARO_IDENTITIES?.init(sb,uid,'admin');}catch(_){}try{window.VEXARO_POSTHOG_IDENTIFY(uid,{app:'admin',role:'admin'});}catch(_){}const p=await Promise.race([sb.from('profiles').select('role').eq('id',uid).single(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Administrator profile check timed out.')),5000))]);if(p.error)throw p.error;if(String(p.data?.role||'').toLowerCase()!=='admin')throw new Error('Admin access required.');$('loading').classList.add('hidden');$('app').classList.remove('hidden');try{await reloadAll()}catch(e){note(e?.message||'Some admin data could not be loaded yet.');}}catch(e){
+try{await window.VEXARO_IDENTITIES?.init(sb,uid,'admin');}catch(_){}try{window.VEXARO_POSTHOG_IDENTIFY(uid,{app:'admin',role:'admin'});}catch(_){}const p=await Promise.race([sb.from('profiles').select('role').eq('id',uid).single(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Administrator profile check timed out.')),5000))]);if(p.error)throw p.error;if(String(p.data?.role||'').toLowerCase()!=='admin')throw new Error('Admin access required.');$('loading').classList.add('hidden');$('app').classList.remove('hidden');$('adminSignOutBtn')?.classList.remove('hidden');try{await reloadAll()}catch(e){note(e?.message||'Some admin data could not be loaded yet.');}}catch(e){
   try{if(uid)await sb?.auth.signOut()}catch(_){}
   if(String(e?.message||'').includes('Administrator session check timed out.')){showAdminSignIn();return;}
   fail(e?.message||'Unable to verify administrator access.')

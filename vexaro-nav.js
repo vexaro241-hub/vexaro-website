@@ -1,18 +1,12 @@
 (function(){try{if(!document.querySelector('script[data-vexaro-posthog]')){var s=document.createElement('script');s.src='/vexaro-posthog.js';s.async=true;s.dataset.vexaroPosthog='1';document.head.appendChild(s)}}catch(_){}})();
 (function(){
 'use strict';
-/* VEXARO site-wide rule: browser refresh returns to Home.
-   Normal navigation and back/forward history are unchanged. */
-const nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
-if(nav&&nav.type==='reload'&&(location.pathname!=='/'||location.search||location.hash)){
- location.replace('/');
- return;
-}
+/* Refresh stays on the page the visitor is using. */
 const isMemberApp=/vexaro-members\.vexaro241\.workers\.dev$/i.test(location.hostname);
 const homeHref=isMemberApp?'community.html?view=home':'/';
 const links=[
  ['HOME',homeHref],['HQ','/#hq'],['CLIPS','/clips.html'],['LOADOUTS','/loadouts.html'],
- ['SETTINGS','/settings.html'],['LIVE','/live/'],['COMMUNITY','/community.html'],
+ ['SETTINGS','/settings.html'],['LIVE','/live/'],['FIND SQUAD','/find-your-squad.html'],['COMMUNITY','/community.html'],
  ['MARKETPLACE','/marketplace.html'],['PRO','/membership.html'],['ABOUT','/about.html'],
  ['APP','/app.html'],['SEARCH','/search.html']
 ];
@@ -145,14 +139,14 @@ function mobileMenu(){
  Object.assign(b.style,{position:'fixed',top:'15px',right:'16px',zIndex:'10001',width:'46px',height:'46px',border:'1px solid rgba(255,255,255,.16)',borderRadius:'10px',background:'rgba(8,8,10,.96)',color:'#fff',fontSize:'25px',cursor:'pointer'});
  const n=document.createElement('nav');n.id='vexaro-global-menu';n.setAttribute('aria-label','VEXARO navigation');
  Object.assign(n.style,{position:'fixed',top:'0',right:'0',bottom:'0',width:'min(390px,88vw)',zIndex:'10000',background:'#08080a',padding:'82px 22px 28px',overflow:'auto',display:'none',borderLeft:'1px solid rgba(255,255,255,.12)',boxShadow:'-25px 0 70px rgba(0,0,0,.6)'});
- n.innerHTML='<div style="color:#e10600;font-size:10px;font-weight:900;letter-spacing:.2em;margin-bottom:18px">VEXARO / NAVIGATION</div>'+links.map(x=>'<a href="'+x[1]+'" style="display:block;padding:14px 12px;border-bottom:1px solid rgba(255,255,255,.07);color:#ddd;text-decoration:none;font-size:11px;font-weight:900;letter-spacing:.12em">'+x[0]+'</a>').join('')+'<a href="/community.html?signin=1" style="display:block;padding:14px 12px;color:#e10600">SIGN IN / JOIN VEXARO</a>';
+ n.innerHTML='<div style="color:#e10600;font-size:10px;font-weight:900;letter-spacing:.2em;margin-bottom:18px">VEXARO / NAVIGATION</div>'+links.map(x=>'<a href="'+x[1]+'" style="display:block;padding:14px 12px;border-bottom:1px solid rgba(255,255,255,.07);color:#ddd;text-decoration:none;font-size:11px;font-weight:900;letter-spacing:.12em">'+x[0]+'</a>').join('')+'<a href="/?auth=signin" style="display:block;padding:14px 12px;color:#e10600">SIGN IN / JOIN VEXARO</a>';
  document.body.append(b,n);
  const close=()=>{n.style.display='none';b.textContent='☰';};
  b.onclick=()=>{const open=n.style.display!=='block';n.style.display=open?'block':'none';b.textContent=open?'×':'☰';};
  n.querySelectorAll('a').forEach(a=>a.onclick=close);
  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
 }
-cleanupLegacyCache();
+/* Preserve the installed PWA and its caches during normal navigation. */
 cleanHome();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mobileMenu,{once:true});else mobileMenu();
 })();
