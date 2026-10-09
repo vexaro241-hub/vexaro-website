@@ -45,6 +45,38 @@ async function communityDataSmoke(){
   }catch(e){return {ok:false,error:e.message,checks:results}}
   finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
 }
+async function authRoutingSmoke(){
+  let b,c;const checks=[];
+  try{
+    b=await chromium.launch();c=await b.newContext();
+    for(const path of ["/community.html?auth=signin","/community.html?auth=signup"]){
+      const p=await c.newPage();const errors=[];
+      p.on("pageerror",e=>errors.push(e.message));
+      await p.goto(BASE+path+"&qa="+QA,{waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
+      await p.locator("#authTitle").waitFor({state:"attached",timeout:8000});
+      await p.waitForFunction(()=>!document.querySelector("#authView")?.classList.contains("hidden"),null,{timeout:10000});
+      const first=await p.evaluate(()=>({visible:!document.querySelector("#authView")?.classList.contains("hidden"),title:document.querySelector("#authTitle")?.textContent.trim(),appHidden:document.querySelector("#appView")?.classList.contains("hidden")}));
+      await p.reload({waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
+      await p.waitForFunction(()=>!document.querySelector("#authView")?.classList.contains("hidden"),null,{timeout:10000});
+      const afterReload=await p.evaluate(()=>({visible:!document.querySelector("#authView")?.classList.contains("hidden"),title:document.querySelector("#authTitle")?.textContent.trim(),appHidden:document.querySelector("#appView")?.classList.contains("hidden")}));
+      const expected=path.includes("signup")?"JOIN VEXARO.":"WELCOME BACK.";
+      checks.push({path,ok:first.visible&&first.appHidden&&first.title===expected&&afterReload.visible&&afterReload.appHidden&&afterReload.title===expected&&errors.length===0,first,afterReload,errors});
+      await p.close();
+    }
+    for(const id of ["newRequest","sellerApply"]){
+      const p=await c.newPage();await p.goto(BASE+"/marketplace.html?qa="+QA,{waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
+      await p.locator("#"+id).waitFor({state:"visible",timeout:10000});
+      await p.locator("#"+id).click();
+      await p.waitForURL(url=>url.pathname.includes("community")&&url.searchParams.get("auth")==="signin",{timeout:10000});
+      await p.waitForFunction(()=>!document.querySelector("#authView")?.classList.contains("hidden"),null,{timeout:10000});
+      const result=await p.evaluate(()=>({url:location.href,visible:!document.querySelector("#authView")?.classList.contains("hidden"),title:document.querySelector("#authTitle")?.textContent.trim()}));
+      checks.push({path:"marketplace #"+id,ok:result.visible&&result.title==="WELCOME BACK.",...result});
+      await p.close();
+    }
+    return {ok:checks.every(x=>x.ok),checks};
+  }catch(e){return {ok:false,error:e.message,checks}}
+  finally{if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
+}
 async function adminHeroLayout(){
   let b,c,p;try{
     b=await chromium.launch();c=await b.newContext({viewport:{width:390,height:844}});p=await c.newPage();
