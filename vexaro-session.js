@@ -3,7 +3,7 @@
 /* VEXARO auth hygiene: member sessions persist across normal reloads. Explicit sign-out and inactivity/hidden-time limits still clear them. */
 const IDLE_LIMIT=30*60*1000;
 const HIDDEN_LIMIT=15*60*1000;
-const isAdminApp=location.hostname==='vexaro-admin.vexaro241.workers.dev';
+const isAdminApp=location.pathname.startsWith('/admin-app') || location.pathname.startsWith('/admin-') || location.hostname==='vexaro-admin.vexaro241.workers.dev';
 const now=()=>Date.now();
 const clearSession=()=>{
   try{
