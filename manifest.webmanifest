@@ -1,9 +1,9 @@
 {
   "name": "VEXARO",
   "short_name": "VEXARO",
-  "start_url": "https://vexaro-website.vexaro241.workers.dev/",
-  "scope": "https://vexaro-website.vexaro241.workers.dev/",
-  "id": "https://vexaro-website.vexaro241.workers.dev/",
+  "start_url": "https://vexaroofficial.com/",
+  "scope": "https://vexaroofficial.com/",
+  "id": "https://vexaroofficial.com/",
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#070707",
