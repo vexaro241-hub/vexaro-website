@@ -515,6 +515,7 @@ async function sendFriendRequest(userId){
   }
   const {error}=await sb.from('friend_requests').insert({sender_id:uid,receiver_id:userId,status:'pending'});
   if(error){alert('Could not send friend request: '+error.message);return}
+  try{await notify(userId,'friend_request','New friend request','Someone sent you a VEXARO friend request.','?view=friends')}catch(_){}
   alert('Friend request sent.');
   await loadMembers();
 }
@@ -553,6 +554,10 @@ async function respondFriendRequest(id,status){
   if(!session||!['accepted','declined'].includes(status))return;
   const {error}=await sb.from('friend_requests').update({status}).eq('id',id).eq('receiver_id',session.user.id).eq('status','pending');
   if(error){alert('Could not update friend request: '+error.message);return}
+  if(status==='accepted'){
+    const req=friendRequestsCache.find(r=>r.id===id);
+    if(req?.sender_id)try{await notify(req.sender_id,'friend_accepted','Friend request accepted','Your VEXARO friend request was accepted.','?view=friends')}catch(_){}
+  }
   await loadFriends();await loadMembers();
 }
 async function loadLoadouts(){if(!sb){$('loadoutList').innerHTML='<div class="empty">Connect Supabase to load loadouts.</div>';return}const {data,error}=await sb.from('loadouts').select('*,public_profiles!loadouts_user_id_fkey(username,display_name)').order('created_at',{ascending:false}).limit(40);if(error){$('loadoutList').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}$('loadoutList').innerHTML=data.length?data.map(l=>`<article class="card"><div class="posthead"><div class="avatar">${esc((l.public_profiles?.display_name||'V').slice(0,1).toUpperCase())}</div><div><b>${esc(l.title)}</b><br><small><a class="profile-link" href="?view=profile&user=${encodeURIComponent(l.user_id)}">@${esc(l.public_profiles?.username||'member')}</a> · ${esc(l.category)}</small></div></div>${l.image_url?'<img loading="lazy" src="'+esc(l.image_url)+'" alt="'+esc(l.weapon)+'" style="width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-top:12px;border:1px solid var(--line)">':''}<div class="loadout"><h3>${esc(l.weapon)}</h3>${parseAttachments((l.attachments||[]).map(a=>a.name+': '+a.value).join('\n')).map(a=>`<div class="attachment"><span>${esc(a.name)}</span><b>${esc(a.value)}</b></div>`).join('')}<p style="color:#888;line-height:1.5">${esc(l.notes)}</p>${(l.perks||[]).length?'<div class="attachment"><span>Perks</span><b>'+esc((l.perks||[]).map(x=>x.name+': '+x.value).join(' · '))+'</b></div>':''}${(l.equipment||[]).length?'<div class="attachment"><span>Equipment</span><b>'+esc((l.equipment||[]).map(x=>x.name+': '+x.value).join(' · '))+'</b></div>':''}</div></article>`).join(''):'<div class="empty">No loadouts yet. Add the first community build.</div>'}
