@@ -464,6 +464,79 @@ async function getMemberFollowData(){if(!session||!memberCache.length)return{fol
 async async function renderMembers(){const q=($('memberSearch')?.value||'').trim().toLowerCase();const list=memberCache.filter(m=>!q||[m.display_name,m.username,m.bio].join(' ').toLowerCase().includes(q));const state=await getMemberFollowData();$('memberListView').innerHTML=list.length?'<div class="member-grid">'+list.map(m=>{const admin=false;const st=state.stats[m.id]||{followers:0,following:0};const isSelf=session?.user?.id===m.id;const isFollowing=state.followingSet?.has(m.id);return '<article class="member-card"><div class="avatar">'+(m.avatar_url?'<img src="'+esc(m.avatar_url)+'" alt="">':esc((m.display_name||'V').slice(0,1).toUpperCase()))+'</div><div class="member-info"><h3>'+esc(m.display_name||'VEXARO Member')+'</h3><div class="member-handle">@'+esc(m.username||'member')+(admin?' <span class="badge">ADMIN</span>':'')+'</div><p>'+esc(m.bio||'VEXARO community member.')+'</p><div class="member-meta"><span><b>Games:</b> '+esc(Array.isArray(m.games_played)&&m.games_played.length?m.games_played.join(', '):'Not added yet')+'</span><span>'+esc(m.country||'Country not shared')+' · '+esc(m.platform||'Platform not specified')+'</span><span>'+st.followers+' followers</span></div><div class="actions">'+(session&&!isSelf?'<button class="btn mini accent'+(isFollowing?'':'')+'" onclick="toggleMemberFollow(\''+m.id+'\')">'+(isFollowing?'FOLLOWING':'FOLLOW')+'</button>':'')+'<a class="btn mini" href="?view=profile&user='+encodeURIComponent(m.id)+'">VIEW PROFILE</a></div></div></article>'}).join('')+'</div>':'<div class="empty">'+(q?'No members match that search.':'No members yet.')+'</div>'}
 async function toggleMemberFollow(userId){if(!session){openAuth('signin');return}if(session.user.id===userId)return;const current=await sb.from('follows').select('follower_id').eq('follower_id',session.user.id).eq('following_id',userId).maybeSingle();if(current.error){alert(current.error.message);return}const res=current.data?await sb.from('follows').delete().eq('follower_id',session.user.id).eq('following_id',userId):await sb.from('follows').insert({follower_id:session.user.id,following_id:userId});if(res.error)alert(res.error.message);else{if(!current.data)await notify(userId,'follow','New VEXARO follower','Someone followed your VEXARO profile.','?view=profile&user='+encodeURIComponent(session.user.id));loadMembers()}}
 async function loadMembers(){if(!sb){$('memberListView').innerHTML='<div class="empty">Connect Supabase to find members.</div>';return}const [profilesRes,creatorRes,adminRes]=await Promise.all([sb.from('public_profiles').select('id,username,display_name,bio,avatar_url,created_at,games_played,country,platform').order('created_at',{ascending:false}).limit(100),sb.from('public_profile_identities').select('user_id,username,display_name,bio,avatar_url,identity_type,can_post').eq('identity_type','creator').eq('can_post',true),sb.from('public_profile_identities').select('user_id').eq('identity_type','admin')]);if(profilesRes.error||creatorRes.error||adminRes.error){$('memberListView').innerHTML='<div class="empty">Member list is temporarily unavailable. Please try again.</div>';return}const adminIds=new Set((adminRes.data||[]).map(x=>x.user_id));const base=(profilesRes.data||[]).filter(x=>!adminIds.has(x.id));const byId=new Map(base.map(x=>[x.id,x]));(creatorRes.data||[]).filter(x=>!adminIds.has(x.user_id)).forEach(x=>{const p=byId.get(x.user_id);if(p){byId.set(x.user_id,{...p,username:x.username||p.username,display_name:x.display_name||p.display_name,bio:x.bio||p.bio,avatar_url:x.avatar_url||p.avatar_url,role:'member'})}else{byId.set(x.user_id,{id:x.user_id,username:x.username,display_name:x.display_name,bio:x.bio,avatar_url:x.avatar_url,role:'member',created_at:null})}});memberCache=[...byId.values()].sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));renderMembers()}
+let friendRequestsCache=[];
+async function getFriendRequestState(){
+  const statusByUser={};
+  if(!session||!sb)return {statusByUser};
+  const uid=session.user.id;
+  const {data,error}=await sb.from('friend_requests').select('sender_id,receiver_id,status').or('sender_id.eq.'+uid+',receiver_id.eq.'+uid).limit(300);
+  if(error)return {statusByUser};
+  friendRequestsCache=data||[];
+  for(const r of friendRequestsCache){
+    const other=r.sender_id===uid?r.receiver_id:r.sender_id;
+    if(r.status==='accepted')statusByUser[other]='accepted';
+    else if(r.status==='pending')statusByUser[other]=r.sender_id===uid?'pending_out':'pending_in';
+  }
+  return {statusByUser};
+}
+async function sendFriendRequest(userId){
+  if(!session){openAuth('signin');return}
+  const uid=session.user.id;
+  if(!userId||userId===uid)return;
+  const [outRes,inRes]=await Promise.all([
+    sb.from('friend_requests').select('id,status').eq('sender_id',uid).eq('receiver_id',userId).maybeSingle(),
+    sb.from('friend_requests').select('id,status').eq('sender_id',userId).eq('receiver_id',uid).maybeSingle()
+  ]);
+  if(outRes.error||inRes.error){alert('Could not check friend requests. Please try again.');return}
+  if(outRes.data?.status==='accepted'||inRes.data?.status==='accepted'){alert('You are already friends.');return}
+  if(outRes.data?.status==='pending'){alert('Friend request already sent.');return}
+  if(inRes.data?.status==='pending'){showView('friends');return}
+  for(const row of [outRes.data,inRes.data].filter(x=>x?.status==='declined')){
+    const del=await sb.from('friend_requests').delete().eq('id',row.id);
+    if(del.error){alert('Could not restart this friend request: '+del.error.message);return}
+  }
+  const {error}=await sb.from('friend_requests').insert({sender_id:uid,receiver_id:userId,status:'pending'});
+  if(error){alert('Could not send friend request: '+error.message);return}
+  alert('Friend request sent.');
+  await loadMembers();
+}
+async function loadFriends(){
+  const incoming=$('friendIncoming'),outgoing=$('friendOutgoing'),list=$('friendList');
+  if(!session){const msg='<div class="empty">Sign in to manage your friends and requests.</div>';incoming.innerHTML=msg;outgoing.innerHTML=msg;list.innerHTML=msg;return}
+  [incoming,outgoing,list].forEach(el=>el.innerHTML='<div class="empty">Loading friends…</div>');
+  const uid=session.user.id;
+  const {data,error}=await sb.from('friend_requests').select('id,sender_id,receiver_id,status,created_at').or('sender_id.eq.'+uid+',receiver_id.eq.'+uid).order('created_at',{ascending:false}).limit(300);
+  if(error){[incoming,outgoing,list].forEach(el=>el.innerHTML='<div class="empty">Friends are temporarily unavailable. Please refresh and try again.</div>');return}
+  friendRequestsCache=data||[];
+  const ids=[...new Set(friendRequestsCache.flatMap(r=>[r.sender_id,r.receiver_id]).filter(id=>id!==uid))];
+  let people={};
+  if(ids.length){
+    const p=await sb.from('public_profiles').select('id,username,display_name,avatar_url,games_played,country,platform').in('id',ids);
+    if(p.error){[incoming,outgoing,list].forEach(el=>el.innerHTML='<div class="empty">Could not load member profiles.</div>');return}
+    people=Object.fromEntries((p.data||[]).map(x=>[x.id,x]));
+  }
+  const card=(r,kind)=>{
+    const id=r.sender_id===uid?r.receiver_id:r.sender_id;
+    const p=people[id]||{};
+    const name=esc(p.display_name||p.username||'VEXARO Member');
+    const games=esc(Array.isArray(p.games_played)&&p.games_played.length?p.games_played.join(', '):'Games not added');
+    let actions='<a class="btn mini" href="?view=profile&user='+encodeURIComponent(id)+'">VIEW PROFILE</a>';
+    if(kind==='incoming')actions+='<button class="btn mini accent" onclick="respondFriendRequest(\''+r.id+'\',\'accepted\')">ACCEPT</button><button class="btn mini" onclick="respondFriendRequest(\''+r.id+'\',\'declined\')">DECLINE</button>';
+    return '<article class="card"><div class="posthead"><div class="avatar">'+esc((p.display_name||p.username||'V').slice(0,1).toUpperCase())+'</div><div><b>'+name+'</b><div class="meta">@'+esc(p.username||'member')+' · '+games+'</div></div></div><div class="actions">'+actions+'</div></article>';
+  };
+  const incomingRows=friendRequestsCache.filter(r=>r.receiver_id===uid&&r.status==='pending');
+  const outgoingRows=friendRequestsCache.filter(r=>r.sender_id===uid&&r.status==='pending');
+  const friendRows=friendRequestsCache.filter(r=>r.status==='accepted');
+  incoming.innerHTML=incomingRows.length?incomingRows.map(r=>card(r,'incoming')).join(''):'<div class="empty">No incoming friend requests.</div>';
+  outgoing.innerHTML=outgoingRows.length?outgoingRows.map(r=>card(r,'outgoing')).join(''):'<div class="empty">No pending requests sent.</div>';
+  list.innerHTML=friendRows.length?friendRows.map(r=>card(r,'friend')).join(''):'<div class="empty">No friends yet. Open Members and add a gamer to get started.</div>';
+}
+async function respondFriendRequest(id,status){
+  if(!session||!['accepted','declined'].includes(status))return;
+  const {error}=await sb.from('friend_requests').update({status}).eq('id',id).eq('receiver_id',session.user.id).eq('status','pending');
+  if(error){alert('Could not update friend request: '+error.message);return}
+  await loadFriends();await loadMembers();
+}
 async function loadLoadouts(){if(!sb){$('loadoutList').innerHTML='<div class="empty">Connect Supabase to load loadouts.</div>';return}const {data,error}=await sb.from('loadouts').select('*,public_profiles!loadouts_user_id_fkey(username,display_name)').order('created_at',{ascending:false}).limit(40);if(error){$('loadoutList').innerHTML='<div class="empty">'+esc(error.message)+'</div>';return}$('loadoutList').innerHTML=data.length?data.map(l=>`<article class="card"><div class="posthead"><div class="avatar">${esc((l.public_profiles?.display_name||'V').slice(0,1).toUpperCase())}</div><div><b>${esc(l.title)}</b><br><small><a class="profile-link" href="?view=profile&user=${encodeURIComponent(l.user_id)}">@${esc(l.public_profiles?.username||'member')}</a> · ${esc(l.category)}</small></div></div>${l.image_url?'<img loading="lazy" src="'+esc(l.image_url)+'" alt="'+esc(l.weapon)+'" style="width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-top:12px;border:1px solid var(--line)">':''}<div class="loadout"><h3>${esc(l.weapon)}</h3>${parseAttachments((l.attachments||[]).map(a=>a.name+': '+a.value).join('\n')).map(a=>`<div class="attachment"><span>${esc(a.name)}</span><b>${esc(a.value)}</b></div>`).join('')}<p style="color:#888;line-height:1.5">${esc(l.notes)}</p>${(l.perks||[]).length?'<div class="attachment"><span>Perks</span><b>'+esc((l.perks||[]).map(x=>x.name+': '+x.value).join(' · '))+'</b></div>':''}${(l.equipment||[]).length?'<div class="attachment"><span>Equipment</span><b>'+esc((l.equipment||[]).map(x=>x.name+': '+x.value).join(' · '))+'</b></div>':''}</div></article>`).join(''):'<div class="empty">No loadouts yet. Add the first community build.</div>'}
 async function saveLoadout(){if(!session){openAuth();return}const title=$('lTitle').value.trim(),weapon=$('lWeapon').value.trim();if(!title||!weapon){alert('Add a title and weapon.');return}const img=$('lImage')?.files?.[0];if(img&&(!img.type.startsWith('image/')||img.size>52428800)){alert('Weapon image must be an image under 50MB.');return}let image_url=null;if(img){const ext=(img.name.split('.').pop()||'jpg').toLowerCase(),path='loadouts/'+session.user.id+'/'+crypto.randomUUID()+'.'+ext;const up=await sb.storage.from('community-media').upload(path,img,{contentType:img.type,upsert:false});if(up.error){alert('Image upload failed: '+up.error.message);return}image_url=sb.storage.from('community-media').getPublicUrl(path).data.publicUrl}const {error}=await sb.from('loadouts').insert({user_id:session.user.id,title,weapon,category:$('lCategory').value.trim()||'Warzone',attachments:parseAttachments($('lAttachments').value),perks:parseAttachments($('lPerks').value),equipment:parseAttachments($('lEquipment').value),notes:$('lNotes').value.trim(),image_url});if(error)alert(error.message);else{$('loadoutForm').classList.add('hidden');$('lImage').value='';loadLoadouts()}}
 let squadPostsCache=[];
