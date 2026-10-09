@@ -49,7 +49,8 @@ function showLoadError(id,label,error){const el=$(id);if(!el)return;const messag
 async function boot(){
  try{
   if(!window.VEXARO_SUPABASE_URL||!window.VEXARO_SUPABASE_KEY||!window.supabase?.createClient){$('listings').innerHTML='<div class="empty">Marketplace backend is not connected.</div>';$('requests').innerHTML='<div class="empty">Marketplace backend is not connected.</div>';return}
-  sb=window.vexaroSupabase||(window.vexaroSupabase=window.supabase.createClient(window.VEXARO_SUPABASE_URL,window.VEXARO_SUPABASE_KEY));
+  sb=window.vexaroSupabase;
+  if(!sb)throw new Error('Shared VEXARO Supabase client is unavailable.');
   const auth=await withTimeout(sb.auth.getSession(),'Account session check');
   session=auth?.data?.session||null;
   $('accountBtn').textContent=session?'VEXARO ACCOUNT':'JOIN VEXARO';
