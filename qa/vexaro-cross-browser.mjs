@@ -125,7 +125,8 @@ async function communityMobileNavLayout(){
   finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
 }
 const suites=[];for(const [bt,label,opts] of [[chromium,"Chromium"],[firefox,"Firefox"],[webkit,"WebKit"],[chromium,"iPhone 15 Pro Max",devices["iPhone 15 Pro Max"]||{viewport:{width:430,height:932},isMobile:true,hasTouch:true}]])suites.push(await timed(smoke(bt,label,opts),240000,label+" suite"));
-const communityMobileNav=await communityMobileNavLayout();\nconst refreshChecks=[];for(const path of ["/","/community?view=feed"])refreshChecks.push(await refreshSignOut(path));
+const communityMobileNav=await communityMobileNavLayout();
+const refreshChecks=[];for(const path of ["/","/community?view=feed"])refreshChecks.push(await refreshSignOut(path));
 const refresh={ok:refreshChecks.every(x=>x.ok),checks:refreshChecks};
 const adminHero=await adminHeroLayout();
 const communityData=await communityDataSmoke();
