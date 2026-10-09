@@ -223,7 +223,7 @@ function startMemberPresence(){
   presenceTimer=null;
   if(!session||!sb)return;
   updateMemberPresence(true);
-  presenceTimer=setInterval(()=>{if(document.visibilityState==='visible')updateMemberPresence()},60000);
+  presenceTimer=setInterval(()=>{if(document.visibilityState==='visible'){updateMemberPresence();if(currentView==='members')loadMembers()}},60000);
 }
 async function applySession(s){
   const version=++sessionVersion;
