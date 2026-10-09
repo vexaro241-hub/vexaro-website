@@ -32,7 +32,7 @@ jobs:
           set +e
           ok=0
           for i in 1 2 3; do
-            if curl -fsS --max-time 15 "https://vexaro-website.vexaro241.workers.dev/health" >/dev/null; then
+            if curl -fsS --max-time 15 "https://vexaroofficial.com/health" >/dev/null; then
               ok=1
               break
             fi
