@@ -23,6 +23,28 @@ async function refreshSignOut(path="/"){
     return {path,ok:result.remaining.length===0&&dialogs.length===0,dialogs,markerBefore,...result};
   }catch(e){return {path,ok:false,error:e.message}}finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
 }
+async function communityDataSmoke(){
+  let b,c,p;const results=[];
+  try{
+    b=await chromium.launch();c=await b.newContext();p=await c.newPage();
+    const apiErrors=[];
+    p.on("pageerror",e=>apiErrors.push(e.message));
+    p.on("console",m=>{if(m.type()==="error"&&/supabase|postgrest|permission denied|failed to fetch|401|403|schema cache/i.test(m.text()))apiErrors.push(m.text())});
+    for(const view of ["feed","members"]){
+      await p.goto(BASE+"/community.html?view="+view+"&qa="+QA,{waitUntil:"domcontentloaded",timeout:QA_TIMEOUT});
+      const selector=view==="feed"?"#feedList":"#memberListView";
+      await p.locator(selector).waitFor({state:"attached",timeout:5000});
+      await p.waitForFunction(sel=>{const el=document.querySelector(sel);return !!el&&el.textContent.trim().length>0},selector,{timeout:10000}).catch(()=>{});
+      await p.waitForTimeout(500);
+      const content=(await p.locator(selector).innerText().catch(()=> "")).trim();
+      const bad=/connect supabase|permission denied|not allowed|failed to fetch|could not find the relationship|schema cache|temporarily unavailable|\b401\b|\b403\b/i.test(content);
+      results.push({view,ok:content.length>0&&!bad&&apiErrors.length===0,content:content.slice(0,240),errors:[...apiErrors]});
+      apiErrors.length=0;
+    }
+    return {ok:results.every(x=>x.ok),checks:results};
+  }catch(e){return {ok:false,error:e.message,checks:results}}
+  finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
+}
 async function adminHeroLayout(){
   let b,c,p;try{
     b=await chromium.launch();c=await b.newContext({viewport:{width:390,height:844}});p=await c.newPage();
@@ -42,4 +64,5 @@ const suites=[];for(const [bt,label,opts] of [[chromium,"Chromium"],[firefox,"Fi
 const refreshChecks=[];for(const path of ["/","/community?view=feed"])refreshChecks.push(await refreshSignOut(path));
 const refresh={ok:refreshChecks.every(x=>x.ok),checks:refreshChecks};
 const adminHero=await adminHeroLayout();
-const assets=await scan(),meta=await metadata(),report={generatedAt:new Date().toISOString(),suites,refreshSignOut:refresh,adminHeroLayout:adminHero,assets,metadata:meta};writeFileSync("qa-results/cross-browser/report.json",JSON.stringify(report,null,2));console.log(JSON.stringify({suites:suites.map(s=>({label:s.label,passed:s.out.filter(x=>x.status>=200&&x.status<400&&x.body&&!x.errors.length).length,total:s.out.length})),refreshSignOut:refresh,adminHeroLayout:adminHero,assets,metadata:meta},null,2));if(suites.some(s=>s.out.some(x=>!(x.status>=200&&x.status<400&&x.body&&!x.errors.length)))||!refresh.ok||!adminHero.ok||assets.bad.length||meta.bad.length)process.exit(1);
+const communityData=await communityDataSmoke();
+const assets=await scan(),meta=await metadata(),report={generatedAt:new Date().toISOString(),suites,refreshSignOut:refresh,adminHeroLayout:adminHero,communityDataSmoke:communityData,assets,metadata:meta};writeFileSync("qa-results/cross-browser/report.json",JSON.stringify(report,null,2));console.log(JSON.stringify({suites:suites.map(s=>({label:s.label,passed:s.out.filter(x=>x.status>=200&&x.status<400&&x.body&&!x.errors.length).length,total:s.out.length})),refreshSignOut:refresh,adminHeroLayout:adminHero,communityDataSmoke:communityData,assets,metadata:meta},null,2));if(suites.some(s=>s.out.some(x=>!(x.status>=200&&x.status<400&&x.body&&!x.errors.length)))||!refresh.ok||!adminHero.ok||!communityData.ok||assets.bad.length||meta.bad.length)process.exit(1);
