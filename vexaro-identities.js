@@ -25,11 +25,14 @@ window.VEXARO_IDENTITIES={
   this.sb=sb;
   const {data,error}=await sb.from('profile_identities').select('id,slug,username,display_name,bio,avatar_url,identity_type,can_post').eq('user_id',userId).order('identity_type');
   if(error){console.warn('Identity switcher:',error.message);return null}
-  this.list=data||[];
   const path=(location.pathname||'').toLowerCase();
-  const wanted=preferredType||((path.includes('admin-app')||location.hostname.includes('vexaro-admin'))?'admin':((path.includes('community')||location.hostname.includes('vexaro-members')||path==='/')?'creator':null));
+  const isAdminApp=path.includes('admin-app')||path.includes('admin-')||location.hostname.includes('vexaro-admin');
+  const allIdentities=data||[];
+  /* Admin identities and the admin switch target must never be exposed in public/member surfaces. */
+  this.list=isAdminApp?allIdentities:allIdentities.filter(x=>x.identity_type!=='admin');
+  const wanted=preferredType||(isAdminApp?'admin':((path.includes('community')||location.hostname.includes('vexaro-members')||path==='/')?'creator':null));
   const saved=localStorage.getItem(KEY);
-  this.active=this.list.find(x=>x.identity_type===wanted)||this.list.find(x=>x.id===saved)||this.list.find(x=>x.identity_type==='admin')||this.list.find(x=>x.identity_type==='creator')||this.list[0]||null;
+  this.active=this.list.find(x=>x.identity_type===wanted)||this.list.find(x=>x.id===saved)||this.list.find(x=>x.identity_type==='creator')||this.list[0]||null;
   if(this.active)localStorage.setItem(KEY,this.active.id);
   this.render();
   return this.active;
