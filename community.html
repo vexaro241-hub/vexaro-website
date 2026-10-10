@@ -768,20 +768,28 @@ async function saveLoadout(){if(!session){openAuth();return}const title=$('lTitl
 let squadPostsCache=[];
 async function loadSquads(){
   const list=$('squadList'); if(!list)return;
-  if(!sb){list.innerHTML='<div class="empty">Connect to VEXARO to browse squad requests.</div>';return}
+  if(!sb){list.innerHTML='<div class="empty">Community connection unavailable. Refresh the page and try again.</div>';return}
   list.innerHTML='<div class="empty">Finding players…</div>';
-  const {data,error}=await sb.from('squad_posts').select('id,user_id,game,game_mode,platform,country,play_when,players_needed,mic_preference,description,status,created_at').eq('status','open').order('created_at',{ascending:false}).limit(100);
-  if(error){list.innerHTML='<div class="empty">Squad Finder is temporarily unavailable. Please try again.</div>';return}
-  const ids=[...new Set((data||[]).map(x=>x.user_id))];
-  let profilesById={};
-  if(ids.length){const pr=await sb.from('public_profiles').select('id,username,display_name,avatar_url').in('id',ids);if(!pr.error)(pr.data||[]).forEach(p=>profilesById[p.id]=p)}
-  squadPostsCache=(data||[]).map(p=>({...p,member:profilesById[p.user_id]||{username:'member',display_name:'VEXARO member'}}));
-  renderSquads();
+  try{
+    const {data,error}=await sb.from('squad_posts').select('id,user_id,game,game_mode,platform,country,play_when,players_needed,mic_preference,description,status,created_at').eq('status','open').order('created_at',{ascending:false}).limit(100);
+    if(error)throw error;
+    const ids=[...new Set((data||[]).map(x=>x.user_id).filter(Boolean))];
+    let profilesById={};
+    if(ids.length){
+      const pr=await sb.from('public_profiles').select('id,username,display_name,avatar_url').in('id',ids);
+      if(!pr.error)(pr.data||[]).forEach(p=>profilesById[p.id]=p);
+    }
+    squadPostsCache=(data||[]).map(p=>({...p,member:profilesById[p.user_id]||{username:'member',display_name:'VEXARO member'}}));
+    renderSquads();
+  }catch(error){
+    console.error('VEXARO Squad Finder failed to load:',error);
+    list.innerHTML='<div class="empty">Squad Finder could not connect. Check your connection and <button class="btn mini" type="button" onclick="loadSquads()">TRY AGAIN</button></div>';
+  }
 }
 function renderSquads(){
   const list=$('squadList');if(!list)return;
   const game=($('squadGameFilter')?.value||'').trim().toLowerCase(),platform=$('squadPlatformFilter')?.value||'',country=($('squadCountryFilter')?.value||'').trim().toLowerCase();
-  const rows=squadPostsCache.filter(p=>(!game||p.game.toLowerCase().includes(game))&&(!platform||p.platform===platform)&&(!country||String(p.country||'').toLowerCase().includes(country)));
+  const rows=squadPostsCache.filter(p=>(!game||String(p.game||'').toLowerCase().includes(game))&&(!platform||p.platform===platform)&&(!country||String(p.country||'').toLowerCase().includes(country)));
   list.innerHTML=rows.length?rows.map(p=>'<article class="post-card"><div class="posthead"><div class="avatar">'+esc((p.member.display_name||'V').slice(0,1).toUpperCase())+'</div><div><b>'+esc(p.game)+'</b><br><small><a class="profile-link" href="?view=profile&user='+encodeURIComponent(p.user_id)+'">@'+esc(p.member.username||'member')+'</a> · '+esc(p.game_mode)+'</small></div></div><div class="actions"><span class="badge">'+esc(p.platform)+'</span><span class="badge">'+esc(p.country&&p.country!=='Not specified'?p.country:'Country not shared')+'</span><span class="badge">'+esc(p.play_when)+'</span><span class="badge">'+esc(p.players_needed)+' player'+(p.players_needed===1?'':'s')+' needed</span><span class="badge">Mic: '+esc(p.mic_preference)+'</span></div><p class="body" style="margin-top:12px">'+esc(p.description)+'</p><div class="meta">Posted '+esc(new Date(p.created_at).toLocaleDateString())+'</div>'+(session?.user?.id===p.user_id?'<div class="actions"><button class="btn mini" type="button" onclick="closeSquadPost(\''+p.id+'\')">CLOSE REQUEST</button></div>':'<div class="actions"><button class="btn mini" type="button" onclick="openPublicProfile(\''+p.user_id+'\')">VIEW PLAYER PROFILE</button></div>')+'</article>').join(''):'<div class="empty">No squad requests match those filters yet. Be the first to post one.</div>';
 }
 async function saveSquadPost(){
