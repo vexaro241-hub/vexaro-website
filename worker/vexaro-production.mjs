@@ -82,8 +82,8 @@ export default {
         const fitMarker = '<style id="vexaro-homepage-fit-v1">';
         const fitIndex = html.indexOf(fitMarker);
         if (fitIndex >= 0) {
-          const previousStyleOpen = html.lastIndexOf("<style", fitIndex);
-          const previousStyleClose = html.lastIndexOf("</style>", fitIndex);
+          const previousStyleOpen = html.lastIndexOf("<style", fitIndex - 1);
+          const previousStyleClose = html.lastIndexOf("</style>", fitIndex - 1);
           if (previousStyleOpen > previousStyleClose) {
             html = html.slice(0, fitIndex) + "</style>" + html.slice(fitIndex);
           }
