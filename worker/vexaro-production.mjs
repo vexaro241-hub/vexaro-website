@@ -56,7 +56,7 @@ export default {
 
       // Replace the old device-only profile handler with the authenticated Supabase profile sync.
       if (html.includes('id="profileForm"') && html.includes("const fields=['handle'")) {
-        const memberScriptStart = html.search(/<script>\\s*\\(function\\(\\)\\{\\s*const fields=\\['handle'/);
+        const memberScriptStart = html.search(/<script>\s*\(function\(\)\{\s*const fields=\['handle'/);
         const memberScriptEnd = memberScriptStart >= 0 ? html.indexOf("</script>", memberScriptStart) : -1;
         if (memberScriptStart >= 0 && memberScriptEnd > memberScriptStart) {
           html = html.slice(0, memberScriptStart) + "<script>" + membersSpaceInlineScript + "</script>" + html.slice(memberScriptEnd + 9);
