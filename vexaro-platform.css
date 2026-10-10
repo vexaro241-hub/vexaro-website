@@ -81,3 +81,32 @@ h1{line-height:1.02}
  :where(.hero p){font-size:15px}
  :where(.navstatus){flex-wrap:wrap}
 }
+
+
+/* Production mobile navigation and overflow hotfix — 2026-10-10 */
+html,body{width:100%;max-width:100%;min-width:0;overflow-x:clip}
+*,*::before,*::after{box-sizing:border-box}
+img,video,iframe,svg{max-width:100%}
+@media(max-width:800px){
+  header.top,header.topbar,header.site-header,.site-header{width:100%;max-width:100%;overflow:visible}
+  header .nav,header .wrap.nav,.topbar .nav,.top .nav{width:calc(100% - 24px)!important;max-width:1180px!important;min-width:0!important;height:auto!important;min-height:58px!important;display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;padding:10px 0!important;margin-inline:auto!important}
+  header .brand,.topbar .brand,.top .brand{flex:0 1 auto!important;min-width:0!important;max-width:65%!important;font-size:12px!important;letter-spacing:.07em!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  header nav,header .navlinks,.topbar nav,.top nav{min-width:0!important;max-width:100%!important}
+  header .navlinks,.topbar .navlinks,.top .navlinks{order:3!important;display:flex!important;width:100%!important;flex:1 0 100%!important;gap:6px!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;padding:4px 0 8px!important;scrollbar-width:thin!important;-webkit-overflow-scrolling:touch!important}
+  header .navlinks a,.topbar .navlinks a,.top .navlinks a{display:inline-flex!important;align-items:center!important;flex:0 0 auto!important;white-space:nowrap!important;font-size:10px!important;padding:9px 10px!important}
+  header .global-nav{display:flex!important;flex-wrap:nowrap!important;gap:6px!important;width:100%!important;max-width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;padding:0 12px 10px!important;margin:0!important;scrollbar-width:thin!important;-webkit-overflow-scrolling:touch!important}
+  header .global-nav .btn{flex:0 0 auto!important;white-space:nowrap!important;padding:9px 10px!important;font-size:9px!important}
+  .menu-trigger{display:inline-flex!important;flex:0 0 40px!important;width:40px!important;min-width:40px!important;max-width:40px!important;height:40px!important;min-height:40px!important;padding:0!important;font-size:19px!important;line-height:1!important;border-radius:9px!important}
+  .mobilemenu{position:absolute!important;top:100%!important;left:12px!important;right:12px!important;width:auto!important;max-width:calc(100vw - 24px)!important;max-height:70vh!important;overflow:auto!important;z-index:100!important}
+  main,.wrap,.hero,.section,.grid,.panel,.footer{min-width:0!important;max-width:100%}
+  .hero h1{overflow-wrap:normal!important;word-break:normal!important}
+  .grid,.tier-grid,.featured{grid-template-columns:minmax(0,1fr)!important}
+  .wrap{width:calc(100% - 24px)!important}
+  .navlinks a{letter-spacing:.04em!important}
+}
+@media(max-width:420px){
+  .wrap{width:calc(100% - 20px)!important}
+  .hero{padding-top:42px!important}
+  .hero h1{font-size:clamp(42px,14vw,66px)!important}
+  .panel,.plan,.tier-card{padding:16px!important}
+}
