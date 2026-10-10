@@ -113,9 +113,9 @@ h3{font-size:clamp(1.05rem,2.5vw,1.6rem)!important;line-height:1.15!important}
 
 *,*:before,*:after{box-sizing:border-box}
 img,video,iframe,svg{max-width:100%}
-.mobilemenu{position:fixed!important;top:76px!important;right:14px!important;left:14px!important;z-index:9999!important;display:none!important;flex-direction:column!important;gap:0!important;padding:12px!important;max-height:calc(100dvh - 92px)!important;overflow:auto!important;background:rgba(8,8,10,.98)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:14px!important;box-shadow:0 24px 70px rgba(0,0,0,.7)!important;backdrop-filter:blur(18px)!important}
+.mobilemenu{position:fixed!important;top:72px!important;right:12px!important;left:auto!important;width:min(320px,calc(100vw - 24px))!important;max-width:calc(100vw - 24px)!important;z-index:9999!important;display:none!important;flex-direction:column!important;gap:0!important;padding:10px!important;max-height:calc(100dvh - 84px)!important;overflow:auto!important;background:rgba(8,8,10,.98)!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:12px!important;box-shadow:0 24px 70px rgba(0,0,0,.7)!important;backdrop-filter:blur(18px)!important}
 .mobilemenu.open{display:flex!important}
-.mobilemenu a{display:block!important;width:100%!important;padding:14px 13px!important;border-bottom:1px solid rgba(255,255,255,.07)!important;color:#ddd!important;font-size:11px!important;font-weight:900!important;letter-spacing:.12em!important;text-transform:uppercase!important}
+.mobilemenu a{display:block!important;width:100%!important;padding:12px 12px!important;border-bottom:1px solid rgba(255,255,255,.07)!important;color:#ddd!important;font-size:10px!important;font-weight:900!important;letter-spacing:.1em!important;text-transform:uppercase!important}
 .mobilemenu a:last-child{border-bottom:0!important}
 .mobilemenu a:hover,.mobilemenu a:focus{color:#fff!important;background:rgba(225,6,0,.10)!important}
 @media(max-width:1024px){
@@ -125,7 +125,7 @@ img,video,iframe,svg{max-width:100%}
 }
 @media(max-width:520px){
  .topbar .nav{min-height:64px!important;height:auto!important}
- .mobilemenu{top:70px!important;left:10px!important;right:10px!important;max-height:calc(100dvh - 82px)!important}
+ .mobilemenu{top:68px!important;left:auto!important;right:10px!important;width:min(300px,calc(100vw - 20px))!important;max-width:calc(100vw - 20px)!important;max-height:calc(100dvh - 80px)!important;padding:8px!important}
  .mobilemenu a{padding:13px 11px!important}
  .hero,.poster{max-width:100vw!important}
  .section,.wrap,.hero-content{min-width:0!important;max-width:100%!important}
@@ -176,7 +176,7 @@ function mobileMenu(){
  const b=document.createElement('button');b.id='vexaro-global-menu-btn';b.type='button';b.textContent='☰';b.setAttribute('aria-label','Open VEXARO navigation');
  Object.assign(b.style,{position:'fixed',top:'15px',right:'16px',zIndex:'10001',width:'46px',height:'46px',border:'1px solid rgba(255,255,255,.16)',borderRadius:'10px',background:'rgba(8,8,10,.96)',color:'#fff',fontSize:'25px',cursor:'pointer'});
  const n=document.createElement('nav');n.id='vexaro-global-menu';n.setAttribute('aria-label','VEXARO navigation');
- Object.assign(n.style,{position:'fixed',top:'0',right:'0',bottom:'0',width:'min(390px,88vw)',zIndex:'10000',background:'#08080a',padding:'82px 22px 28px',overflow:'auto',display:'none',borderLeft:'1px solid rgba(255,255,255,.12)',boxShadow:'-25px 0 70px rgba(0,0,0,.6)'});
+ Object.assign(n.style,{position:'fixed',top:'70px',right:'12px',bottom:'auto',width:'min(320px,calc(100vw - 24px))',maxHeight:'calc(100dvh - 82px)',zIndex:'10000',background:'#08080a',padding:'54px 14px 16px',overflow:'auto',display:'none',border:'1px solid rgba(255,255,255,.14)',borderRadius:'12px',boxShadow:'0 24px 70px rgba(0,0,0,.7)'});
  n.innerHTML='<div style="color:#e10600;font-size:10px;font-weight:900;letter-spacing:.2em;margin-bottom:18px">VEXARO / NAVIGATION</div>'+links.map(x=>'<a href="'+x[1]+'" style="display:block;padding:14px 12px;border-bottom:1px solid rgba(255,255,255,.07);color:#ddd;text-decoration:none;font-size:11px;font-weight:900;letter-spacing:.12em">'+x[0]+'</a>').join('')+'<a href="/?auth=signin" style="display:block;padding:14px 12px;color:#e10600">SIGN IN / JOIN VEXARO</a>';
  document.body.append(b,n);
  const close=()=>{n.style.display='none';b.textContent='☰';};
