@@ -12,7 +12,19 @@
 <header class="bar"><div class="wrap nav"><a class="brand" href="/">VEXARO<span>.</span></a><nav class="navlinks" aria-label="Main navigation"><a href="/">Home</a><a href="/community.html">Community</a><a class="current" href="/members-space.html">Members Space</a><a href="/find-your-squad.html">Find Your Squad</a></nav></div></header>
 <main class="wrap">
 <section class="hero"><div class="eyebrow">VEXARO / PLAYER DIRECTORY</div><h1>YOUR SPACE.<br>YOUR <span>GAME.</span></h1><p>Build your gaming identity in one place. Tell the community which platform you play on, your region and the games you’re into — so you can find people who fit your setup.</p></section>
-<div class="layout">
+
+<section class="panel social-panel" style="margin-top:18px"><h2>Social & streaming accounts</h2><p class="sub">Add the public links you want other players to find. These are profile links, not account authorisations.</p>
+<div class="two">
+<div class="field"><label for="youtube">YouTube channel</label><input id="youtube" type="url" maxlength="300" placeholder="https://youtube.com/@yourchannel"></div>
+<div class="field"><label for="tiktok">TikTok</label><input id="tiktok" type="url" maxlength="300" placeholder="https://tiktok.com/@yourname"></div>
+<div class="field"><label for="twitch">Twitch</label><input id="twitch" type="url" maxlength="300" placeholder="https://twitch.tv/yourchannel"></div>
+<div class="field"><label for="discord">Discord invite / profile</label><input id="discord" type="url" maxlength="300" placeholder="https://discord.gg/yourinvite"></div>
+<div class="field"><label for="instagram">Instagram</label><input id="instagram" type="url" maxlength="300" placeholder="https://instagram.com/yourname"></div>
+<div class="field"><label for="xlink">X</label><input id="xlink" type="url" maxlength="300" placeholder="https://x.com/yourname"></div>
+<div class="field"><label for="kick">Kick</label><input id="kick" type="url" maxlength="300" placeholder="https://kick.com/yourchannel"></div>
+<div class="field"><label for="facebook">Facebook</label><input id="facebook" type="url" maxlength="300" placeholder="https://facebook.com/yourpage"></div>
+</div><p class="note">YouTube shows as “connected” only after its real Google authorisation succeeds. These fields simply store links on this device for now.</p></section>
+\n<div class="layout">
 <section class="panel"><h2>Gaming identity</h2><p class="sub">Add the details you want other VEXARO members to know.</p><div id="status" class="status">Loading your account…</div>
 <form id="profileForm">
 <div class="field"><label for="handle">Gaming username</label><input id="handle" maxlength="40" placeholder="Your gamer tag" autocomplete="nickname"></div>
@@ -28,7 +40,7 @@
 </main><footer class="wrap footer"><span>© VEXARO — YOUR GAME. YOUR PEOPLE.</span><span><a href="/">Home</a> · <a href="/community.html">Community</a> · <a href="/membership.html">VEXARO PRO</a></span></footer>
 <script>
 (function(){
-const fields=['handle','platform','console','region','timezone','games','bio'];
+const fields=['handle','platform','console','region','timezone','games','bio','youtube','tiktok','twitch','discord','instagram','xlink','kick','facebook'];
 const $=id=>document.getElementById(id);
 const status=$('status');
 function values(){const o={};fields.forEach(k=>o[k]=$(k).value.trim());return o}
