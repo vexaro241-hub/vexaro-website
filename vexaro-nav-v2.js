@@ -205,7 +205,8 @@ function setupVexaroUtilities(){
   location.reload();
  });
 }
-cleanupLegacyCache();
+/* Do not purge browser caches or unregister service workers on every page load.
+   That breaks offline/PWA behaviour; handle cache migrations in versioned SW updates. */
 cleanHome();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{mobileMenu();setupVexaroUtilities();},{once:true});else{mobileMenu();setupVexaroUtilities();}
 })();
