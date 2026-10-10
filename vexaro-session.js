@@ -19,29 +19,7 @@ const forceSignedOut=()=>{
   try{window.dispatchEvent(new CustomEvent('vexaro:signed-out'))}catch(e){}
   if(location.pathname==='/'&&!location.search&&!location.hash) location.reload();
 };
-/* User-requested behaviour: a manual browser refresh must sign members out. */
-let navType='',legacyNavigationType=null,previousPage='';
-const currentPage=location.href;
-try{
-  navType=performance.getEntriesByType('navigation')[0]?.type||'';
-  legacyNavigationType=typeof performance.navigation?.type==='number'?performance.navigation.type:null;
-  previousPage=sessionStorage.getItem('vexaro_last_page_url')||'';
-}catch(e){}
-const isRefresh=navType==='reload'||legacyNavigationType===1||(navType!=='back_forward'&&previousPage===currentPage);
-if(!isAdminApp && isRefresh){
-  /* Clear the live Supabase client as well as every stored auth key. The same-URL
-     marker is a fallback for browsers that misreport reload navigation. */
-  try{
-    const client=window.vexaroSupabase;
-    if(client&&client.auth&&typeof client.auth.signOut==='function'){
-      const signOutResult=client.auth.signOut({scope:'local'});
-      if(signOutResult&&typeof signOutResult.catch==='function')signOutResult.catch(()=>{});
-    }
-  }catch(e){}
-  clearSession();
-  try{sessionStorage.setItem('vexaro_signed_out','1')}catch(e){}
-}
-try{sessionStorage.setItem('vexaro_last_page_url',currentPage)}catch(e){}
+/* Keep authenticated member sessions intact across refresh and same-page navigation. */
 let last=Number(localStorage.getItem('vexaro_last_active')||0);
 if(!isAdminApp){
   if(last&&now()-last>IDLE_LIMIT) clearSession();
@@ -73,9 +51,5 @@ window.addEventListener('pageshow',()=>{
   if(!isAdminApp && lastSeen&&now()-lastSeen>IDLE_LIMIT) forceSignedOut();
 });
 check();
-try{
-  if('serviceWorker' in navigator && !localStorage.getItem('vexaro_sw_cleanup_v1')){
-    navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))).then(()=>localStorage.setItem('vexaro_sw_cleanup_v1','1')).catch(()=>{});
-  }
-}catch(e){}
+/* Do not unregister service workers during normal page startup. */
 })();
