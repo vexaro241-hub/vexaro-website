@@ -40,11 +40,41 @@ export default {
       ].map(([kind, name, value]) => '<meta ' + kind + '="' + esc(name) + '" content="' + esc(value) + '">').join("");
       html = html.replace(/<\/head>/i, social + "</head>");
 
+      // Ensure every public VEXARO page has the shared top-right navigation unless it already includes it.
+      if (!/vexaro-nav(?:-v2)?\\.js/i.test(html) && !path.startsWith("/health/") && !/^\\/google[0-9a-f]+\\.html$/i.test(path)) {
+        html = html.replace(/<\\/head>/i, '<script src="/vexaro-nav.js" defer></script></head>');
+      }
+
+      // Fix the Community tab row on narrow screens without introducing horizontal scrolling.
+      if (/^\\/community(?:\\.html|\\/)?$/i.test(path)) {
+        const communityMobileStyle = `<style id="vexaro-community-mobile-nav-fix">
+@media(max-width:800px){
+ .top .nav{height:auto!important;min-height:72px!important;max-height:none!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;overflow:visible!important;padding:12px 0!important}
+ .navlinks{position:static!important;inset:auto!important;order:initial!important;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(105px,1fr))!important;flex:1 1 100%!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:8px 0!important;gap:7px!important;overflow:visible!important;background:transparent!important;border:0!important;border-top:1px solid #25262c!important;box-shadow:none!important;backdrop-filter:none!important}
+ .navlinks .tab{height:auto!important;min-height:36px!important;min-width:0!important;width:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:9px 5px!important;font-size:9px!important;line-height:1.2!important;white-space:normal!important;text-align:center!important}
+}
+</style>`;
+        html = html.replace(/<\\/head>/i, communityMobileStyle + "</head>");
+      }
+
       if (path === "/loadouts.html") {
         html = html.replace(
           /if\(!builds\.length\)\{[\s\S]*?\}\}catch\(e\)/,
           "if(!builds.length){grid.innerHTML='<article class=\"card\"><div class=\"num\">VEXARO / STARTER</div><h3>NO PUBLISHED BUILDS YET.</h3><p>The arsenal is ready. Sign in through the community to publish the first VEXARO loadout.</p><div class=\"card-actions\"><a class=\"ghost\" href=\"community.html\">OPEN COMMUNITY</a><a class=\"ghost\" href=\"controller-settings.html\">TUNE SETTINGS</a></div></article>';} }catch(e)"
         );
+      }
+
+      if (/^\\/community(?:\\.html|\\/)?$/i.test(path)) {
+        // Older Community assets had profile CSS after </html>; move that CSS back inside the document.
+        const htmlClose = html.toLowerCase().lastIndexOf("</html>");
+        if (htmlClose >= 0) {
+          const trailing = html.slice(htmlClose + 7).trim();
+          if (trailing.startsWith("/* VEXARO master release: profile and sign-in polish */")) {
+            const documentPart = html.slice(0, htmlClose);
+            const profileStyle = '<style id="vx-profile-polish">' + trailing + '</style>';
+            html = documentPart.replace(/<\\/body>/i, profileStyle + "</body>") + "</html>";
+          }
+        }
       }
 
       response = new Response(html, asset);
@@ -55,7 +85,7 @@ export default {
     }
 
     const headers = new Headers(response.headers);
-    headers.set("Content-Security-Policy", "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://eu-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https://gyapnhfsbsnxkyfqlsxh.supabase.co https://vexaro-password-check.vexaro241.workers.dev https://vexaro-members.vexaro241.workers.dev https://vexaro-admin.vexaro241.workers.dev https://vexaro-twitch-auth.vexaro241.workers.dev https://vexaro-youtube-auth.vexaro241.workers.dev https://www.googleapis.com https://api.twitch.tv https://eu.i.posthog.com; frame-src 'self' https://www.youtube.com https://www.twitch.tv https://player.twitch.tv; form-action 'self' https://id.twitch.tv https://accounts.google.com; manifest-src 'self'; worker-src 'self' blob:");
+    headers.set("Content-Security-Policy", "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://eu-assets.i.posthog.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https://gyapnhfsbsnxkyfqlsxh.supabase.co https://vexaro-password-check.vexaro241.workers.dev https://vexaro-members.vexaro241.workers.dev https://vexaro-admin.vexaro241.workers.dev https://vexaro-twitch-auth.vexaro241.workers.dev https://vexaro-youtube-auth.vexaro241.workers.dev https://www.googleapis.com https://api.twitch.tv https://eu.i.posthog.com https://static.cloudflareinsights.com; frame-src 'self' https://www.youtube.com https://www.twitch.tv https://player.twitch.tv; form-action 'self' https://id.twitch.tv https://accounts.google.com; manifest-src 'self'; worker-src 'self' blob:");
     headers.set("X-Content-Type-Options", "nosniff");
     headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
     headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
