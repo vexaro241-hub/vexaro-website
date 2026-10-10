@@ -5,19 +5,15 @@
   "scope": "https://vexaroofficial.com/",
   "id": "https://vexaroofficial.com/community",
   "display": "standalone",
-  "display_override": [
-    "standalone"
-  ],
+  "display_override": ["standalone"],
   "background_color": "#050505",
   "theme_color": "#e10600",
   "description": "VEXARO gaming community — clips, loadouts, settings and member profiles.",
-  "icons": [
-    {
-      "src": "/vexaro-app-icon.svg?v=20261010-3",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ],
+  "icons": [{
+    "src": "/vexaro-app-icon.svg?v=20261010-4",
+    "sizes": "any",
+    "type": "image/svg+xml",
+    "purpose": "any maskable"
+  }],
   "orientation": "portrait-primary"
 }
