@@ -143,7 +143,28 @@ try {
           }).catch(() => false);
           result.menuOpened = opened;
           if (!opened) result.failures.push("Community fallback menu did not open");
+        if (viewport.name === "mobile" && target.name === "community" && layout.menuId === "vexaro-global-menu-fallback-btn") {
+          await page.locator("#vexaro-global-menu-fallback-btn").click({ timeout: 5000 });
+          await page.waitForTimeout(150);
+          const opened = await page.locator("#vexaro-global-menu-fallback-panel").evaluate(element => {
+            const style = getComputedStyle(element);
+            return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) > 0;
+          }).catch(() => false);
+          result.menuOpened = opened;
+          if (!opened) result.failures.push("Community fallback menu did not open");
           await page.locator("#vexaro-global-menu-fallback-btn").click({ timeout: 5000 }).catch(() => {});
+        }
+
+        if (viewport.name === "mobile" && target.name === "members-space" && layout.menuId === "vexaro-global-menu-btn") {
+          await page.locator("#vexaro-global-menu-btn").click({ timeout: 5000 });
+          await page.waitForTimeout(150);
+          const opened = await page.locator("#vexaro-global-menu").evaluate(element => {
+            const style = getComputedStyle(element);
+            return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) > 0;
+          }).catch(() => false);
+          result.menuOpened = opened;
+          if (!opened) result.failures.push("Members Space navigation menu did not open");
+          await page.locator("#vexaro-global-menu-btn").click({ timeout: 5000 }).catch(() => {});
         }
       }
 
