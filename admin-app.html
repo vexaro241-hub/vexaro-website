@@ -240,14 +240,20 @@ async function saveMembershipEntitlement(input){
   const tier=input.dataset.membershipTier, entitlement=input.dataset.membershipEntitlement;
   if(!tier||!entitlement)return;
   input.disabled=true;
-  const status=$('membershipEntitlementsStatus');
+  const status=$('membershipEntitlementsStatus'), enabled=input.checked;
   status.textContent='Saving '+entitlement+' for '+tier+'…';
   try{
-    const {error}=await sb.from('membership_entitlements').update({enabled:input.checked,updated_at:new Date().toISOString()}).eq('tier_code',tier).eq('entitlement_code',entitlement);
+    const {error}=await sb.from('membership_entitlements').update({enabled,updated_at:new Date().toISOString()}).eq('tier_code',tier).eq('entitlement_code',entitlement);
     if(error)throw error;
-    status.textContent='Saved '+entitlement+' for '+tier+'.';
+    try{
+      const audit=await sb.from('admin_audit_log').insert({admin_id:uid,action:'membership_entitlement_updated',target_type:'membership_entitlement',target_id:tier+'.'+entitlement,details:{enabled}});
+      if(audit.error)throw audit.error;
+      status.textContent='Saved '+entitlement+' for '+tier+' and recorded the admin audit event.';
+    }catch(auditError){
+      status.textContent='Saved '+entitlement+' for '+tier+', but audit logging failed: '+(auditError?.message||'unknown error')+'.';
+    }
   }catch(e){
-    input.checked=!input.checked;
+    input.checked=!enabled;
     status.textContent='Could not save access rule: '+(e?.message||'unknown error');
   }finally{input.disabled=false}
 }
