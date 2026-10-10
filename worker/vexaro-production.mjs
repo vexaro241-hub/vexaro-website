@@ -118,15 +118,21 @@ export default {
       }
 
       // Wrap Members Space navigation on small screens rather than requiring horizontal scrolling.
-      if (html.includes("YOUR SPACE. YOUR GAME.") && !html.includes("vexaro-members-mobile-nav-fix")) {
+      if (html.includes('id="profileForm"') && html.includes("const fields=['handle'") && !html.includes("vexaro-members-mobile-nav-fix")) {
         const membersMobileStyle = `<style id="vexaro-members-mobile-nav-fix">
 @media(max-width:760px){
- .bar .nav{overflow:visible!important;max-width:100%!important}
- .navlinks{display:flex!important;flex-wrap:wrap!important;gap:10px!important;max-width:100%!important;overflow:visible!important;white-space:normal!important;padding-bottom:3px!important}
- .navlinks a{min-height:36px!important;display:inline-flex!important;align-items:center!important;white-space:normal!important}
+ body .bar .nav{overflow:visible!important;max-width:100%!important;min-width:0!important;flex-wrap:wrap!important}
+ body .bar .navlinks{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:minmax(36px,auto)!important;flex:1 1 100%!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow:visible!important;overflow-x:visible!important;white-space:normal!important;gap:8px!important;padding-bottom:3px!important}
+ body .bar .navlinks>a{display:flex!important;min-width:0!important;width:100%!important;min-height:36px!important;align-items:center!important;justify-content:center!important;white-space:normal!important;overflow-wrap:anywhere!important;text-align:center!important}
 }
 </style>`;
         html = html.replace(/<\/body>/i, membersMobileStyle + "</body>");
+      }
+
+      // Keep the homepage hamburger fully inside the desktop viewport.
+      if (html.includes('id="hamb"') && !html.includes("vexaro-home-menu-overflow-fix")) {
+        const homeMenuStyle = '<style id="vexaro-home-menu-overflow-fix">#hamb{right:16px!important;left:auto!important;transform:none!important;margin-right:0!important;box-sizing:border-box!important}</style>';
+        html = html.replace(/<\/body>/i, homeMenuStyle + "</body>");
       }
 
       if (html.includes('<style id="vexaro-homepage-fit-v1">')) {
