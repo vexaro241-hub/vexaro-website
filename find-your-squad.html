@@ -63,7 +63,7 @@ $('createForm').addEventListener('submit',async e=>{
  if(!payload.description){$('formStatus').textContent='Add a short message first.';return;}
  $('submitBtn').disabled=true;$('formStatus').textContent='Publishing…';
  try{const {error}=await client.from('squad_posts').insert(payload);if(error)throw error;$('createForm').reset();$('formStatus').textContent='Squad post published.';await refresh();}
- catch(err){$('formStatus').textContent='Could not publish yet. Check that the squad database migration has been applied.';console.error(err.message||err);}
+ catch(err){const message=String(err?.message||'');const code=String(err?.code||'');if(code==='42501'||/row-level security|active member|permission denied|not allowed/i.test(message)){$('formStatus').textContent='Your account is signed in, but it does not currently have permission to publish squad posts. If your membership should be active, contact VEXARO support.';}else if(/relation .* does not exist|schema cache|column .* does not exist/i.test(message)){$('formStatus').textContent='The squad board database setup is incomplete. Please try again later.';}else{$('formStatus').textContent='Could not publish your squad post. Please check your connection and try again.';}console.error('VEXARO squad post publish failed:',code,message);}
  finally{$('submitBtn').disabled=false;updateAuth();}
 });
 init();
