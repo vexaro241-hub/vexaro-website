@@ -231,7 +231,7 @@ async function applySession(s){
     showView(currentView||'home');
     return;
   }
-  const {data,error}=await sb.from('profiles').select('id,username,display_name,bio,avatar_url,created_at,role').eq('id',session.user.id).maybeSingle();
+  const {data,error}=await sb.from('profiles').select('id,username,display_name,bio,avatar_url,banner_url,social_links,created_at,role').eq('id',session.user.id).maybeSingle();
   if(version!==sessionVersion)return;
   if(error){
     profile=null;
