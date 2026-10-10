@@ -205,7 +205,7 @@ function setupVexaroUtilities(){
   location.reload();
  });
 }
-cleanupLegacyCache();
+/* Do not unregister service workers or clear caches during normal navigation. */
 cleanHome();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{mobileMenu();setupVexaroUtilities();},{once:true});else{mobileMenu();setupVexaroUtilities();}
 })();
