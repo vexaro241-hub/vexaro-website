@@ -499,7 +499,7 @@ function showView(view){
   if(view==='feed')loadFeed(); if(view==='loadouts')loadLoadouts(); if(view==='settings')loadSettings(); if(view==='profile')renderProfile(); if(view==='members')loadMembers(); if(view==='friends')loadFriends(); if(view==='squads')loadSquads();
 }
 const requestedAuth=new URLSearchParams(window.location.search).get('auth');
-const homepageAuth=new URLSearchParams(window.location.search).get('signin')==='1'||requestedAuth==='signin'||requestedAuth==='signup';
+const homepageAuth=new URLSearchParams(window.location.search).get('signin')==='1'||requestedAuth==='signin'||requestedAuth==='signup'||requestedAuth==='recovery';
 async function boot(){
   if(!readyConfig()){
     $('configNotice').textContent='Community backend not connected yet. Add your Supabase URL and publishable key to supabase-config.js, then deploy.';
