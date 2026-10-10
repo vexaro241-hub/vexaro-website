@@ -45,7 +45,8 @@ function menuStyles(){
  const s=document.createElement('style');
  s.id='vexaro-menu-responsive';
  s.textContent=`
-html,body{max-width:100%;overflow-x:hidden}\n:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:2px solid #ff5a52!important;outline-offset:3px!important}
+html,body{max-width:100%;overflow-x:hidden}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:2px solid #ff5a52!important;outline-offset:3px!important}
 /* Site-wide responsive baseline: keep every page usable across phones, tablets, desktop and landscape screens. */
 html{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
 body{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
