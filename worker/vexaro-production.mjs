@@ -66,7 +66,7 @@ export default {
       }
 
       // Apply the mobile Community tab fix after page styles so it wins the cascade.
-      if (/^\\/community(?:\\.html|\\/)?$/i.test(path) && !html.includes("vexaro-community-mobile-nav-fix")) {
+      if (/^\/community(?:\.html|\/)?$/i.test(path) && !html.includes("vexaro-community-mobile-nav-fix")) {
         const communityMobileStyle = `<style id="vexaro-community-mobile-nav-fix">
 @media(max-width:800px){
  .top .nav{height:auto!important;min-height:72px!important;max-height:none!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;overflow:visible!important;padding:12px 0!important}
@@ -74,7 +74,7 @@ export default {
  .navlinks .tab{height:auto!important;min-height:36px!important;min-width:0!important;width:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:9px 5px!important;font-size:9px!important;line-height:1.2!important;white-space:normal!important;text-align:center!important}
 }
 </style>`;
-        html = html.replace(/<\\/body>/i, communityMobileStyle + "</body>");
+        html = html.replace(/<\/body>/i, communityMobileStyle + "</body>");
       }
 
       if (path === "/" || path === "/index.html") {
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>`;
       if (!html.includes('id="vexaro-global-menu-fallback"')) {
-        html = html.replace(/<\\/body>/i, menuFallback + "</body>");
+        html = html.replace(/<\/body>/i, menuFallback + "</body>");
       }
 
       response = new Response(html, asset);
