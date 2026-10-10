@@ -41,20 +41,8 @@ export default {
       html = html.replace(/<\/head>/i, social + "</head>");
 
       // Ensure every public VEXARO page has the shared top-right navigation unless it already includes it.
-      if (!/vexaro-nav(?:-v2)?\.js/i.test(html) && !path.startsWith("/health/") && !/^\/google[0-9a-f]+\.html$/i.test(path)) {
+      if (!/vexaro-nav(?:-v2)?\.js/i.test(html) && !/<button\b[^>]*aria-label=["\'][^"\']*(?:menu|navigation)[^"\']*["\']/i.test(html) && !path.startsWith("/health/") && !/^\/google[0-9a-f]+\.html$/i.test(path)) {
         html = html.replace(/<\/head>/i, '<script src="/vexaro-nav.js" defer></script></head>');
-      }
-
-      // Fix the Community tab row on narrow screens without introducing horizontal scrolling.
-      if (/^\/community(?:\.html|\/)?$/i.test(path)) {
-        const communityMobileStyle = `<style id="vexaro-community-mobile-nav-fix">
-@media(max-width:800px){
- .top .nav{height:auto!important;min-height:72px!important;max-height:none!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;overflow:visible!important;padding:12px 0!important}
- .navlinks{position:static!important;inset:auto!important;order:initial!important;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(105px,1fr))!important;flex:1 1 100%!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:8px 0!important;gap:7px!important;overflow:visible!important;background:transparent!important;border:0!important;border-top:1px solid #25262c!important;box-shadow:none!important;backdrop-filter:none!important}
- .navlinks .tab{height:auto!important;min-height:36px!important;min-width:0!important;width:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:9px 5px!important;font-size:9px!important;line-height:1.2!important;white-space:normal!important;text-align:center!important}
-}
-</style>`;
-        html = html.replace(/<\/head>/i, communityMobileStyle + "</head>");
       }
 
       if (path === "/loadouts.html") {
@@ -77,6 +65,18 @@ export default {
         }
       }
 
+      // Apply the mobile Community tab fix after page styles so it wins the cascade.
+      if (/^\\/community(?:\\.html|\\/)?$/i.test(path) && !html.includes("vexaro-community-mobile-nav-fix")) {
+        const communityMobileStyle = `<style id="vexaro-community-mobile-nav-fix">
+@media(max-width:800px){
+ .top .nav{height:auto!important;min-height:72px!important;max-height:none!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;overflow:visible!important;padding:12px 0!important}
+ .navlinks{position:static!important;inset:auto!important;order:initial!important;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(105px,1fr))!important;flex:1 1 100%!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:8px 0!important;gap:7px!important;overflow:visible!important;background:transparent!important;border:0!important;border-top:1px solid #25262c!important;box-shadow:none!important;backdrop-filter:none!important}
+ .navlinks .tab{height:auto!important;min-height:36px!important;min-width:0!important;width:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:9px 5px!important;font-size:9px!important;line-height:1.2!important;white-space:normal!important;text-align:center!important}
+}
+</style>`;
+        html = html.replace(/<\\/body>/i, communityMobileStyle + "</body>");
+      }
+
       if (path === "/" || path === "/index.html") {
         // Repair a legacy nested homepage style tag only when the fit layer is not preceded by a close tag.
         const fitMarker = '<style id="vexaro-homepage-fit-v1">';
@@ -88,6 +88,61 @@ export default {
             html = html.slice(0, fitIndex) + "</style>" + html.slice(fitIndex);
           }
         }
+      }
+
+      // Final fallback: ensure a usable top-right menu even if an older page's nav script does not create one.
+      const menuFallback = `<script id="vexaro-global-menu-fallback">
+document.addEventListener("DOMContentLoaded", function () {
+  const hasButton = document.getElementById("vexaro-global-menu-btn") ||
+    document.getElementById("vexaro-global-menu") ||
+    document.querySelector(".site-menu") ||
+    (document.getElementById("hamb") && document.getElementById("mobilemenu")) ||
+    Array.from(document.querySelectorAll("button[aria-label],button[title]")).some(function (el) {
+      return /menu|navigation/i.test((el.getAttribute("aria-label") || "") + " " + (el.getAttribute("title") || ""));
+    });
+  if (hasButton) return;
+  const links = [
+    ["HOME","/"],["HQ","/#hq"],["CLIPS","/clips.html"],["LOADOUTS","/loadouts.html"],
+    ["SETTINGS","/settings.html"],["LIVE","/live/"],["FIND SQUAD","/find-your-squad.html"],
+    ["COMMUNITY","/community.html"],["MARKETPLACE","/marketplace.html"],["PRO","/membership.html"],
+    ["ABOUT","/about.html"],["APP","/app.html"],["SEARCH","/search.html"]
+  ];
+  const button = document.createElement("button");
+  button.id = "vexaro-global-menu-fallback-btn";
+  button.type = "button";
+  button.textContent = "☰";
+  button.setAttribute("aria-label", "Open VEXARO navigation");
+  button.setAttribute("aria-expanded", "false");
+  button.title = "Open VEXARO navigation";
+  Object.assign(button.style, {position:"fixed",top:"15px",right:"16px",zIndex:"10001",width:"46px",height:"46px",border:"1px solid rgba(255,255,255,.16)",borderRadius:"10px",background:"rgba(8,8,10,.96)",color:"#fff",fontSize:"25px",cursor:"pointer"});
+  const panel = document.createElement("nav");
+  panel.id = "vexaro-global-menu-fallback-panel";
+  panel.setAttribute("aria-label", "VEXARO navigation");
+  Object.assign(panel.style, {position:"fixed",top:"0",right:"0",bottom:"0",width:"min(390px,88vw)",zIndex:"10000",background:"#08080a",padding:"82px 22px 28px",overflow:"auto",display:"none",borderLeft:"1px solid rgba(255,255,255,.12)",boxShadow:"-25px 0 70px rgba(0,0,0,.6)"});
+  const heading = document.createElement("div");
+  heading.textContent = "VEXARO / NAVIGATION";
+  Object.assign(heading.style,{color:"#e10600",fontSize:"10px",fontWeight:"900",letterSpacing:".2em",marginBottom:"18px"});
+  panel.appendChild(heading);
+  links.forEach(function (item) {
+    const a = document.createElement("a");
+    a.href = item[1]; a.textContent = item[0];
+    Object.assign(a.style,{display:"block",padding:"14px 12px",borderBottom:"1px solid rgba(255,255,255,.07)",color:"#ddd",textDecoration:"none",fontSize:"11px",fontWeight:"900",letterSpacing:".12em"});
+    a.addEventListener("click", closeMenu);
+    panel.appendChild(a);
+  });
+  const signIn = document.createElement("a");
+  signIn.href = "/?auth=signin"; signIn.textContent = "SIGN IN / JOIN VEXARO";
+  Object.assign(signIn.style,{display:"block",padding:"14px 12px",color:"#e10600",textDecoration:"none"});
+  signIn.addEventListener("click", closeMenu);
+  panel.appendChild(signIn);
+  function closeMenu(){panel.style.display="none";button.textContent="☰";button.setAttribute("aria-expanded","false");}
+  button.addEventListener("click",function(){const open=panel.style.display!=="block";panel.style.display=open?"block":"none";button.textContent=open?"×":"☰";button.setAttribute("aria-expanded",String(open));});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeMenu();});
+  document.body.append(button,panel);
+});
+</script>`;
+      if (!html.includes('id="vexaro-global-menu-fallback"')) {
+        html = html.replace(/<\\/body>/i, menuFallback + "</body>");
       }
 
       response = new Response(html, asset);
