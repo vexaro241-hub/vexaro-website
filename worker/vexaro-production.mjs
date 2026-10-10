@@ -125,12 +125,17 @@ export default {
       // Final fallback: ensure a usable top-right menu even if an older page's nav script does not create one.
       const menuFallback = `<script id="vexaro-global-menu-fallback">
 document.addEventListener("DOMContentLoaded", function () {
-  const hasButton = document.getElementById("vexaro-global-menu-btn") ||
-    document.getElementById("vexaro-global-menu") ||
-    document.querySelector(".site-menu") ||
-    (document.getElementById("hamb") && document.getElementById("mobilemenu")) ||
+  function isVisible(el) {
+    if (!el) return false;
+    const style = window.getComputedStyle(el);
+    return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) > 0;
+  }
+  const hasButton = isVisible(document.getElementById("vexaro-global-menu-fallback-btn")) ||
+    isVisible(document.getElementById("vexaro-global-menu-btn")) ||
+    (isVisible(document.getElementById("hamb")) && !!document.getElementById("mobilemenu")) ||
+    isVisible(document.querySelector(".site-menu")) ||
     Array.from(document.querySelectorAll("button[aria-label],button[title]")).some(function (el) {
-      return /menu|navigation/i.test((el.getAttribute("aria-label") || "") + " " + (el.getAttribute("title") || ""));
+      return isVisible(el) && /menu|navigation/i.test((el.getAttribute("aria-label") || "") + " " + (el.getAttribute("title") || ""));
     });
   if (hasButton) return;
   const links = [
