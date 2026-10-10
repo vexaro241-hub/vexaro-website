@@ -40,6 +40,14 @@ export default {
       ].map(([kind, name, value]) => '<meta ' + kind + '="' + esc(name) + '" content="' + esc(value) + '">').join("");
       html = html.replace(/<\/head>/i, social + "</head>");
 
+      // Keep Members Space guidance aligned with the profile fields that sync to Supabase when signed in.
+      if (/^\\/members-space(?:\\.html|\\/)?$/i.test(path)) {
+        html = html.replace(
+          "These fields simply store links on this device for now.",
+          "Save your gaming identity to sync these public links to your VEXARO profile. YouTube authorisation is a separate step."
+        );
+      }
+
       // Ensure every public VEXARO page has the shared top-right navigation unless it already includes it.
       if (!/vexaro-nav(?:-v2)?\.js/i.test(html) && !/<button\b[^>]*aria-label=["\'][^"\']*(?:menu|navigation)[^"\']*["\']/i.test(html) && !path.startsWith("/health/") && !/^\/google[0-9a-f]+\.html$/i.test(path)) {
         html = html.replace(/<\/head>/i, '<script src="/vexaro-nav.js" defer></script></head>');
@@ -75,6 +83,18 @@ export default {
 }
 </style>`;
         html = html.replace(/<\/body>/i, communityMobileStyle + "</body>");
+      }
+
+      // Wrap Members Space navigation on small screens rather than requiring horizontal scrolling.
+      if (/^\\/members-space(?:\\.html|\\/)?$/i.test(path) && !html.includes("vexaro-members-mobile-nav-fix")) {
+        const membersMobileStyle = `<style id="vexaro-members-mobile-nav-fix">
+@media(max-width:760px){
+ .bar .nav{overflow:visible!important;max-width:100%!important}
+ .navlinks{display:flex!important;flex-wrap:wrap!important;gap:10px!important;max-width:100%!important;overflow:visible!important;white-space:normal!important;padding-bottom:3px!important}
+ .navlinks a{min-height:36px!important;display:inline-flex!important;align-items:center!important;white-space:normal!important}
+}
+</style>`;
+        html = html.replace(/<\\/body>/i, membersMobileStyle + "</body>");
       }
 
       if (path === "/" || path === "/index.html") {
