@@ -1,6 +1,12 @@
 // Production deployment trigger: keep asset bundle managed by Wrangler.
 export default {
   async fetch(request, env) {
+    // Normalise all supported Admin Hub entry points before static asset lookup.
+    const incomingUrl = new URL(request.url);
+    if (["/admin-hub", "/admin-hub/", "/admin-hub.html"].includes(incomingUrl.pathname)) {
+      incomingUrl.pathname = "/admin-app.html";
+      request = new Request(incomingUrl, request);
+    }
     const asset = await env.ASSETS.fetch(request);
     const type = asset.headers.get("content-type") || "";
     let response = asset;
