@@ -6,7 +6,7 @@
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
-    "run_worker_first": ["/", "/*.html", "/live/*", "/about*", "/app*", "/clips*", "/community*", "/controller-settings*", "/find-your-squad*", "/graphics-settings*", "/loadouts*", "/marketplace*", "/member*", "/membership*", "/messages*", "/notifications*", "/persona*", "/search*", "/settings*", "/warzone-*", "/admin*"],
+    "run_worker_first": ["/", "/*.html", "/live/*", "/about*", "/app*", "/clips*", "/community*", "/controller-settings*", "/find-your-squad*", "/graphics-settings*", "/loadouts*", "/marketplace*", "/member*", "/messages*", "/notifications*", "/persona*", "/search*", "/settings*", "/warzone-*", "/admin*"],
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
   },
