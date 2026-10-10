@@ -1,6 +1,12 @@
 // Production deployment trigger: keep asset bundle managed by Wrangler.
 export default {
   async fetch(request, env) {
+    // Keep the historical admin-hub route working while the canonical page remains admin-app.html.
+    const incomingUrl = new URL(request.url);
+    if (incomingUrl.pathname === "/admin-hub" || incomingUrl.pathname === "/admin-hub/") {
+      incomingUrl.pathname = "/admin-app.html";
+      request = new Request(incomingUrl, request);
+    }
     const asset = await env.ASSETS.fetch(request);
     const type = asset.headers.get("content-type") || "";
     let response = asset;
