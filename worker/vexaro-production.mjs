@@ -41,7 +41,7 @@ export default {
       html = html.replace(/<\/head>/i, social + "</head>");
 
       // Keep Members Space guidance aligned with the profile fields that sync to Supabase when signed in.
-      if (/^\\/members-space(?:\\.html|\\/)?$/i.test(path)) {
+      if (/^\/members-space(?:\.html|\/)?$/i.test(path)) {
         html = html.replace(
           "These fields simply store links on this device for now.",
           "Save your gaming identity to sync these public links to your VEXARO profile. YouTube authorisation is a separate step."
@@ -86,7 +86,7 @@ export default {
       }
 
       // Wrap Members Space navigation on small screens rather than requiring horizontal scrolling.
-      if (/^\\/members-space(?:\\.html|\\/)?$/i.test(path) && !html.includes("vexaro-members-mobile-nav-fix")) {
+      if (/^\/members-space(?:\.html|\/)?$/i.test(path) && !html.includes("vexaro-members-mobile-nav-fix")) {
         const membersMobileStyle = `<style id="vexaro-members-mobile-nav-fix">
 @media(max-width:760px){
  .bar .nav{overflow:visible!important;max-width:100%!important}
@@ -94,7 +94,7 @@ export default {
  .navlinks a{min-height:36px!important;display:inline-flex!important;align-items:center!important;white-space:normal!important}
 }
 </style>`;
-        html = html.replace(/<\\/body>/i, membersMobileStyle + "</body>");
+        html = html.replace(/<\/body>/i, membersMobileStyle + "</body>");
       }
 
       if (path === "/" || path === "/index.html") {
