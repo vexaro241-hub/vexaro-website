@@ -929,4 +929,45 @@ $('postMedia')?.addEventListener('change',e=>{const files=[...e.target.files||[]
   .top .navlinks{flex-wrap:wrap!important;overflow:visible!important;white-space:normal!important}
 }
 </style><script src="/vexaro-nav-v2.js"></script>
+
+<style id="vx-community-professional-redesign">
+/* VEXARO Members: clean, editorial layout — override the accumulated experimental mobile rules. */
+:root{--vx-bg:#080809;--vx-surface:#101013;--vx-surface-2:#151519;--vx-stroke:rgba(255,255,255,.09);--vx-muted:#9a9aa3;--vx-red:#e10600}
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}body{padding-bottom:24px!important;background:radial-gradient(ellipse at 80% 0,rgba(225,6,0,.10),transparent 36%),#080809!important;color:#f5f5f6;letter-spacing:0}
+/* The app already has its own navigation. Remove duplicate floating site controls. */
+#vexaro-home-shortcut,#vexaro-global-menu-btn,#vexaro-global-menu{display:none!important}
+.top{position:sticky!important;top:0!important;z-index:1000!important;background:rgba(8,8,9,.94)!important;border-bottom:1px solid var(--vx-stroke)!important;box-shadow:0 8px 24px rgba(0,0,0,.18)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}
+.top .nav{width:min(1240px,calc(100% - 36px))!important;min-height:66px!important;height:auto!important;padding:10px 0!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:12px!important;overflow:visible!important}
+.brand{flex:0 0 auto!important;font-size:13px!important;letter-spacing:.12em!important;line-height:1!important;white-space:nowrap!important}
+.brand span{font-size:10px!important;color:var(--vx-red)!important}
+.top .navlinks{order:3!important;display:flex!important;flex:1 1 100%!important;width:100%!important;max-width:100%!important;min-width:0!important;gap:4px!important;align-items:center!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;padding:7px 0 1px!important;margin:0!important;border-top:1px solid rgba(255,255,255,.055)!important;background:transparent!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch}
+.top .navlinks::-webkit-scrollbar{display:none!important}
+.top .navlinks .tab{position:relative!important;display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:0!important;min-height:34px!important;height:34px!important;padding:0 11px!important;border:0!important;border-radius:7px!important;background:transparent!important;color:#a2a2aa!important;font-size:10px!important;font-weight:750!important;letter-spacing:.025em!important;line-height:1!important;text-transform:none!important;white-space:nowrap!important;box-shadow:none!important}
+.top .navlinks .tab:hover{background:rgba(255,255,255,.055)!important;color:#fff!important}
+.top .navlinks .tab.active{background:rgba(225,6,0,.11)!important;color:#fff!important}
+.top .navlinks .tab.active:after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:2px;background:var(--vx-red);border-radius:2px}
+.app-tools{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:5px!important;margin-left:auto!important}
+.app-tools .btn,#authNav .btn,#identitySwitcher .btn{width:auto!important;min-width:0!important;min-height:34px!important;height:34px!important;padding:0 10px!important;border-radius:8px!important;background:#151518!important;border:1px solid var(--vx-stroke)!important;color:#eee!important;font-size:10px!important;font-weight:700!important;letter-spacing:0!important;white-space:nowrap!important;box-shadow:none!important}
+.app-tools .btn:hover,#authNav .btn:hover,#identitySwitcher .btn:hover{border-color:rgba(225,6,0,.4)!important;background:#1b1112!important}
+#authNav{display:flex!important;align-items:center!important;gap:5px!important;width:auto!important;max-width:100%!important;flex:0 1 auto!important;margin-left:auto!important}
+#identitySwitcher{max-width:100%!important;min-width:0!important;margin-left:0!important}
+#appView.grid{display:block!important;width:min(980px,calc(100% - 36px))!important;margin:0 auto!important;padding:26px 0 48px!important}
+#appView>.view{width:100%;min-width:0}
+#homeView>.panel{padding:clamp(22px,4vw,38px)!important;border:1px solid var(--vx-stroke)!important;border-radius:16px!important;background:linear-gradient(140deg,rgba(255,255,255,.035),transparent 58%),#0e0e11!important;box-shadow:0 16px 38px rgba(0,0,0,.18)!important}
+#homeView .kicker,.panel .kicker{font-size:10px!important;letter-spacing:.15em!important;color:#ef3933!important}
+#homeView h2{font-size:clamp(27px,5vw,42px)!important;line-height:1.05!important;letter-spacing:-.04em!important;margin:12px 0!important;max-width:620px}
+#homeView p{max-width:690px!important;font-size:14px!important;line-height:1.75!important;color:#a5a5ad!important}
+.actions{gap:8px!important;align-items:center!important}
+.actions .btn,.panel .btn{width:auto!important;min-width:0!important;min-height:38px!important;height:auto!important;padding:0 14px!important;border-radius:8px!important;background:#17171b!important;border:1px solid rgba(255,255,255,.10)!important;color:#eee!important;font-size:10px!important;font-weight:750!important;letter-spacing:.035em!important;line-height:1.2!important;text-transform:none!important;box-shadow:none!important;white-space:nowrap!important}
+.actions .btn.accent,.panel .btn.accent{background:var(--vx-red)!important;border-color:var(--vx-red)!important;color:white!important}
+.actions .btn:hover,.panel .btn:hover{transform:translateY(-1px)!important;border-color:rgba(225,6,0,.45)!important}
+.panel{border-radius:13px!important;border-color:var(--vx-stroke)!important;background:#101013!important;box-shadow:0 10px 28px rgba(0,0,0,.14)!important}
+.panel h2{font-size:clamp(22px,3vw,30px)!important;letter-spacing:-.025em!important}
+.feed-intro{border-radius:10px!important;background:rgba(225,6,0,.055)!important;border-color:rgba(225,6,0,.16)!important;padding:14px!important}
+.notice,.loadout,.comment{border-radius:10px!important}
+@media(min-width:801px){.top .nav{flex-wrap:nowrap!important}.top .navlinks{order:initial!important;flex:1 1 auto!important;width:auto!important;border-top:0!important;padding:0!important;overflow-x:auto!important}.app-tools{margin-left:0!important}#authNav{margin-left:0!important}#appView.grid{padding-top:38px!important}}
+@media(max-width:800px){.top .nav{width:calc(100% - 24px)!important;gap:9px!important;padding:10px 0!important}.brand{font-size:12px!important}.app-tools{gap:4px!important}.app-tools .btn{font-size:9px!important;padding:0 8px!important}#authNav{margin-left:auto!important}#appView.grid{width:calc(100% - 24px)!important;padding:20px 0 34px!important}.panel{padding:17px!important}}
+@media(max-width:520px){.top .nav{width:calc(100% - 20px)!important;gap:8px!important}.brand{font-size:11px!important;letter-spacing:.08em!important}.brand span{font-size:9px!important}.app-tools .btn{min-height:31px!important;height:31px!important;padding:0 7px!important;font-size:8px!important}.app-tools .btn[aria-label="Alerts"]{display:none!important}#authNav .btn{min-height:31px!important;height:31px!important;padding:0 8px!important;font-size:9px!important}.top .navlinks{gap:2px!important;padding-top:6px!important}.top .navlinks .tab{height:32px!important;min-height:32px!important;padding:0 10px!important;font-size:10px!important}#appView.grid{width:calc(100% - 20px)!important;padding-top:15px!important}#homeView>.panel{padding:21px 18px!important;border-radius:13px!important}#homeView h2{font-size:28px!important}#homeView p{font-size:13px!important;line-height:1.7!important}.actions{gap:7px!important}.actions .btn,.panel .btn{min-height:36px!important;padding:0 11px!important;font-size:10px!important}}
+@media(prefers-reduced-motion:reduce){.actions .btn,.panel .btn{transition:none!important}}
+</style>
 </body></html>
