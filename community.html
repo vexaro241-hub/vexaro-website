@@ -96,6 +96,76 @@ body{overscroll-behavior-x:none}
  .navlinks{display:flex!important}
 }
 .presence-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:#666}.presence-dot.online{background:#36d17b;box-shadow:0 0 7px #36d17b88}.presence-dot.offline{background:#666}
+
+/* VEXARO MEMBERS APP REDESIGN — app-first visual system */
+:root{--app-bg:#070709;--app-surface:#101014;--app-surface-raised:#17171d;--app-border:rgba(255,255,255,.085);--app-red:#e10600;--app-muted:#9696a1}
+html{background:var(--app-bg);scroll-padding-top:90px}
+body{background:radial-gradient(ellipse at 50% -18%,rgba(225,6,0,.2),transparent 44%),linear-gradient(180deg,#08080a 0%,#060607 65%,#09090c 100%);min-height:100vh;padding-bottom:30px}
+.top{background:rgba(8,8,10,.9);border-bottom:1px solid var(--app-border);backdrop-filter:blur(24px);box-shadow:0 8px 28px rgba(0,0,0,.22)}
+.nav{height:auto;min-height:76px;padding:12px 0;gap:14px}
+.brand{font-size:15px;white-space:nowrap;letter-spacing:.13em}
+.navlinks{gap:3px;align-items:center}
+.navlinks .tab{padding:10px 11px;border-radius:9px;font-size:10px;letter-spacing:.04em;white-space:nowrap}
+.navlinks .tab.active,.navlinks .tab[aria-current="page"]{background:rgba(225,6,0,.13);border-color:rgba(225,6,0,.32);color:#fff}
+.app-tools{display:flex;gap:6px;align-items:center}
+#identitySwitcher,#authNav{flex-shrink:0}
+.hero{padding:48px 0 28px;max-width:100%}
+.hero h1{font-size:clamp(38px,5.5vw,66px);letter-spacing:-.055em;line-height:.95}
+.hero p{font-size:15px;max-width:620px;color:#a5a5af}
+.community-hero-links{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
+.btn{border-radius:11px;transition:transform .18s ease,border-color .18s ease,background .18s ease;min-height:42px}
+.btn:hover{transform:translateY(-1px);border-color:rgba(225,6,0,.45)}
+.btn.accent{background:linear-gradient(135deg,#f21a14,#b80000);box-shadow:0 7px 22px rgba(225,6,0,.18)}
+.grid{gap:16px;padding-bottom:90px;align-items:start}
+.panel{border-radius:18px;border-color:var(--app-border);background:linear-gradient(145deg,rgba(22,22,27,.98),rgba(11,11,14,.98));box-shadow:0 18px 55px rgba(0,0,0,.25);padding:22px}
+.panel h2{font-size:21px;letter-spacing:-.025em}
+.view{animation:memberViewIn .18s ease-out}
+@keyframes memberViewIn{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.field input,.field textarea,.field select,.feed-tools input,.feed-tools select,.comment-row input{background:#09090c;border-color:rgba(255,255,255,.11);border-radius:11px;min-height:44px}
+.post-card,.card{border-color:rgba(255,255,255,.09)}
+.post-card{padding:20px 0}
+.posthead .avatar,.avatar{border-radius:14px}
+.member-card,.loadout,.comment,.notice{border-radius:13px;border-color:rgba(255,255,255,.09);background:rgba(255,255,255,.025)}
+.member-card{padding:15px}
+.status{border-radius:12px;background:rgba(225,6,0,.07)}
+.hidden{display:none!important}
+:focus-visible{outline:2px solid rgba(255,45,38,.85)!important;outline-offset:3px}
+@media(min-width:851px){
+ body{padding-bottom:0}
+ .nav{flex-wrap:wrap}
+ .navlinks{flex:1 1 100%;order:4;justify-content:flex-start;border-top:1px solid rgba(255,255,255,.055);padding-top:8px}
+ .hero{padding-top:38px}
+ .grid{grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr)}
+}
+@media(max-width:850px){
+ body{padding-bottom:100px!important}
+ .wrap{width:calc(100% - 24px)}
+ .top{position:sticky;top:0}
+ .nav{min-height:60px;padding:9px 0 8px;gap:8px;flex-wrap:wrap}
+ .brand{font-size:13px}
+ #identitySwitcher{margin-left:auto!important}
+ #authNav{display:flex;align-items:center;gap:5px}
+ #authNav span{display:none!important}
+ #authNav .btn{padding:8px 10px;font-size:9px;min-height:36px}
+ .app-tools{display:none}
+ .navlinks{position:fixed;z-index:100;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));width:auto;order:initial;display:flex;flex-wrap:nowrap;gap:4px;padding:8px;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:rgba(17,17,21,.96);border:1px solid rgba(255,255,255,.12);border-radius:17px;box-shadow:0 15px 50px rgba(0,0,0,.62);backdrop-filter:blur(24px)}
+ .navlinks::-webkit-scrollbar{display:none}
+ .navlinks .tab{flex:0 0 auto;min-height:43px;padding:10px 12px;font-size:10px;border-radius:10px}
+ .navlinks .site-home-link{display:none}
+ .hero{padding:28px 0 20px}
+ .hero h1{font-size:clamp(36px,10vw,52px)}
+ .hero p{font-size:13px;line-height:1.65}
+ .grid{grid-template-columns:minmax(0,1fr);gap:12px;padding-bottom:22px}
+ .panel{padding:17px;border-radius:16px}
+ .panel h2{font-size:19px}
+ .auth{margin:20px auto 30px}
+ .member-grid{grid-template-columns:minmax(0,1fr)}
+ .media-grid{grid-template-columns:minmax(0,1fr)}
+ .section-title{align-items:flex-start}
+ .btn{min-height:42px}
+}
+@media(prefers-reduced-motion:reduce){.view{animation:none!important}*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
 </style><style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style><link rel="stylesheet" href="/vexaro-platform.css?v=20261009-2"><style id="vx-community-website-redesign-v1">
 /* Editorial community website treatment; preserve existing auth, feed and view behaviour. */
 body{background:#08090c;background-image:radial-gradient(ellipse at 12% 4%,rgba(225,6,0,.14),transparent 34%),linear-gradient(180deg,#0a0b0e 0%,#08090c 48%,#0d0e12 100%);color:#f5f5f6}
