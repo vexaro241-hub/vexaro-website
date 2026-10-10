@@ -184,6 +184,30 @@ function mobileMenu(){
  n.querySelectorAll('a').forEach(a=>a.onclick=close);
  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
 }
+/* Consistent direct Home access on every inner page (independent of logo, sign-in and menu). */
+function setupPersistentHomeLink(){
+ try{
+  if(location.pathname==='/'||location.pathname==='/index.html')return;
+  if(document.getElementById('vexaro-home-shortcut'))return;
+  const a=document.createElement('a');
+  a.id='vexaro-home-shortcut';
+  a.href='/';
+  a.textContent='HOME';
+  a.setAttribute('aria-label','Return to VEXARO homepage');
+  a.title='Return to VEXARO homepage';
+  Object.assign(a.style,{
+   position:'fixed',left:'max(12px,env(safe-area-inset-left))',bottom:'max(12px,env(safe-area-inset-bottom))',
+   zIndex:'9998',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'8px',
+   minWidth:'76px',minHeight:'42px',padding:'10px 14px',border:'1px solid rgba(225,6,0,.75)',
+   borderRadius:'10px',background:'rgba(8,8,10,.96)',color:'#fff',fontSize:'11px',
+   fontWeight:'900',letterSpacing:'.12em',textDecoration:'none',boxShadow:'0 8px 28px rgba(0,0,0,.45)',
+   backdropFilter:'blur(12px)',WebkitBackdropFilter:'blur(12px)',touchAction:'manipulation'
+  });
+  a.addEventListener('mouseenter',()=>{a.style.background='#e10600';});
+  a.addEventListener('mouseleave',()=>{a.style.background='rgba(8,8,10,.96)';});
+  document.body.appendChild(a);
+ }catch(_){}
+}
 /* VEXARO install + mobile utility controls */
 let __vexaroInstallPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();__vexaroInstallPrompt=e;});
