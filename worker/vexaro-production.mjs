@@ -41,12 +41,12 @@ export default {
       html = html.replace(/<\/head>/i, social + "</head>");
 
       // Ensure every public VEXARO page has the shared top-right navigation unless it already includes it.
-      if (!/vexaro-nav(?:-v2)?\\.js/i.test(html) && !path.startsWith("/health/") && !/^\\/google[0-9a-f]+\\.html$/i.test(path)) {
-        html = html.replace(/<\\/head>/i, '<script src="/vexaro-nav.js" defer></script></head>');
+      if (!/vexaro-nav(?:-v2)?\.js/i.test(html) && !path.startsWith("/health/") && !/^\/google[0-9a-f]+\.html$/i.test(path)) {
+        html = html.replace(/<\/head>/i, '<script src="/vexaro-nav.js" defer></script></head>');
       }
 
       // Fix the Community tab row on narrow screens without introducing horizontal scrolling.
-      if (/^\\/community(?:\\.html|\\/)?$/i.test(path)) {
+      if (/^\/community(?:\.html|\/)?$/i.test(path)) {
         const communityMobileStyle = `<style id="vexaro-community-mobile-nav-fix">
 @media(max-width:800px){
  .top .nav{height:auto!important;min-height:72px!important;max-height:none!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;overflow:visible!important;padding:12px 0!important}
@@ -54,7 +54,7 @@ export default {
  .navlinks .tab{height:auto!important;min-height:36px!important;min-width:0!important;width:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:9px 5px!important;font-size:9px!important;line-height:1.2!important;white-space:normal!important;text-align:center!important}
 }
 </style>`;
-        html = html.replace(/<\\/head>/i, communityMobileStyle + "</head>");
+        html = html.replace(/<\/head>/i, communityMobileStyle + "</head>");
       }
 
       if (path === "/loadouts.html") {
@@ -64,7 +64,7 @@ export default {
         );
       }
 
-      if (/^\\/community(?:\\.html|\\/)?$/i.test(path)) {
+      if (/^\/community(?:\.html|\/)?$/i.test(path)) {
         // Older Community assets had profile CSS after </html>; move that CSS back inside the document.
         const htmlClose = html.toLowerCase().lastIndexOf("</html>");
         if (htmlClose >= 0) {
@@ -72,7 +72,7 @@ export default {
           if (trailing.startsWith("/* VEXARO master release: profile and sign-in polish */")) {
             const documentPart = html.slice(0, htmlClose);
             const profileStyle = '<style id="vx-profile-polish">' + trailing + '</style>';
-            html = documentPart.replace(/<\\/body>/i, profileStyle + "</body>") + "</html>";
+            html = documentPart.replace(/<\/body>/i, profileStyle + "</body>") + "</html>";
           }
         }
       }
