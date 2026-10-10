@@ -1,0 +1,44 @@
+name: VEXARO release smoke tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [release/vexaro-master-batch-2026-10]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cloudflare-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check Cloudflare preview endpoints and page markers
+        run: |
+          node --input-type=module <<'NODE'
+          const checks = [
+            { name: "preview homepage", url: "https://vexaro-website-preview.vexaro241.workers.dev/", markers: [/VEXARO/i] },
+            { name: "preview community", url: "https://vexaro-website-preview.vexaro241.workers.dev/community.html", markers: [/VEXARO/i, /community/i] },
+            { name: "preview members space", url: "https://vexaro-website-preview.vexaro241.workers.dev/members-space.html", markers: [/VEXARO/i] },
+            { name: "main worker", url: "https://vexaro-website.vexaro241.workers.dev/?vexaro_qa=1", markers: [/VEXARO/i] },
+            { name: "members worker", url: "https://vexaro-members.vexaro241.workers.dev/?view=feed&vexaro_qa=1", markers: [/VEXARO/i, /community|build/i] },
+            { name: "admin worker", url: "https://vexaro-admin.vexaro241.workers.dev/?vexaro_qa=1", markers: [/VEXARO|ADMIN/i] }
+          ];
+          let failed = 0;
+          for (const check of checks) {
+            try {
+              const response = await fetch(check.url, { redirect: "follow", signal: AbortSignal.timeout(20000) });
+              const body = await response.text();
+              const missing = check.markers.filter(marker => !marker.test(body));
+              const ok = response.status >= 200 && response.status < 400 && missing.length === 0;
+              console.log(`${ok ? "PASS" : "FAIL"} ${check.name}: HTTP ${response.status}${missing.length ? `; missing markers: ${missing.map(String).join(", ")}` : ""}`);
+              if (!ok) failed++;
+            } catch (error) {
+              console.log(`FAIL ${check.name}: ${error.message}`);
+              failed++;
+            }
+          }
+          if (failed) process.exit(1);
+          NODE
