@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS membership_plan_tiers_tier_code_idx ON public.membership_plan_tiers (tier_code);
