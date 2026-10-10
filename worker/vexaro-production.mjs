@@ -10,9 +10,9 @@ export default {
     // Fetch the underlying extensionless asset internally so Worker fixes still apply to clean .html URLs.
     const requestUrl = new URL(request.url);
     const path = requestUrl.pathname;
-    if (/^\\/[^/]+\\.html$/i.test(path)) {
+    if (/^\/[^/]+\.html$/i.test(path)) {
       const assetUrl = new URL(request.url);
-      assetUrl.pathname = path.toLowerCase() === "/index.html" ? "/" : path.replace(/\\.html$/i, "");
+      assetUrl.pathname = path.toLowerCase() === "/index.html" ? "/" : path.replace(/\.html$/i, "");
       request = new Request(assetUrl, request);
     }
     const asset = await env.ASSETS.fetch(request);
