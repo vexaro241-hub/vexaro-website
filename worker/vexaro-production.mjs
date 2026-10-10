@@ -41,12 +41,10 @@ export default {
       html = html.replace(/<\/head>/i, social + "</head>");
 
       // Keep Members Space guidance aligned with the profile fields that sync to Supabase when signed in.
-      if (/^\/members-space(?:\.html|\/)?$/i.test(path)) {
-        html = html.replace(
-          "These fields simply store links on this device for now.",
-          "Save your gaming identity to sync these public links to your VEXARO profile. YouTube authorisation is a separate step."
-        );
-      }
+      html = html.replace(
+        "These fields simply store links on this device for now.",
+        "Save your gaming identity to sync these public links to your VEXARO profile. YouTube authorisation is a separate step."
+      );
 
       // Ensure every public VEXARO page has the shared top-right navigation unless it already includes it.
       if (!/vexaro-nav(?:-v2)?\.js/i.test(html) && !/<button\b[^>]*aria-label=["\'][^"\']*(?:menu|navigation)[^"\']*["\']/i.test(html) && !path.startsWith("/health/") && !/^\/google[0-9a-f]+\.html$/i.test(path)) {
@@ -60,8 +58,8 @@ export default {
         );
       }
 
-      if (/^\/community(?:\.html|\/)?$/i.test(path)) {
-        // Older Community assets had profile CSS after </html>; move that CSS back inside the document.
+      // Repair legacy Community assets whose profile CSS was appended after the closing HTML tag.
+      if (html.includes("/* VEXARO master release: profile and sign-in polish */")) {
         const htmlClose = html.toLowerCase().lastIndexOf("</html>");
         if (htmlClose >= 0) {
           const trailing = html.slice(htmlClose + 7).trim();
@@ -74,7 +72,7 @@ export default {
       }
 
       // Apply the mobile Community tab fix after page styles so it wins the cascade.
-      if (/^\/community(?:\.html|\/)?$/i.test(path) && !html.includes("vexaro-community-mobile-nav-fix")) {
+      if (html.includes('id="memberHomeBtn"') && !html.includes("vexaro-community-mobile-nav-fix")) {
         const communityMobileStyle = `<style id="vexaro-community-mobile-nav-fix">
 @media(max-width:800px){
  .top .nav{height:auto!important;min-height:72px!important;max-height:none!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;overflow:visible!important;padding:12px 0!important}
@@ -86,7 +84,7 @@ export default {
       }
 
       // Wrap Members Space navigation on small screens rather than requiring horizontal scrolling.
-      if (/^\/members-space(?:\.html|\/)?$/i.test(path) && !html.includes("vexaro-members-mobile-nav-fix")) {
+      if (html.includes("YOUR SPACE. YOUR GAME.") && !html.includes("vexaro-members-mobile-nav-fix")) {
         const membersMobileStyle = `<style id="vexaro-members-mobile-nav-fix">
 @media(max-width:760px){
  .bar .nav{overflow:visible!important;max-width:100%!important}
@@ -97,7 +95,7 @@ export default {
         html = html.replace(/<\/body>/i, membersMobileStyle + "</body>");
       }
 
-      if (path === "/" || path === "/index.html") {
+      if (html.includes('<style id="vexaro-homepage-fit-v1">')) {
         // Repair a legacy nested homepage style tag only when the fit layer is not preceded by a close tag.
         const fitMarker = '<style id="vexaro-homepage-fit-v1">';
         const fitIndex = html.indexOf(fitMarker);
