@@ -108,19 +108,31 @@ async function communityMobileNavLayout(){
       const nav=document.querySelector(".top .navlinks");
       const links=[...document.querySelectorAll(".top .navlinks .tab")].map(el=>{
         const r=el.getBoundingClientRect();
-        return {label:(el.innerText||el.getAttribute("aria-label")||"").trim(),visible:r.width>0&&r.height>0&&r.left>=-1&&r.right<=innerWidth+1&&r.top>=-1&&r.bottom<=innerHeight+1};
+        const s=getComputedStyle(el);
+        return {label:(el.innerText||el.getAttribute("aria-label")||"").trim(),width:Math.round(r.width),height:Math.round(r.height),lineHeight:s.lineHeight,whiteSpace:s.whiteSpace,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth};
       });
-      return {viewportWidth:innerWidth,pageWidth:document.documentElement.scrollWidth,navWidth:nav?.clientWidth||0,navScrollWidth:nav?.scrollWidth||0,links};
+      return {viewportWidth:innerWidth,pageWidth:document.documentElement.scrollWidth,navWidth:nav?.clientWidth||0,navScrollWidth:nav?.scrollWidth||0,navOverflow:getComputedStyle(nav).overflowX,links};
     });
-    const members=await p.locator('.top .navlinks [data-view="members"]').isVisible();
+    const linksReachable=[];
+    for(const selector of ['.top .navlinks .site-home-link','.top .navlinks [data-view="home"]','.top .navlinks [data-view="feed"]','.top .navlinks [data-view="loadouts"]','.top .navlinks [data-view="settings"]','.top .navlinks [data-view="profile"]','.top .navlinks [data-view="members"]','.top .navlinks [data-view="friends"]','.top .navlinks [data-view="squads"]']){
+      const el=p.locator(selector);
+      await el.evaluate(node=>node.scrollIntoView({block:"nearest",inline:"center"}));
+      const visible=await el.isVisible();
+      const oneLine=await el.evaluate(node=>Math.abs(node.getBoundingClientRect().height-parseFloat(getComputedStyle(node).lineHeight))<3 && getComputedStyle(node).whiteSpace==="nowrap");
+      linksReachable.push({label:(await el.innerText().catch(()=>el.getAttribute("aria-label")||"")).trim(),visible,oneLine});
+    }
+    await p.locator('.top .navlinks [data-view="members"]').evaluate(node=>node.scrollIntoView({block:"nearest",inline:"center"}));
     await p.locator('.top .navlinks [data-view="members"]').click();
     await p.waitForFunction(()=>!document.querySelector("#membersView")?.classList.contains("hidden"),null,{timeout:5000});
     const membersSwitch=await p.evaluate(()=>!document.querySelector("#membersView")?.classList.contains("hidden"));
+    await p.locator('.top .navlinks [data-view="friends"]').evaluate(node=>node.scrollIntoView({block:"nearest",inline:"center"}));
     await p.locator('.top .navlinks [data-view="friends"]').click();
     await p.waitForFunction(()=>!document.querySelector("#friendsView")?.classList.contains("hidden"),null,{timeout:5000});
     const friendsSwitch=await p.evaluate(()=>!document.querySelector("#friendsView")?.classList.contains("hidden"));
-    const ok=layout.pageWidth<=layout.viewportWidth&&layout.navScrollWidth<=layout.navWidth+1&&layout.links.length>=8&&layout.links.every(x=>x.visible)&&members&&membersSwitch&&friendsSwitch&&errors.length===0;
-    return {ok,layout,membersSwitch,friendsSwitch,errors};
+    const scrollable=layout.navScrollWidth>layout.navWidth&&/auto|scroll/.test(layout.navOverflow);
+    const labelsSingleLine=layout.links.every(x=>x.height>0&&x.whiteSpace==="nowrap"&&x.height<=40);
+    const ok=layout.pageWidth<=layout.viewportWidth&&scrollable&&linksReachable.length===9&&linksReachable.every(x=>x.visible&&x.oneLine)&&labelsSingleLine&&membersSwitch&&friendsSwitch&&errors.length===0;
+    return {ok,layout,linksReachable,membersSwitch,friendsSwitch,errors};
   }catch(e){return {ok:false,error:e.message}}
   finally{if(p)await p.close().catch(()=>{});if(c)await c.close().catch(()=>{});if(b)await b.close().catch(()=>{})}
 }
