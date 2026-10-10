@@ -118,7 +118,7 @@ async function communityMobileNavLayout(){
       const el=p.locator(selector);
       await el.evaluate(node=>node.scrollIntoView({block:"nearest",inline:"center"}));
       const visible=await el.isVisible();
-      const oneLine=await el.evaluate(node=>Math.abs(node.getBoundingClientRect().height-parseFloat(getComputedStyle(node).lineHeight))<3 && getComputedStyle(node).whiteSpace==="nowrap");
+      const oneLine=await el.evaluate(node=>getComputedStyle(node).whiteSpace==="nowrap" && node.scrollWidth<=node.clientWidth+2);
       linksReachable.push({label:(await el.innerText().catch(()=>el.getAttribute("aria-label")||"")).trim(),visible,oneLine});
     }
     await p.locator('.top .navlinks [data-view="members"]').evaluate(node=>node.scrollIntoView({block:"nearest",inline:"center"}));
