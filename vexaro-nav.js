@@ -114,6 +114,7 @@ img,video,iframe,svg{max-width:100%}
 }
 @media(orientation:landscape) and (max-height:600px){
  .mobilemenu{max-height:calc(100dvh - 78px)!important}
+#vexaro-global-menu-btn{width:46px!important;min-width:46px!important;max-width:46px!important;flex:0 0 46px!important}
 }
 `;
  document.head.appendChild(s);
