@@ -115,5 +115,5 @@ img,video,iframe,svg{max-width:100%}
 /* VEXARO visual refresh — cinematic crimson texture and unified app identity */
 :root{--vx-red:#e10600;--vx-red-bright:#ff3434}
 body{background-image:radial-gradient(ellipse at 90% 0%,rgba(225,6,0,.12),transparent 34%),linear-gradient(135deg,rgba(255,255,255,.012) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.012) 50%,rgba(255,255,255,.012) 75%,transparent 75%);background-size:auto,44px 44px}
-:where(.hero,.page-hero,.page-header){background-color:#070708;background-image:linear-gradient(90deg,rgba(4,4,5,.97),rgba(4,4,5,.72) 55%,rgba(4,4,5,.5)),url('/vexaro-hero.svg?v=20261010-1');background-size:cover;background-position:center}
+:where(.hero,.page-hero,.page-header){background-color:#070708;background-image:linear-gradient(90deg,rgba(4,4,5,.97),rgba(4,4,5,.72) 55%,rgba(4,4,5,.5)),url('/hero.webp?v=20261010-4');background-size:cover;background-position:center}
 :where(.card,.panel,.tile,.build-card,.product-card,.setting-card,.hq-card){background-image:linear-gradient(145deg,rgba(255,255,255,.035),transparent 54%),radial-gradient(ellipse at 100% 0%,rgba(225,6,0,.09),transparent 55%),linear-gradient(160deg,#111114,#080809)}
