@@ -161,6 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const links = [
     ["HOME","/"],["HQ","/#hq"],["CLIPS","/clips.html"],["LOADOUTS","/loadouts.html"],
     ["SETTINGS","/settings.html"],["LIVE","/live/"],["FIND SQUAD","/find-your-squad.html"],
+    ["MEMBERS SPACE","/members-space.html"],["NOTIFICATIONS","/notifications.html"],
     ["COMMUNITY","/community.html"],["MARKETPLACE","/marketplace.html"],["PRO","/membership.html"],
     ["ABOUT","/about.html"],["APP","/app.html"],["SEARCH","/search.html"]
   ];
