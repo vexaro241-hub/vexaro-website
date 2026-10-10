@@ -161,6 +161,17 @@ img,video,iframe,svg{max-width:100%}
   font-size:9px!important;line-height:1.1!important;
  }
  body .top .navlinks .site-home-link{display:flex!important}
+ /* Explicitly override page-level hidden states on the first three real navigation destinations. */
+ body .top .navlinks > .tab:nth-child(-n+3),
+ body .top .navlinks > .tab:nth-child(-n+3).hidden,
+ body .top .navlinks > .tab:nth-child(-n+3)[hidden]{
+  display:flex!important;visibility:visible!important;opacity:1!important;
+  position:static!important;transform:none!important;clip:auto!important;
+  width:calc((100% - 8px)/3)!important;max-width:calc((100% - 8px)/3)!important;
+  height:34px!important;min-height:34px!important;overflow:visible!important;
+ }
+ body .top .navlinks > .tab:nth-child(-n+3)[style*="display: none"]{display:flex!important}
+
  body{padding-bottom:160px!important}
 }
 `;
