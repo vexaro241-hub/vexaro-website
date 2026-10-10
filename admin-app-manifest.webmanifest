@@ -10,8 +10,8 @@
   "theme_color": "#070707",
   "description": "Private VEXARO administration app — moderation, members, business and site control.",
   "icons": [
-    {"src":"https://vexaroofficial.com/icon-members.svg","sizes":"192x192","type":"image/svg+xml","purpose":"any maskable"},
-    {"src":"https://vexaroofficial.com/icon-members.svg","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}
+    {"src":"https://vexaroofficial.com/vexaro-app-icon.svg?v=20261010-2","sizes":"192x192","type":"image/svg+xml","purpose":"any maskable"},
+    {"src":"https://vexaroofficial.com/vexaro-app-icon.svg?v=20261010-2","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}
   ],
   "orientation": "portrait-primary"
 }
