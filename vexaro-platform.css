@@ -81,3 +81,37 @@ h1{line-height:1.02}
  :where(.hero p){font-size:15px}
  :where(.navstatus){flex-wrap:wrap}
 }
+
+
+/* VEXARO release polish — legibility, image framing, crimson consistency, and touch targets */
+:root{--vx-red:#e10600;--vx-red-bright:#ff3b32;--vx-crimson:#e10600}
+html,body{max-width:100%;overflow-x:clip}
+img,video,canvas,svg{max-width:100%}
+:where(.vx-hero,.hero){isolation:isolate}
+.vx-hero{position:relative;overflow:hidden;background-color:#070708}
+.vx-hero-image{background-size:cover;background-repeat:no-repeat;background-position:center 42%;filter:saturate(1.12) contrast(1.06)}
+.vx-hero:before{pointer-events:none}
+.vx-hero-copy{position:relative;z-index:2}
+.vx-hero h1{max-width:100%;overflow-wrap:normal;text-wrap:balance;text-shadow:0 3px 28px rgba(0,0,0,.55)}
+.vx-hero-copy>p{max-width:52ch;text-shadow:0 1px 12px rgba(0,0,0,.7)}
+.vx-hero .vx-overline,.vx-label,.vx-section-intro .vx-label{color:#ff453d}
+.vx-btn,.vx-hero-actions a{touch-action:manipulation}
+:where(a,button,[role=button],input,select,textarea):focus-visible{outline:2px solid #ff453d!important;outline-offset:3px}
+:where(.vx-path,.vx-feature,.vx-last-grid>a,.vx-last-grid>div){isolation:isolate}
+:where(.vx-path,.vx-last-grid>a){transition:border-color .2s ease,background-color .2s ease,transform .2s ease}
+:where(.vx-path,.vx-last-grid>a):hover{border-color:rgba(225,6,0,.6)}
+/* Keep decorative artwork behind copy and avoid clipping the VEXARO wordmark. */
+.vx-hero:after,.vx-hero-top,.vx-hero-bottom{pointer-events:none}
+.vx-hero-inner,.vx-hero-copy{min-width:0}
+@media(max-width:760px){
+ .vx-hero-image{background-position:60% center}
+ .vx-hero h1{font-size:clamp(56px,15.8vw,94px);letter-spacing:-.075em;line-height:.9;overflow-wrap:normal}
+ .vx-hero-copy>p{font-size:14px;line-height:1.7}
+ .vx-hero-actions{align-items:center}
+ .vx-btn{min-height:44px}
+}
+@media(max-width:380px){
+ .vx-hero h1{font-size:clamp(48px,15.2vw,60px);letter-spacing:-.065em}
+ .vx-hero-top,.vx-hero-bottom{letter-spacing:.08em}
+}
+@media(prefers-reduced-motion:reduce){:where(.vx-path,.vx-last-grid>a){transition:none}}
