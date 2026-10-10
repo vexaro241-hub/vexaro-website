@@ -52,6 +52,13 @@ export default {
         "Save your gaming identity to sync these public links to your VEXARO profile. YouTube authorisation is a separate step."
       );
 
+      // Give squad-post publishing failures a useful permission/setup/connection explanation.
+      const oldSquadPublishCatch = "catch(err){$('formStatus').textContent='Could not publish yet. Check that the squad database migration has been applied.';console.error(err.message||err);}";
+      const newSquadPublishCatch = "catch(err){const message=String(err?.message||'');const code=String(err?.code||'');if(code==='42501'||/row-level security|active member|permission denied|not allowed/i.test(message)){$('formStatus').textContent='Your account is signed in, but it does not currently have permission to publish squad posts. If your membership should be active, contact VEXARO support.';}else if(/relation .* does not exist|schema cache|column .* does not exist/i.test(message)){$('formStatus').textContent='The squad board database setup is incomplete. Please try again later.';}else{$('formStatus').textContent='Could not publish your squad post. Please check your connection and try again.';}console.error('VEXARO squad post publish failed:',code,message);}";
+      if (html.includes('id="createForm"') && html.includes(oldSquadPublishCatch)) {
+        html = html.replace(oldSquadPublishCatch, newSquadPublishCatch);
+      }
+
       // Ensure every public VEXARO page has the shared top-right navigation unless it already includes it.
       if (!/vexaro-nav(?:-v2)?\.js/i.test(html) && !/<button\b[^>]*aria-label=["\'][^"\']*(?:menu|navigation)[^"\']*["\']/i.test(html) && !path.startsWith("/health/") && !/^\/google[0-9a-f]+\.html$/i.test(path)) {
         html = html.replace(/<\/head>/i, '<script src="/vexaro-nav.js" defer></script></head>');
