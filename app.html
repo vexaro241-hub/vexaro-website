@@ -12,6 +12,52 @@ a:visited{color:inherit;text-decoration:none}
 .navlinks a:hover,.navlinks a.active,.links a:hover{color:#fff}
 .btn:visited,.btn.accent:visited{color:#fff}
 .kicker,.status{color:#e10600}
+
+/* VEXARO APP ENTRY — native-inspired launch screen */
+:root{--app-line:rgba(255,255,255,.09);--app-surface:#111115;--app-muted:#a0a0aa}
+body{background:radial-gradient(ellipse at 50% -12%,rgba(225,6,0,.23),transparent 44%),#070709;min-height:100vh}
+.topbar{background:rgba(7,7,9,.92);border-bottom:1px solid var(--app-line);backdrop-filter:blur(24px)}
+.nav{height:64px}
+.brand{font-size:15px;letter-spacing:.12em}
+.navlinks a{border-radius:10px;padding:10px 12px;font-size:9px}
+.hero{min-height:0;padding:clamp(55px,10vh,110px) 0 48px;align-items:center;border-bottom:0}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.15),transparent 65%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1}
+.hero h1{font-size:clamp(52px,10vw,104px);max-width:850px}
+.hero p{font-size:15px;max-width:560px;color:#aaaab4}
+.section{padding:26px 0 70px;border-bottom:0}
+.head{margin-bottom:22px}
+.head h2{font-size:clamp(28px,4vw,42px)}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.card{min-height:220px;padding:22px;border:1px solid var(--app-line);border-radius:18px;background:linear-gradient(145deg,rgba(23,23,29,.98),rgba(11,11,14,.98));box-shadow:0 16px 42px rgba(0,0,0,.25)}
+.card:before{height:2px;background:linear-gradient(90deg,#f21a14,rgba(225,6,0,0))}
+.card h3{font-size:22px;margin:26px 0 10px}
+.card p{font-size:13px;color:#a2a2ac;line-height:1.65}
+.cta{min-height:42px;align-items:center;justify-content:center;border-radius:10px;background:linear-gradient(135deg,#f21a14,#b80000);box-shadow:0 7px 20px rgba(225,6,0,.14)}
+.install-actions .cta{margin-top:12px}
+.install-actions .cta+ .cta{background:#18181e;border:1px solid var(--app-line)}
+.install-state{border-radius:12px}
+.install-note{font-size:11px;line-height:1.7}
+.footer{border-top:1px solid var(--app-line);background:#08080a}
+@media(max-width:800px){
+ .wrap{width:calc(100% - 26px)}
+ .nav{height:auto;min-height:60px;padding:12px 0}
+ .navlinks{gap:3px;justify-content:flex-end}
+ .navlinks a{font-size:8px;padding:8px 7px}
+ .navlinks a:nth-child(n+5){display:none}
+ .hero{padding:58px 0 30px}
+ .hero h1{font-size:clamp(45px,13vw,68px)}
+ .hero p{font-size:13px;line-height:1.7}
+ .section{padding:18px 0 38px}
+ .head p{font-size:12px;line-height:1.65}
+ .grid{grid-template-columns:minmax(0,1fr);gap:10px}
+ .card{min-height:0;padding:19px;border-radius:16px}
+ .card h3{margin-top:20px}
+ .install-actions{display:grid;grid-template-columns:1fr}
+ .install-actions .cta{width:100%;margin-top:10px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
 </style><link rel="stylesheet" href="/vexaro-platform.css?v=20261009-1"></head><body>
 <header class="topbar"><div class="wrap nav"><a class="brand" href="/">VEX<b>ARO</b></a><nav class="navlinks"><a href="/">Home</a><a href="clips.html">Clips</a><a href="loadouts.html">Loadouts</a><a href="/live/">Live</a><a href="community.html">Community</a><a href="find-your-squad.html">Squad Finder</a><a href="app.html">App</a><a href="about.html">About</a></nav></div></header>
 <main><section class="hero"><div class="wrap"><div class="kicker">04 / Platform</div><h1>VEXARO APP.</h1><p>The VEXARO experience, built for the phone. Install the PWA and keep the community, content and live experience close.</p></div></section>
