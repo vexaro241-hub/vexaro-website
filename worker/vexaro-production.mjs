@@ -77,6 +77,19 @@ export default {
         }
       }
 
+      if (path === "/" || path === "/index.html") {
+        // Repair a legacy nested homepage style tag only when the fit layer is not preceded by a close tag.
+        const fitMarker = '<style id="vexaro-homepage-fit-v1">';
+        const fitIndex = html.indexOf(fitMarker);
+        if (fitIndex >= 0) {
+          const previousStyleOpen = html.lastIndexOf("<style", fitIndex);
+          const previousStyleClose = html.lastIndexOf("</style>", fitIndex);
+          if (previousStyleOpen > previousStyleClose) {
+            html = html.slice(0, fitIndex) + "</style>" + html.slice(fitIndex);
+          }
+        }
+      }
+
       response = new Response(html, asset);
     } else if (type.includes("text/xml") || type.includes("application/xml") || type.includes("text/plain") || type.includes("application/manifest+json") || type.includes("application/json")) {
       const requestUrl = new URL(request.url);
