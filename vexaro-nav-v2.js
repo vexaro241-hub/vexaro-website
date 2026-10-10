@@ -144,20 +144,19 @@ img,video,iframe,svg{max-width:100%}
 @media(max-width:800px){
  body .top .navlinks{
   position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;
-  z-index:10050!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  grid-auto-rows:minmax(32px,auto)!important;gap:2px!important;
+  z-index:10050!important;display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;gap:4px!important;
   width:100vw!important;max-width:100vw!important;height:auto!important;max-height:none!important;
   margin:0!important;padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;
   overflow:visible!important;overflow-x:visible!important;overflow-y:visible!important;
-  flex-wrap:initial!important;white-space:normal!important;box-sizing:border-box!important;
+  flex-wrap:wrap!important;white-space:normal!important;box-sizing:border-box!important;
   background:rgba(7,7,9,.97)!important;border:0!important;border-top:1px solid rgba(225,6,0,.45)!important;
   border-radius:0!important;box-shadow:0 -12px 34px rgba(0,0,0,.4)!important;backdrop-filter:blur(18px)!important;
  }
  body .top .navlinks .tab{
   position:static!important;display:flex!important;visibility:visible!important;opacity:1!important;
   transform:none!important;translate:none!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
-  width:100%!important;min-width:0!important;max-width:100%!important;min-height:32px!important;height:auto!important;
-  margin:0!important;padding:6px 3px!important;align-items:center!important;justify-content:center!important;
+  width:calc((100% - 8px)/3)!important;flex:0 0 calc((100% - 8px)/3)!important;min-width:0!important;max-width:calc((100% - 8px)/3)!important;min-height:34px!important;height:34px!important;
+  margin:0!important;padding:5px 3px!important;align-items:center!important;justify-content:center!important;
   text-align:center!important;white-space:normal!important;overflow-wrap:anywhere!important;
   font-size:9px!important;line-height:1.1!important;
  }
