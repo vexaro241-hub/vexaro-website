@@ -54,7 +54,7 @@ for (const target of targets) {
       const fallback = await httpCheck(target.url);
       const markerOk = target.name === "admin"
         ? /ADMIN SIGN IN|VEXARO ADMIN HUB/i.test(fallback.body)
-        : /BUILD\\. SHARE\\. GRIND\\.|VEXARO COMMUNITY/i.test(fallback.body);
+        : /BUILD\. SHARE\. GRIND\.|VEXARO COMMUNITY/i.test(fallback.body);
       if (fallback.status >= 200 && fallback.status < 400 && markerOk) {
         row.ok = true;
         row.fallback = true;
@@ -67,7 +67,7 @@ for (const target of targets) {
       const fallback = await httpCheck(target.url);
       const markerOk = target.name === "admin"
         ? /ADMIN SIGN IN|VEXARO ADMIN HUB/i.test(fallback.body)
-        : /BUILD\\. SHARE\\. GRIND\\.|VEXARO COMMUNITY/i.test(fallback.body);
+        : /BUILD\. SHARE\. GRIND\.|VEXARO COMMUNITY/i.test(fallback.body);
       if (fallback.status >= 200 && fallback.status < 400 && markerOk) {
         row.ok = true;
         row.fallback = true;
