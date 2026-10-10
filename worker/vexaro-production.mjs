@@ -7,14 +7,20 @@ export default {
       incomingUrl.pathname = "/admin-app.html";
       request = new Request(incomingUrl, request);
     }
+    // Fetch the underlying extensionless asset internally so Worker fixes still apply to clean .html URLs.
+    const requestUrl = new URL(request.url);
+    const path = requestUrl.pathname;
+    if (/^\\/[^/]+\\.html$/i.test(path)) {
+      const assetUrl = new URL(request.url);
+      assetUrl.pathname = path.toLowerCase() === "/index.html" ? "/" : path.replace(/\\.html$/i, "");
+      request = new Request(assetUrl, request);
+    }
     const asset = await env.ASSETS.fetch(request);
     const type = asset.headers.get("content-type") || "";
     let response = asset;
 
     if (type.includes("text/html")) {
       let html = await asset.text();
-      const requestUrl = new URL(request.url);
-      const path = requestUrl.pathname;
       // Keep the temporary Worker origin out of public absolute URLs when the real domain is attached.
       // This makes canonical/social/schema links, sitemap, and other generated URLs follow the host serving the request.
       html = html.replaceAll("https://vexaro-website.vexaro241.workers.dev", requestUrl.origin);
