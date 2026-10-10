@@ -15,7 +15,7 @@
 
 <section class="panel social-panel" style="margin-top:18px"><h2>Social & streaming accounts</h2><p class="sub">Add the public links you want other players to find. These are profile links, not account authorisations.</p>
 <div class="two">
-<div class="field"><label for="youtube">YouTube channel</label><input id="youtube" type="url" maxlength="300" placeholder="https://youtube.com/@yourchannel"></div>
+<div class="field"><label for="youtube">YouTube channel</label><input id="youtube" type="url" maxlength="300" placeholder="https://youtube.com/@yourchannel"><button class="btn ghost" type="button" id="youtubeConnect" style="margin-top:9px">Connect / retry YouTube</button><p class="note" id="youtubeStatus" role="status">Connect your Google account to enable the YouTube integration.</p></div>
 <div class="field"><label for="tiktok">TikTok</label><input id="tiktok" type="url" maxlength="300" placeholder="https://tiktok.com/@yourname"></div>
 <div class="field"><label for="twitch">Twitch</label><input id="twitch" type="url" maxlength="300" placeholder="https://twitch.tv/yourchannel"></div>
 <div class="field"><label for="discord">Discord invite / profile</label><input id="discord" type="url" maxlength="300" placeholder="https://discord.gg/yourinvite"></div>
@@ -24,7 +24,7 @@
 <div class="field"><label for="kick">Kick</label><input id="kick" type="url" maxlength="300" placeholder="https://kick.com/yourchannel"></div>
 <div class="field"><label for="facebook">Facebook</label><input id="facebook" type="url" maxlength="300" placeholder="https://facebook.com/yourpage"></div>
 </div><p class="note">YouTube shows as “connected” only after its real Google authorisation succeeds. These fields simply store links on this device for now.</p></section>
-\n<div class="layout">
+<div class="layout">
 <section class="panel"><h2>Gaming identity</h2><p class="sub">Add the details you want other VEXARO members to know.</p><div id="status" class="status">Loading your account…</div>
 <form id="profileForm">
 <div class="field"><label for="handle">Gaming username</label><input id="handle" maxlength="40" placeholder="Your gamer tag" autocomplete="nickname"></div>
@@ -47,6 +47,8 @@ function values(){const o={};fields.forEach(k=>o[k]=$(k).value.trim());return o}
 function preview(){const v=values();$('previewHandle').innerHTML=(v.handle?escapeHtml(v.handle):'YOUR')+' <span>'+(v.handle?'PLAYER':'TAG')+'</span>';$('previewTags').innerHTML='<span class="tag">'+escapeHtml(v.platform||'Platform not set')+'</span><span class="tag">'+escapeHtml(v.region||'Region not set')+'</span>';$('previewConsole').textContent=v.console||'Not set';$('previewGames').textContent=v.games||'Not set';$('previewTime').textContent=v.timezone||'Not set';$('previewBio').textContent=v.bio||'Your introduction will appear here when you add one.'}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 fields.forEach(k=>$(k).addEventListener('input',preview));
+const youtubeButton=$('youtubeConnect');
+if(youtubeButton)youtubeButton.addEventListener('click',async()=>{const label=youtubeButton.textContent;youtubeButton.disabled=true;youtubeButton.textContent='CONNECTING…';$('youtubeStatus').textContent='Checking your VEXARO sign-in…';try{const sb=window.vexaroSupabase;if(!sb)throw new Error('VEXARO sign-in service is unavailable.');const {data,error}=await sb.auth.getSession();if(error)throw error;if(!data.session?.access_token){$('youtubeStatus').textContent='Sign in to VEXARO first, then retry YouTube connection.';return;}const response=await fetch('https://vexaro-youtube-auth.vexaro241.workers.dev/start',{method:'GET',headers:{Authorization:'Bearer '+data.session.access_token}});const result=await response.json();if(!response.ok||!result.url)throw new Error(result.error||result.message||'Could not start Google authorisation.');window.location.assign(result.url);}catch(error){$('youtubeStatus').textContent=(error&&error.message)||'YouTube connection failed. Please retry.';}finally{youtubeButton.disabled=false;youtubeButton.textContent=label;}});
 try{const v=JSON.parse(localStorage.getItem('vexaro_members_space_profile')||'{}');fields.forEach(k=>{if(v[k])$(k).value=v[k]});preview();}catch(e){}
 let client=window.vexaroSupabase||null;
 if(client){client.auth.getSession().then(({data,error})=>{if(error||!data.session){status.textContent='You can build a preview here. Sign in through VEXARO to use account features.';$('saveStatus').textContent='Not signed in — the preview can be saved on this device.';return}status.className='status good';status.textContent='Signed in to VEXARO. Your player card is ready to edit.';$('saveStatus').textContent='Signed in, but shared profile publishing is not yet connected on this page.'}).catch(()=>{status.textContent='Account status could not be checked. You can still preview your details.'})}else{status.textContent='Account service is unavailable right now. You can still preview your details.'}
