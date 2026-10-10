@@ -1,4 +1,5 @@
 // Production deployment trigger: keep asset bundle managed by Wrangler.
+const notificationsInlineScript = "const list=document.getElementById('list');const esc=v=>String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]));const safeLink=v=>{try{const u=new URL(String(v||'community.html'),location.origin);return ['https:','http:'].includes(u.protocol)?u.href:'community.html'}catch(_){return 'community.html'}};async function boot(){const sb=window.vexaroSupabase;if(!sb){list.innerHTML='<div class=\"empty\">VEXARO account service is unavailable. Please try again shortly.</div>';return}const {data:{session},error:sessionError}=await sb.auth.getSession();if(sessionError){list.innerHTML='<div class=\"empty\">Could not check your sign-in. Please refresh and try again.</div>';return}if(!session){list.innerHTML='<div class=\"empty\">Sign in to view notifications.</div>';return}const r=await sb.from('notifications').select('id,type,title,body,link,read_at,created_at').order('created_at',{ascending:false}).limit(100);if(r.error){list.innerHTML='<div class=\"empty\">'+esc(r.error.message)+'</div>';return}list.innerHTML=r.data?.length?r.data.map(n=>'<a class=\"item '+(!n.read_at?'unread':'')+'\" href=\"'+esc(safeLink(n.link))+'\" data-id=\"'+esc(n.id)+'\"><div class=\"type\">'+esc(n.type)+'</div><div class=\"title\">'+esc(n.title)+'</div><div class=\"body\">'+esc(n.body)+'</div><div class=\"meta\">'+new Date(n.created_at).toLocaleString('en-GB')+(!n.read_at?' · NEW':'')+'</div></a>').join(''):'<div class=\"empty\">No notifications yet.</div>';list.querySelectorAll('[data-id]').forEach(a=>a.addEventListener('click',async()=>{await sb.from('notifications').update({read_at:new Date().toISOString()}).eq('id',a.dataset.id).eq('user_id',session.user.id)}))}document.getElementById('read').addEventListener('click',async()=>{const sb=window.vexaroSupabase;if(!sb){list.innerHTML='<div class=\"empty\">VEXARO account service is unavailable. Please try again shortly.</div>';return}const {data:{session},error:sessionError}=await sb.auth.getSession();if(sessionError){list.innerHTML='<div class=\"empty\">Could not check your sign-in. Please refresh and try again.</div>';return}if(session){await sb.from('notifications').update({read_at:new Date().toISOString()}).eq('user_id',session.user.id).is('read_at',null);boot()}});boot();";
 export default {
   async fetch(request, env) {
     // Normalise all supported Admin Hub entry points before static asset lookup.
@@ -51,6 +52,15 @@ export default {
         "These fields simply store links on this device for now.",
         "Save your gaming identity to sync these public links to your VEXARO profile. YouTube authorisation is a separate step."
       );
+
+      // Use the hardened notification renderer on the current production asset until the full static bundle is redeployed.
+      if (html.includes('id="read"') && html.includes("from('notifications')")) {
+        const scriptStart = html.indexOf("<script>const list=");
+        const scriptEnd = scriptStart >= 0 ? html.indexOf("</script>", scriptStart) : -1;
+        if (scriptStart >= 0 && scriptEnd > scriptStart) {
+          html = html.slice(0, scriptStart) + "<script>" + notificationsInlineScript + "</script>" + html.slice(scriptEnd + 9);
+        }
+      }
 
       // Give squad-post publishing failures a useful permission/setup/connection explanation.
       const oldSquadPublishCatch = "catch(err){$('formStatus').textContent='Could not publish yet. Check that the squad database migration has been applied.';console.error(err.message||err);}";
