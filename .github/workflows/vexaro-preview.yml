@@ -15,3 +15,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate VEXARO site structure
         run: node scripts/validate-vexaro.mjs
+      - name: Check production Worker syntax
+        run: node --check worker/vexaro-production.mjs
